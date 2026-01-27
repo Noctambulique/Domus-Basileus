@@ -1,242 +1,129 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Naos</title>
+<meta charset="UTF-8">
+<title>Map interactive</title>
 
 <style>
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  font-family:system-ui,Segoe UI,Roboto,Arial;
-  background:#000;
-}
+    body {
+        margin: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+    }
 
-#viewport{
-  position:fixed;
-  inset:0;
-  overflow:hidden;
-  touch-action:none;
-}
+    #map-container {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        cursor: grab;
+        position: relative;
+        background: #000;
+    }
 
-#map{
-  position:absolute;
-  width:1600px;
-  height:1600px;
+    #map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        user-select: none;
+    }
 
-  background-repeat:no-repeat;
-  background-position:top center;
-  background-size:contain;
+    .marker {
+        position: absolute;
+        cursor: pointer;
+    }
 
-  transform-origin:0 0;
-  will-change:transform;
-}
-
-/* ===== CURSOR ===== */
-
-#cursor{
-  position:absolute;
-  width:16px;
-  height:16px;
-  border:2px solid #00ffcc;
-  border-radius:50%;
-  transform:translate(-50%,-50%);
-  pointer-events:none;
-  display:none;
-  z-index:20;
-}
-
-#coords{
-  position:fixed;
-  bottom:10px;
-  left:10px;
-  padding:6px 10px;
-  font-size:13px;
-  background:rgba(0,0,0,.7);
-  color:#0ff;
-  border-radius:6px;
-  font-family:monospace;
-  z-index:30;
-}
+    #coords {
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 5px;
+        display: none;
+        font-size: 14px;
+    }
 </style>
 </head>
 
 <body>
 
-<div id="viewport">
-  <div id="map">
-    <div id="cursor"></div>
-  </div>
+<div id="map-container">
+    <img id="map" src="map.jpg" alt="map">
 </div>
 
 <div id="coords">X: 0 | Y: 0</div>
 
 <script>
-/* ================= CONFIG ================= */
+const map = document.getElementById("map");
+const container = document.getElementById("map-container");
+const coordsBox = document.getElementById("coords");
 
-const MAP = {
-  bg: "Fond/Map Métro.png",
-  width: 1600,
-  height: 1600
-};
+let isDragging = false;
+let startX, startY;
+let mapX = 0, mapY = 0;
+let showCoords = false;
+let mouseX = 0, mouseY = 0;
 
-/* ================= STATE ================= */
-
-const viewport = document.getElementById("viewport");
-const mapEl    = document.getElementById("map");
-const cursorEl = document.getElementById("cursor");
-const coordsEl = document.getElementById("coords");
-
-let cam   = { x:0, y:0 };
-let scale = 1;
-
-let drag = {
-  active:false,
-  startX:0,
-  startY:0,
-  camX:0,
-  camY:0
-};
-
-let cursor = {
-  active:false,
-  x: MAP.width / 2,
-  y: MAP.height / 2
-};
-
-/* ================= INIT MAP ================= */
-
-mapEl.style.backgroundImage = `url("${MAP.bg}")`;
-
-/* ================= CAMERA ================= */
-
-function clampCam(){
-  const vw = viewport.clientWidth;
-  const vh = viewport.clientHeight;
-
-  scale = Math.max(vw / MAP.width, vh / MAP.height);
-
-  const mapW = MAP.width  * scale;
-  const mapH = MAP.height * scale;
-
-  cam.x = mapW <= vw ? (vw - mapW)/2 : Math.min(0, Math.max(vw-mapW, cam.x));
-  cam.y = 0;
-
-  if(mapH > vh){
-    cam.y = Math.min(0, Math.max(vh-mapH, cam.y));
-  }
-}
-
-function renderCam(){
-  mapEl.style.transform =
-    `translate3d(${cam.x}px, ${cam.y}px, 0) scale(${scale})`;
-}
-
-function updateCam(){
-  clampCam();
-  renderCam();
-}
-
-updateCam();
-window.addEventListener("resize", updateCam);
-
-/* ================= DRAG ================= */
-
-function startDrag(x,y){
-  drag.active = true;
-  drag.startX = x;
-  drag.startY = y;
-  drag.camX   = cam.x;
-  drag.camY   = cam.y;
-}
-
-function moveDrag(x,y){
-  if(!drag.active) return;
-
-  const dx = x - drag.startX;
-  const dy = y - drag.startY;
-
-  const mapW = MAP.width * scale;
-  const mapH = MAP.height * scale;
-
-  if(mapW > viewport.clientWidth)  cam.x = drag.camX + dx;
-  if(mapH > viewport.clientHeight) cam.y = drag.camY + dy;
-
-  updateCam();
-}
-
-function endDrag(){
-  drag.active = false;
-}
-
-/* ================= CURSOR ================= */
-
-function screenToMap(px, py){
-  return {
-    x: (px - cam.x) / scale,
-    y: (py - cam.y) / scale
-  };
-}
-
-function renderCursor(){
-  cursorEl.style.left = cursor.x + "px";
-  cursorEl.style.top  = cursor.y + "px";
-
-  coordsEl.textContent =
-    `X: ${cursor.x.toFixed(0)} | Y: ${cursor.y.toFixed(0)}`;
-}
-
-/* ================= EVENTS ================= */
-
-viewport.addEventListener("mousedown", e=>{
-  startDrag(e.clientX,e.clientY);
+/* --- Déplacement de la map --- */
+container.addEventListener("mousedown", e => {
+    isDragging = true;
+    startX = e.clientX - mapX;
+    startY = e.clientY - mapY;
+    container.style.cursor = "grabbing";
 });
 
-window.addEventListener("mousemove", e=>{
-  moveDrag(e.clientX,e.clientY);
-
-  if(cursor.active){
-    const p = screenToMap(e.clientX, e.clientY);
-    cursor.x = Math.max(0, Math.min(MAP.width,  p.x));
-    cursor.y = Math.max(0, Math.min(MAP.height, p.y));
-    renderCursor();
-  }
+window.addEventListener("mouseup", () => {
+    isDragging = false;
+    container.style.cursor = "grab";
 });
 
-window.addEventListener("mouseup", endDrag);
+window.addEventListener("mousemove", e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
 
-/* === TOUCH === */
+    if (isDragging) {
+        mapX = e.clientX - startX;
+        mapY = e.clientY - startY;
+        map.style.transform = `translate(${mapX}px, ${mapY}px)`;
+        document.querySelectorAll(".marker").forEach(m => {
+            m.style.transform = `translate(${mapX}px, ${mapY}px)`;
+        });
+    }
 
-viewport.addEventListener("touchstart", e=>{
-  const t = e.touches[0];
-  startDrag(t.clientX,t.clientY);
+    if (showCoords) {
+        coordsBox.innerHTML = `X: ${mouseX} | Y: ${mouseY}`;
+    }
 });
 
-viewport.addEventListener("touchmove", e=>{
-  const t = e.touches[0];
-  moveDrag(t.clientX,t.clientY);
-
-  if(cursor.active){
-    const p = screenToMap(t.clientX, t.clientY);
-    cursor.x = Math.max(0, Math.min(MAP.width,  p.x));
-    cursor.y = Math.max(0, Math.min(MAP.height, p.y));
-    renderCursor();
-  }
+/* --- Touche A pour afficher les coordonnées --- */
+window.addEventListener("keydown", e => {
+    if (e.key.toLowerCase() === "a") {
+        showCoords = !showCoords;
+        coordsBox.style.display = showCoords ? "block" : "none";
+    }
 });
 
-viewport.addEventListener("touchend", endDrag);
+/* --- Ajouter un marker --- */
+function addMarker(x, y, size, image, link) {
+    const marker = document.createElement("img");
+    marker.src = image;
+    marker.className = "marker";
+    marker.style.width = size + "px";
+    marker.style.left = x + "px";
+    marker.style.top = y + "px";
+    marker.style.transform = `translate(${mapX}px, ${mapY}px)`;
 
-/* === KEYBOARD === */
+    marker.addEventListener("click", () => {
+        window.location.href = link;
+    });
 
-window.addEventListener("keydown", e=>{
-  if(e.key.toLowerCase() === "a"){
-    cursor.active = !cursor.active;
-    cursorEl.style.display = cursor.active ? "block" : "none";
-  }
-});
+    container.appendChild(marker);
+}
+
+/* --- Exemples de markers --- */
+addMarker(300, 200, 40, "marker.png", "page1.html");
+addMarker(600, 450, 60, "marker.png", "https://example.com");
 </script>
 
 </body>
