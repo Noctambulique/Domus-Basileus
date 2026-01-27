@@ -11,7 +11,7 @@ body{
   margin:0;
   height:100vh;
   font-family:"Trebuchet MS", Arial, sans-serif;
-  background:url("Fond/F3 Ville au loin.jpg") center/cover no-repeat;
+  background:url("https://miro.medium.com/v2/resize:fit:1400/1*_zqJUXJaDneHRrXeXtR5vQ.webp") center/cover no-repeat;
   display:flex;
   justify-content:center;
   align-items:center;
@@ -50,31 +50,6 @@ h1{
   height:18px;
   accent-color:#2f6fb2;
 }
-
-/* barre progression */
-.progress{
-  margin-top:24px;
-}
-
-.track{
-  height:16px;
-  background:#b8d6f5;
-  border:3px solid #6a9cd3;
-}
-
-.fill{
-  height:100%;
-  width:0%;
-  background:#2f6fb2;
-  transition:width 0.25s ease;
-}
-
-.percent{
-  margin-top:8px;
-  text-align:right;
-  font-weight:bold;
-  color:#1f3f63;
-}
 </style>
 </head>
 
@@ -84,48 +59,30 @@ h1{
   <h1>Ce qui m'intéresse</h1>
 
   <div class="item">
-    <input type="checkbox" class="check">
+    <input type="checkbox">
     <label>Créativité obsessionnelle</label>
   </div>
 
   <div class="item">
-    <input type="checkbox" class="check">
+    <input type="checkbox">
     <label>Ordre et chaos</label>
   </div>
 
   <div class="item">
-    <input type="checkbox" class="check">
+    <input type="checkbox">
     <label>Anticipation mentale</label>
   </div>
 
   <div class="item">
-    <input type="checkbox" class="check">
+    <input type="checkbox">
     <label>Dépassement cognitif</label>
   </div>
 
-  <div class="progress">
-    <div class="track">
-      <div class="fill" id="fill"></div>
-    </div>
-    <div class="percent" id="percent">0%</div>
+  <div class="item">
+    <input type="checkbox">
+    <label>Cartographie mentale</label>
   </div>
 </div>
-
-<script>
-const checks = document.querySelectorAll(".check");
-const fill = document.getElementById("fill");
-const percent = document.getElementById("percent");
-
-function update(){
-  const total = checks.length;
-  const active = [...checks].filter(c => c.checked).length;
-  const value = Math.round((active / total) * 100);
-  fill.style.width = value + "%";
-  percent.textContent = value + "%";
-}
-
-checks.forEach(c => c.addEventListener("change", update));
-</script>
 
 </body>
 </html>
