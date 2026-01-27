@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ma Biographie</title>
+
+<style>
+:root {
+  --blue-dark: #2175BF;
+  --blue-medium: #1EA4D9;
+  --blue-light: #18D911;
+  --green-dark: #F1F4FB;
+  --green-light: #067302;
+}
+
+/* ===== Interface générale ===== */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  margin: 0;
+  background-color: var(--blue-light);
+  font-family: Arial, sans-serif;
+}
+
+/* ===== Grille ===== */
+#map {
+  display: grid;
+  grid-template-columns: repeat(8, 100px);
+  gap: 4px;
+}
+
+/* ===== Cellules ===== */
+.cell {
+  width: 100px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--blue-medium);
+  border: 1px solid var(--blue-dark);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.25s, transform 0.15s;
+}
+
+.cell:hover {
+  background-color: var(--green-light);
+  transform: scale(1.05);
+}
+
+/* ===== InfoBox ===== */
+#infoBox {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px;
+  max-width: 220px;
+  background-color: var(--blue-dark);
+  color: #ffffff;
+  border: 2px solid var(--green-light);
+  border-radius: 6px;
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div id="map"></div>
+<div id="infoBox"></div>
+
+<script>
+/*
+  Convention couleur :
+  - "life"  → bleu
+  - "mind"  → bleu clair
+  - "create"→ vert clair
+  - "key"   → vert foncé
+*/
+
+const cellsData = [
+{ label: "‎09/03/2002", text: "Je nais", color: "#1EA4D9" },
+{ label: "‎​🧸", text: "J’aime mes peluches, surtout mon ageuh et mon bilow.", color: "#1EA4D9" },
+{ label: "‎1", text: "Anniversaire.", color: "#F1F4FB" },
+{ label: "‎‎ ", text: "Je passe du temps avec mes jouets animaux, dinosaures", color: "#1EA4D9" },
+{ label: "‎🦖 ", text: "Grande guerre de la chèvre et de t-rex", color: "#F1F4FB" },
+{ label: "‎🐐", text: "Victoire de la Chèvre.", color: "#F1F4FB" },
+{ label: "‎2", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "🍯‎", text: "Perte de Bilow", color: "#1EA4D9" },
+{ label: "‎ ‎", text: "Bilow retrouvé", color: "#1EA4D9" },
+{ label: "‎‎3", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Jouer avec mes playmbobiles, construire des scènes épiques.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Régner sur cette petite galaxie.", color: "#1EA4D9" },
+{ label: "‎4", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ‎", text: "Découvrir les dessins animés pokemon", color: "#1EA4D9" },
+{ label: "‎☁️", text: "Reproduire un oiseau avec des ailes en forme de nuage avec mes kapla.", color: "#067302" },
+{ label: "‎", text: "Essayer d'atteindre le puit dans le parc face à l'école.", color: "#1EA4D9" },
+{ label: "‎🐐", text: "Le Briquet de la cours du Jard.", color: "#1EA4D9" },
+{ label: "‎ ", text: "On m'offre une encyclopédie des pokemons sur laquelle je passe tout mon temps.", color: "#49E1F2" },
+{ label: "5", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: " Je me révèle être un enfant maladroit, distrait, et aimant.", color: "#1EA4D9" },
+{ label: "‎🎮", text: "Première console de jeux, partir à l'aventure sur pokemon.", color: "#1EA4D9" },
+{ label: "‎🚂", text: "Dans la cours, monter dans la locomotive et rêver", color: "#1EA4D9" },
+{ label: "‎ ", text: "Trouver un briquet dans la cours de l'école, réussir à l'allumer avec les copains", color: "#1EA4D9" },
+{ label: "‎ ", text: "Avec les copains, rois de la cours", color: "#F1F4FB" },
+{ label: "‎6", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "S'amuser avec les kapla, construire des tours de plus en plus hautes.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Rechercher des épisode de pokemon sur le pc du salon.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Inventer des engins sur de petites feuilles.", color: "#1EA4D9" },
+{ label: "‎7", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Jouer aux cartes, plaisir de la collection et de l'échange.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Peu de temps pour moi", color: "#1EA4D9" },
+{ label: "‎8", text: "Anniversaire", color: "#1EA4D9" },
+{ label: "🖥️‎ ", text: "Peu de temps pour moi", color: "#1EA4D9" },
+{ label: "‎ ", text: "Jouer aux toupies, plaisir des duels.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Passer mon temps à Holden.", color: "#18D911" },
+{ label: "‎💬", text: "Lire en boucle Garfield et Ducobu.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Sur le canapé noir, lire à l'enseigne lumineuse", color: "#1EA4D9" },
+{ label: "‎9", text: "Anniversaire", color: "#1EA4D9" },
+{ label: "‎ ", text: "Peu de temps pour moi.", color: "#F1F4FB" },
+{ label: "‎ ", text: "De plus en plus rêveur.", color: "#F1F4FB" },
+{ label: "📚", text: "Passer mon temps à Falala.", color: "#18D911" },
+{ label: "‎ ", text: "Mort du petit frère, beaucoup de larmes.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Lire en boucle les Spirou Magazine.", color: "#1EA4D9" },
+{ label: "‎10 ", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Faire une expérience de mort imminente", color: "#1EA4D9" },
+{ label: "‎ ", text: "Découvrir la quête d'Ewilan et Ellana", color: "#F1F4FB" },
+{ label: "👣", text: "Explorer Reims en cherchant des bibliothèques.", color: "#1EA4D9" },
+{ label: "‎11", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Monter d'un étage à la bibliothèque.", color: "#49E1F2" },
+{ label: "‎ ", text: "Découvrir la psychologie.", color: "#49E1F2" },
+{ label: "‎ ", text: "Découvrir la philosophie.", color: "#49E1F2" },
+{ label: "‎ ", text: "Lien savoir = liberté / puissance.", color: "#49E1F2" },
+{ label: "‎12", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Subir l'ennui du système scolaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Exil au CDI.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Découvrir la série Elementary", color: "#1EA4D9" },
+{ label: "‎ ", text: "Faire des montages photo sur toolwiz.", color: "#F1F4FB" },
+{ label: "‎🔎", text: "Passion pour le détective.", color: "#F1F4FB" },
+{ label: "‎ ", text: "Se chercher un Watson.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Télécharger du porno.", color: "#1EA4D9" },
+{ label: "‎13", text: "Anniversaire.", color: "#F1F4FB" },
+{ label: "‎ ", text: "Tomber en déprime.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Un été solitaire en haut, devant la télé.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Devenir un grand voleur de Viesco.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Petite lubies pour les taggeurs.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Découvrir la magie.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Découvrir le principe du forum sur un jeu.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Ne pas parvenir à voler le tampon de la viesco, partir avec le casier.", color: "#1EA4D9" },
+{ label: "14‎", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Découvrir la bourse.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Passer du temps à trainer sur les forums.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Faire du paper trading.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Faire du rp avec ma copine.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Trainer dans les parcs.", color: "#1EA4D9" },
+{ label: "‎15", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Adoption de Sven", color: "#1EA4D9" },
+{ label: "‎ ", text: "Dépression.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Trainer sur discord", color: "#1EA4D9" },
+{ label: "‎ ", text: "Structurer une communauté d'aide.", color: "#067302" },
+{ label: "‎🪽", text: "Partir avec un ange.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Partir en graphisme.", color: "#F1F4FB" },
+{ label: "‎16", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Découvrir la Domus Octavia.", color: "#49E1F2" },
+{ label: "‎👤", text: "Rencontrer Octavie.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Retrouver un sens à la vie.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Refaire de la psycho / philo.", color: "#49E1F2" },
+{ label: "‎17", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Grande solitude IRL.", color: "#F1F4FB" },
+{ label: "‎ ", text: "Revenir en général.", color: "#F1F4FB" },
+{ label: "‎ ", text: "Beaucoup de lectures dans tous les domaines.", color: "#49E1F2" },
+{ label: "‎ ", text: "Créations de forums.", color: "#067302" },
+{ label: "‎ ", text: "Phénixisation, vouloir renaitre par période pour vivre plus.", color: "#067302" },
+{ label: "‎ ", text: "Création d'un premier document récapitulatif", color: "#067302" },
+{ label: "‎ ", text: "Se mettre une école à dos.", color: "#1EA4D9" },
+{ label: "‎🚌", text: "Aventure : départ à Paris.", color: "#D97B29" },
+{ label: "‎ ", text: "Séduire un ange.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Découvrir les modèles de psychométrie.", color: "#49E1F2" },
+{ label: "‎18", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Rencontrer des gens IRL.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Découvrir les groupes politique.", color: "#F1F4FB" },
+{ label: "‎ ", text: "Découvrir des sectes religieuses.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Enterrement en rouge", color: "#F1F4FB" },
+{ label: "‎ ", text: "Boxe à 7h du matin dans maison abandonnée.", color: "#1EA4D9" },
+{ label: "‎🛁", text: "Chant dans baignoire à 7h du matin.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Débattre dans la cours.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Fascination pour les ARG, en créer", color: "#1EA4D9" },
+{ label: "‎19", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Etudier la philosophie à la fac", color: "#49E1F2" },
+{ label: "‎ ", text: "Créer des vidéos sur youtube.", color: "#067302" },
+{ label: "‎ ", text: "Rejoindre un collectif de créateurs.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Je fais des mind map et des notes.", color: "#067302" },
+{ label: "‎ ", text: "En chemise à fleurs.", color: "#1EA4D9" },
+{ label: "‎20", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Rejoindre un groupe de gens cools.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Faire la fête toutes les nuits.", color: "#1EA4D9" },
+{ label: "‎🌙", text: "Errer dans les rues la nuit.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Basile le Noctambule.", color: "#1EA4D9" },
+{ label: "‎21", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Créer mon association de philosophie.", color: "#067302" },
+{ label: "‎ ", text: "Organiser des cafés philo.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Faire des conférences.", color: "#1EA4D9" },
+{ label: "‎👕", text: "Formaliser mon style vestimentaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Recommencer à cuisiner.", color: "#D97B29" },
+{ label: "‎ ", text: "Chef scénariste d'un jeu vidéo.", color: "#067302" },
+{ label: "‎ ", text: "Un été avec le J, entre larmes et rires", color: "#067302" },
+{ label: "‎22", text: "Anniversaire.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Revivre Pokemon par les hackroms.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Comprendre ma sexualité.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Créer des vidéos de philosophie.", color: "#067302" },
+{ label: "‎ ", text: "Passer des soirées sur Azar.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Faire des petits logiciels.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Jouer en trio sur ML.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Créer une appli avec Plok.", color: "#F1F4FB" },
+{ label: "‎ ", text: "Découvrir excel.", color: "#F1F4FB" },
+{ label: "‎23", text: "Anniversaire.", color: "#F1F4FB" },
+{ label: "‎", text: "Revoir Lucas, mesurer les écarts.", color: "#D97B29" },
+{ label: "‎👤", text: "Soupçon d'un troisième homme.", color: "#1EA4D9" },
+{ label: "‎", text: "Rencontrer l'ange du troisième homme.", color: "#1EA4D9" },
+{ label: "‎ ", text: "Quelques stages en prof doc.", color: "#067302" },
+{ label: "‎ ", text: "Créer Naos.", color: "#067302" },
+{ label: "‎ ", text: "Découvrir le henné.", color: "#067302" },
+{ label: "‎ ", text: "Ne pas vouloir cette vie, ne pas en vouloir une autre.", color: "#067302" },
+{ label: "‎ ", text: "Découvrir les associations de Reims, sortir chaque soir.", color: "#1EA4D9" },
+];
+
+const cellsDataB = [
+      { label: "‎ ", text: "Vouloir sans cesse être ailleurs, ne pas s'oublier", color: "#1EA4D9" },
+      { label: "‎ ", text: "Difficulté à exprimer la tristesse si elle n'est pas exprimée par autrui", color: "#1EA4D9" },
+      { label: "‎ ", text: "On me pense souvent hautain", color: "#D97B29" },
+      { label: "‎ ", text: "Le principe de prendre des substances pour aller mieux me semble absurde", color: "#1EA4D9" },
+      { label: "‎ ", text: "Je suis très attaché à mes souvenirs et mes objets", color: "#1EA4D9" },
+      { label: "‎ ", text: "La qualité de mon entourage me donne ma valeur personnelle", color: "#1EA4D9" },
+      { label: "‎ ", text: "Ma santé mentale est assez solide grâce à mon mode jeu", color: "#1EA4D9" },
+      { label: "‎ ", text: "La perspective de manquer quelque chose m'angoisse", color: "#1EA4D9" },
+      { label: "‎ ", text: "J'ai rarement conçu l'avenir sans un certain optimisme", color: "#1EA4D9" },
+
+];
+
+
+
+const map = document.getElementById("map");
+const infoBox = document.getElementById("infoBox");
+
+function renderMap(data) {
+  map.innerHTML = "";
+  infoBox.style.display = "none";
+
+  data.forEach(cell => {
+    const div = document.createElement("div");
+    div.className = "cell";
+    div.style.backgroundColor = cell.color;
+    div.textContent = cell.label;
+
+    div.onclick = () => {
+      infoBox.textContent = cell.text;
+      infoBox.style.display = "block";
+    };
+
+    map.appendChild(div);
+  });
+}
+
+let currentMap = "A";
+renderMap(cellsData);
+
+document.addEventListener("keydown", (e) => {
+  const key = e.key.toLowerCase();
+
+  if (key === "b" && currentMap !== "B") {
+    currentMap = "B";
+    renderMap(cellsDataB);
+  }
+
+  if (key === "a" && currentMap !== "A") {
+    currentMap = "A";
+    renderMap(cellsData);
+  }
+});
+
+</script>
+
+</body>
+</html>
