@@ -11,52 +11,50 @@ body{
   margin:0;
   height:100vh;
   font-family:"Trebuchet MS", Arial, sans-serif;
-  background:url("Fond/F3 Ville au loin.jpg") center/cover no-repeat;
+  background:url("https://miro.medium.com/v2/resize:fit:1400/1*_zqJUXJaDneHRrXeXtR5vQ.webp") center/cover no-repeat;
   display:flex;
   justify-content:center;
   align-items:center;
 }
 
+/* panneau principal */
 .panel{
   width:520px;
   padding:30px;
-  background:linear-gradient(135deg, #6fb6ff, #3a7bd5, #5fa8ff);
-  background-size:300% 300%;
-  animation: gradientMove 8s ease infinite;
+  background:white;
   border-radius:16px;
-  box-shadow:0 15px 30px rgba(0,0,0,0.25);
-  color:white;
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.25),
+    inset 0 0 0 3px #cfe4ff;
 }
 
-@keyframes gradientMove{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
-}
-
+/* titre */
 h1{
   margin:0 0 22px;
   text-align:center;
   font-size:1.5rem;
+  color:#1e3d63;
 }
 
-/* lien-item */
+/* items cliquables */
 .item{
   display:block;
   padding:14px 16px;
   margin-bottom:14px;
-  background:rgba(255,255,255,0.18);
+  background:linear-gradient(135deg, #6fb6ff, #3a7bd5);
   border-radius:10px;
-  backdrop-filter: blur(6px);
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.25);
   text-decoration:none;
   color:white;
-  transition:transform 0.2s ease, background 0.2s ease;
+  font-size:1.05rem;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.35);
+  transition:transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .item:hover{
   transform:translateX(6px);
-  background:rgba(255,255,255,0.30);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,0.6),
+    0 6px 14px rgba(58,123,213,0.45);
 }
 </style>
 </head>
