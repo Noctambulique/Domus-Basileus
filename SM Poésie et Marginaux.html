@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+:root {
+  --gap: 22px;
+  --radius: 14px;
+
+  --aero-blue-top: #54c7ff;
+  --aero-blue-bottom: #0073d9;
+
+  --aero-green: #8bf25b;
+  --aero-white: #e8faff;
+  --aero-glass: rgba(255, 255, 255, 0.55);
+
+  --shadow-dark: 0 8px 22px rgba(0, 0, 0, 0.45);
+}
+
+/* FOND FRUTIGER AERO */
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background:
+    radial-gradient(circle at 70% 20%, #bafffc 0%, #5dc8ff 35%, #0074d9 100%);
+  background-attachment: fixed;
+  color: #002242;
+  overflow-x: hidden;
+}
+
+/* Ajout nuageux + bulles flottantes */
+html::before {
+  content:"";
+  position: fixed;
+  top:0; left:0;
+  width:100vw; height:100vh;
+  pointer-events:none;
+  background:
+    url('Fond/F3 Ville au loin.jpg') center/cover no-repeat;
+  opacity: .22;
+  filter: blur(2px);
+}
+
+/* Mise en page */
+.wrap {
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 38px;
+  box-sizing: border-box;
+}
+
+/* Titres façon Vista */
+.title {
+  font-weight: 600;
+  margin: 0 0 14px;
+  color: #003e73;
+  text-shadow: 0 2px 0 rgba(255,255,255,.7);
+}
+
+/* Grille */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--gap);
+}
+
+/* VRAIES CARTES FRUTIGER AERO */
+.card {
+  position: relative;
+  border-radius: var(--radius);
+  overflow:hidden;
+  min-height: 180px;
+  border: 1px solid rgba(255,255,255,0.8);
+
+  background: linear-gradient(
+    135deg,
+    var(--aero-white) 0%,
+    rgba(255,255,255,.75) 40%,
+    var(--aero-glass) 100%
+  );
+  box-shadow:
+    var(--shadow-dark),
+    inset 0 0 20px rgba(255,255,255,0.7);
+
+  cursor: pointer;
+  transition: .18s ease-out;
+  backdrop-filter: blur(4px);
+}
+
+/* Reflet glossy typique Web 2.0 */
+.card::before {
+  content:"";
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:45%;
+  background:linear-gradient(
+    rgba(255,255,255,.85),
+    rgba(255,255,255,.1)
+  );
+  pointer-events:none;
+}
+
+.card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow:
+    0 12px 26px rgba(0,0,0,.5),
+    inset 0 0 26px rgba(255,255,255,.92);
+  border-color: #7befff;
+}
+
+.card img {
+  width:100%; height:100%;
+  object-fit:cover;
+}
+
+/* READER : FENÊTRE AERO SUREXPLOSÉE */
+.reader {
+  position:relative;
+  min-height:360px;
+  border-radius: var(--radius);
+  padding:40px;
+  border:1px solid #dff8ff;
+  background:linear-gradient(
+    to bottom,
+    rgba(255,255,255,.9),
+    rgba(180,230,255,.8)
+  );
+  box-shadow:
+    0 0 0 2px rgba(0,140,255,.6),
+    0 18px 36px rgba(0,0,0,.55);
+  animation:fadeIn .32s ease-out;
+}
+
+.reader::after {
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(
+    to bottom,
+    rgba(255,255,255,.48),
+    rgba(255,255,255,0)
+  );
+  pointer-events:none;
+}
+
+.reader .content {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #00325f;
+  text-shadow: 0 1px 0 rgba(255,255,255,.8);
+}
+
+/* Anim */
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(12px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+</style>
+
+
+</head>
+<body>
+
+  <div class="wrap">
+
+    <div id="container" class="grid">
+
+<div class="card" 
+     data-text="m">
+  <img src="D hiver/Palais_Idéal_(East_facade)_May_2014.jpg" alt="image 2">
+</div>
+
+      <div class="card" 
+     data-text="Ripley : Cet homme devait avoir une quarantaine d’années lors de notre rencontre. Il était arrivé depuis plus de six mois au Café social lorsque nous échangeâmes quelques mots pour la première fois, après qu’il m’ait spontanément interpellé par un : « Hé ! Paraît que c’est toi le nouveau ! » Il émanait de lui une forme d’entrain, une aisance relationnelle, que sa posture physique et sa musculature confortaient. L’impression générale qui se dégageait de ce premier échange était qu’une grande assurance l’habitait.\n \n Monsieur Ripley semblait animé par un besoin profond : de nature relationnelle. Mais le mode de lien qu’il engageait avec les gens avait un caractère remarquable. \n \n  Il se voulait par exemple expert en économie et commercial de talent et déclara un moment exercer un emploi de vendeur de téléphonie mobile (le téléphone portable faisait à cette époque son apparition) où il expliquait gagner des fortunes ; avant d’annoncer, quelque temps plus tard, avoir démissionné de ce poste pour pouvoir faire « de meilleures affaires ». \n \n Pour démontrer ses talents de financier, il m’avait, un jour, donné un cours sur la bourse, dont la complexité et la longueur n’eurent d’égal que mon scepticisme à l’égard de la logique de ses théories. \n \n Ainsi, Monsieur Ripley, se mesurant constamment à ses compagnons dont il faisait des êtres faibles en comparaison de lui, apparaissait-il avide d’un certain rapport de force, comme s’il fallait qu’il soit le « grand » et les autres des « petits ». Or, cette posture dans laquelle il tentait de placer tout un chacun suscitait beaucoup de méfiance. \n \n En fait, Monsieur Ripley, adulé à son arrivée dans le lieu six mois plus tôt, avait, depuis que les gens s’étaient habitués à lui, perdu leur confiance. Tout le monde, des professionnels aux usagers, s’accordait à dire qu’il était « mythomane ». Ce qualificatif révélait le degré d’agressivité qu’avait suscité cette façon particulière de chercher à « être aimé ». Son attitude lui était devenue nuisible au point d’en faire le repoussoir du groupe.\n \n À présent, les gens semblaient devenus phobiques à l’égard de Monsieur Ripley, sa tendance au mensonge lui ayant valu de devenir l’objet d’un rejet manifeste. Elle révélait à la fois l’existence de sa soif narcissique et celle d’un lien psychiquement coûteux pour les gens qui l’entouraient. Ces derniers ressentaient le sentiment d’être utilisés pour étancher son besoin de reconnaissance. À travers ses mensonges, c’est en effet une étrange manière d’assouvir son avidité relationnelle qui semblait transparaître. \n \n Le mensonge qui va être décrit commence lorsque Monsieur Ripley vint me solliciter pour une demande spéciale : il lui fallait des feuilles à petits carreaux grand format. Sa manière surprenante et directe de m’interpeller laissait à penser qu’il nourrissait un dessein de la plus grande importance. Il fallait, dit-il avec empressement, qu’il dessine des plans. Ces paroles une fois prononcées, il me fixa intensément, comme s’il attendait une question de ma part. L’œil scrutateur avec lequel il observait ma réaction signait son attente que je le questionne sur le motif de sa requête. Posté face à cette énigmatique demande, je l’interrogeais sur ce fameux plan à propos duquel il était venu me solliciter. « Tu dois dessiner des plans ? » demandais-je, sans doute un peu interloqué. « Oui, répondit-il spontanément, car je dois faire le plan d’une éolienne à géométrie variable…  Tu dois savoir ce que c’est qu’une éolienne ? » Là-dessus, il enchaîna des explications, nourries par une quantité impressionnante de détails techniques concernant les divers usages d’une éolienne. \n \n Durant ce « cours », prononcé d’un air magistral, son regard restait cramponné au mien, guettant avidement la moindre de mes réactions. Et ce jusqu’à la conclusion : « L’éolienne que je vais mettre au point est différente… » Le silence qui suivit paraissait être savouré par Monsieur Ripley, qui semblait désireux de m’intriguer avec le caractère exceptionnel de cet appareil. Il poursuivit son descriptif technique : « Une éolienne normale produit 40 % d’électricité… », puis laissa s’amorcer un moment de suspense avant d’enchaîner : « …40 % par rapport à une centrale nucléaire ». Puis, il augmenta le débit des informations délivrées, me faisant définitivement perdre le fil de son discours. Assis en face de lui, je ne recevais plus ses paroles, qui semblaient à présent glisser sur mon écoute et ne résonnaient plus autrement que comme une sorte de flot d’onomatopées vide de tout sens. \n \n Ne saisissant plus le débit continu d’explications dont il semblait m’assaillir, j’avais effectivement la sensation d’être réduit à néant. Aussi, comme pour lutter contre le sentiment d’être noyé par cette logorrhée, je m’accrochais à une phrase, perdue dans un amas de bruits : « Tu sais, un champ d’éoliennes entier produit 40 % d’électricité de moins qu’une centrale nucléaire. Alors que l’éolienne à géométrie variable que j’ai conçue en produit autant. » « Mais c’est quoi le principe de géométrie variable ? » lui demandais-je. \n \n « Tu sais, je ne veux pas commercialiser mon invention, je veux juste faire les plans pour qu’elle puisse être construite. J’ai des amis qui ont monté une association en Afrique. Tu sais, là-bas, produire de l’électricité et extraire de l’eau sera bien utile. D’autant plus qu’avec mon système, extraire de l’eau à dix mètres ne coûtera que cinquante francs… Tu sais que j’étais plombier avant (il avait évoqué beaucoup de professions différentes), eh bien je me sers simplement d’un siphon comme celui-ci (il indiqua d’un geste le lavabo en face de lui) ».  \n \n Quelque chose s’était produit qui, au début, nous avait liés et semblait à présent nous séparer.\n \n Les membres de l’équipe avaient également signalé assez tôt la suspicion que provoquait cet homme. Il était conseillé de s’en « méfier », et ne « pas trop l’écouter ». Les membres de l’équipe se plaignaient du fait qu’ils ne supportaient plus « l’impression d’être pris pour des imbéciles ».\n \n  L’ostracisme impalpable que Monsieur Ripley pouvait ressentir autour de lui devait probablement être la source d’un grand malaise. \n \n Cette rupture signe à la fois l’échec de ces personnes à faire entendre leur souffrance et celui de notre capacité à les contenir, comme si leur parcours ne pouvait être qu’un continuel recommencement, comme si le problème intérieur qui les poussait à mentir les obligeait continuellement à prendre le chemin de l’errance pour rencontrer de nouvelles personnes dans de nouveaux lieux, jusqu’à ce que leur crédibilité soit à nouveau mise à mal. \n \n On peut considérer que « le projet d’éolienne » dont fit part Monsieur Ripley contenait des éléments significatifs de sa solitude et de son besoin d’être réparé. En parlant d’aider l’Afrique (un continent qui souffre) avec son éolienne, Monsieur Ripley pourrait avoir inconsciemment exprimé son attente que quelqu’un vienne le secourir. Dans cette optique, sa souffrance et ses espoirs se seraient dévoilés dans les linéaments fantasmatiques de sa parole. \n \n Par-delà le dire, le sujet ferait partager ses affects avec ceux qu’il trompe. Les éprouvés dérangeants que ferait naître la situation dite de méprise auraient un caractère significatif. En trompant ses interlocuteurs, le sujet se « raconterait » à l’endroit où sa parole échoue à remplir cet office. Autrement dit, la manière dont l’individu manipule l’environnement signifierait la présence du problème qu’il tente de résoudre. \n \n Sans doute notre sentiment d’impuissance consécutif à la situation de méprise que Monsieur Ripley s’efforçait de créer était-il similaire à celui qu’il ressentait au fond de lui. Cette défense qui consiste à tromper l’autre indique en cela la vulnérabilité que le sujet cache. \n \n L’agressivité dont nous faisions état à l’égard de Monsieur Ripley aurait fait écho à sa souffrance.">
+  <img src="D hiver/Palais_Idéal_(East_facade)_May_2014.jpg" alt="image 2">
+</div>
+
+      <div class="card" 
+     data-text=" Kaczynski : L’empereur Hirohito, par exemple, au lieu de se réfugier dans un hédonisme décadent, s’est intéressé à la biologie marine, domaine où il se distingua. Quand les gens peuvent satisfaire sans efforts leurs besoins physiques, ils s’inventent souvent des objectifs artificiels, auxquels ils consacrent la même énergie, avec le même investissement émotionnel que s’il s’agissait d’assurer leur survie. Les aristocrates de l’Empire romain avaient ainsi des ambitions littéraires ; de nombreux aristocrates ont consacré beaucoup de temps et d’énergie à chasser, alors qu’ils ne manquaient certainement pas de\n nourriture ; d’autres rivalisaient dans l’étalage de leurs richesses ; et\n quelques-uns, comme Hirohito, se sont tournés vers la science.\n \n Nous divisons les aspirations humaines en trois catégories : \n 1) celles qui peuvent être satisfaites à l’aide d’un effort minime ; \n 2) celles qui peuvent être satisfaites, mais au prix d’efforts sérieux ; \n 3) celles qui sont impossibles à satisfaire, quels que soient les efforts fournis.\n \n L’auto-accomplissement est le processus qui consiste à satisfaire les aspirations de la deuxième catégorie. Quant à celles de la troisième, plus elles sont nombreuses, plus sont fréquents la frustration, la colère, le défaitisme, la dépression, etc.\n \n Dans la société industrielle moderne, la satisfaction des besoins\n matériels ne requiert qu’un minimum d’efforts. Il suffit de suivre une\n formation qui dispense un petit savoir-faire technique, puis d’arriver à\n l’heure au travail et de déployer le peu d’effort nécessaire pour\n conserver ce travail. \n \n Les gens éprouvent de nombreux désirs passagers ou des impulsions qui sont automatiquement frustrés dans la vie moderne, et qui font donc partie de la troisième catégorie. On peut se mettre en colère, mais la société n’autorise pas la bagarre. Dans beaucoup de situations, elle ne permet même pas les agressions verbales. On peut être pressé de se rendre quelque part ou avoir envie de flâner, mais il n’y a pas d’autre choix que de suivre le flot des voitures et de respecter les signalisations. On peut vouloir faire son travail d’une manière différente, mais on ne peut en général travailler qu’à condition de se plier aux exigences de son employeur. \n \n Les êtres humains ont le besoin, sans doute biologique, de quelque chose que nous appellerons le «processus d’auto-accomplissement ». Ce processus d’auto-accomplissement comporte quatre composantes. Nous nommerons but, effort et réalisation les trois composantes les plus aisément identifiables  tout le monde a besoin de buts qui exigent des efforts pour être atteints, et de réussir à en atteindre au moins quelque uns. La quatrième composante est plus délicate à définir et n’est peut-être pas indispensable à tout le monde ; il s’agit de l’autonomie.\n \n - Theodore Kaczynski, La société industrielle et son avenir">
+  <img src="D hiver/Palais_Idéal_(East_facade)_May_2014.jpg" alt="image 2">
+</div>
+
+      <div class="card" 
+     data-text="Le Grand jeu : Synthèse métaphysique inde bouddhisme & poète maudis\n \n Reims \n \n Réné Daumal \n Roger Gilbert Lecompte\n Roger Vailland\n Robert Meyrat\n \n Ils se rencontrent à 14 15 ans au lycée à Reims, bons élèves très érudits mais dissipés, veulent tester des trucs, détestent l autorité. Testent des drogues, veulent se retrouver dans les rêves. Ils font des experiences de mort imminente. \n \n Le grand jeu sera fondé par Daumal, Lecompte et Vailland, et autres. Ils fondent le grand jeu. Le but est de rencontrer la vérité, comprendre le monde, l art, \n \n Lecompte se drogue, se retire du monde, la vie est une dégradation, l avant naitre est le supérieur. \n \n Daumal veut vivre dans ce monde. Il refuse la dégradation, les addictions.\n \n numero  1 :\n \n L’abandon des cadres moraux et sociaux. La nécessité d’une « éthique nouvelle » fondée sur une révolution intérieure.\n \n  « Table rase : tout est vrai, – il n’y a plus rien. »​. La révolte radicale ne consiste pas seulement à s’opposer à l’ordre établi, mais à déconstruire toute illusion, y compris celles créées par l’esprit humain. \n \n Ils prônent une liberté absolue, déconnectée de tout but. L’idée de liberté, selon René Daumal, repose sur une négation absolue des motivations extérieures et intérieures. L’homme libre, tel qu’il le conçoit, refuse d’agir sous l’influence du désir, de la raison ou d’un but précis. Il atteint une conscience supérieure.\n \n Cette quête de la liberté absolue conduit paradoxalement à une dissolution de l’esprit de révolte. Dès qu’un individu découvre une nouvelle voie intérieure, il se détache du monde, le trouvant indifférent et dépourvu de sens. Il réalise également que toute opposition à une loi reste une manière d’y être assujetti : agir systématiquement contre un désir, c’est encore lui obéir\n \n La liberté sans espoir décrite par Daumal est donc une forme extrême de détachement, où l’individu, ayant refusé toute contrainte, découvre une solitude absolue qui le prive de toute impulsion à agir. Cette liberté n’est pas une exaltation, mais un vide : un rire désespéré face à l’absurde de l’existence, où même la révolte perd son sens.\n \n numero 2 :\n \n L’éveil brutal à l’existence : N’importe qui peut éprouver à un moment ou l’autre la stupeur d’être​. Il décrit comment une prise de conscience soudaine de son existence peut bouleverser un individu et le mener à une crise existentielle. Il prône l’acceptation du vide et de l’absurde comme seul chemin vers une transformation intérieure.\n \n L’être humain est un enchaînement de cercles vicieux : il décrit l’homme comme une série de contradictions, incapable d’accéder à une vérité pure​.\n \n numero 3 : \n \n Le Grand Jeu voit l’Occident comme une civilisation condamnée, où la pensée s’est enfermée dans le rationalisme et l’individualisme.\n Il critique la pensée cartésienne et positiviste, qui a réduit le mythe à un simple conte. Il montre que des traditions ésotériques comme celles de Pythagore, Platon et les gnostiques avaient compris que le mythe est une porte vers l’absolu.\n \n Il rejoint ici l’idée que la raison est une prison, et que l’expérience mystique peut passer par une rupture totale avec le réel ordinaire.\n \n Il insiste sur le fait que l’homme vit dans un monde structuré par le langage, mais que ce langage est lui-même un jeu de reflets trompeurs. Il compare l’acte de parler à une tentative de nommer l’invisible, de saisir l’insaisissable. Mais chaque mot prononcé ne fait que repousser un peu plus loin l’objet réel du discours. Ce constat rapproche sa vision de celle des mystiques ou des penseurs existentialistes : nous sommes condamnés à parler, mais jamais à atteindre l’essence de ce que nous cherchons à dire">
+  <img src="D hiver/Palais_Idéal_(East_facade)_May_2014.jpg" alt="image 2">
+</div>
+
+      <div class="card" 
+     data-text="Capgras : Le Syndrome de Capgras : Une illusion d’imposture\n \n Le syndrome de Capgras est un trouble psychiatrique rare mais fascinant, dans lequel un individu est convaincu qu’un proche (conjoint, parent, ami) a été remplacé par un imposteur identique en apparence. Par exemple, un patient peut croire que sa mère est une copie parfaite de la vraie, mais qu’elle n’est plus elle-même.\n \n Origine et Explication Neuropsychologique\n Le syndrome de Capgras est lié à une déconnexion entre la reconnaissance faciale et les émotions associées. Normalement, lorsque nous voyons une personne familière, notre cerveau active deux systèmes :\n \n Reconnaissance perceptive (le je reconnais ce visage)\n \n Réaction émotionnelle (le je ressens quelque chose en voyant ce visage).\n Chez les patients atteints du syndrome de Capgras, le premier système fonctionne, mais le second est défaillant. Cela signifie que le patient reconnaît bien le visage, mais n’éprouve aucune émotion associée. Le cerveau tente alors de donner un sens à cette incohérence et produit une explication délirante : Ce n’est pas la vraie personne, c’est un imposteur !\n \n Le syndrome de Capgras soulève des questions philosophiques profondes sur l’identité et la reconnaissance.\n \n Notre perception des autres repose-t-elle plus sur ce que nous voyons ou ce que nous ressentons ?\n \n Le syndrome de Frégoli est un trouble délirant rare dans lequel une personne est persuadée qu’un même individu prend l’apparence de différentes personnes pour l’espionner, la persécuter ou l’influencer. Contrairement au syndrome de Capgras (où un proche est perçu comme un imposteur), ici, le patient voit des inconnus comme étant, en réalité, une seule et même personne déguisée ou métamorphosée.\n \n Le syndrome de Frégoli est lié à une hyper-association entre les visages et les souvenirs. Il pourrait découler d’une dysfonction des régions du cerveau impliquées dans la reconnaissance faciale et l’attribution des émotions">
+  <img src="D hiver/Palais_Idéal_(East_facade)_May_2014.jpg" alt="image 2">
+</div>
+
+      <div class="card" 
+     data-text="  Précis de décomposition : Toute expérience capitale est néfaste : les couches de l’existence manquent d’épaisseur ; celui qui les fouille, archéologue du cœur et de l’être, se trouve, au bout de ses recherches, devant des profondeurs vides. Il regrettera en vain la parure des apparences. C’est ainsi que les Mystères antiques, révélations prétendues des secrets ultimes, ne nous ont rien légué en fait de connaissance. Les initiés sans doute étaient tenus de n’en rien transmettre ; il est cependant inconcevable que dans le nombre il ne se soit trouvé un seul bavard ; quoi de plus contraire à la nature humaine qu’une telle obstination dans le secret ? C’est que des secrets, il n’y en avait point ; il y avait des rites et des frissons. Les voiles écartés, que pouvaient-ils découvrir sinon des abîmes sans conséquence ? Il n’y a d’initiation qu’au néant – et au ridicule d’être vivant.\n \n -\n \n C’est l’impossibilité de pleurer qui entretient en nous le goût des choses, et les fait exister encore : elle nous empêche d’en épuiser la saveur et de nous en détourner. Quand, sur tant de routes et de rivages, nos yeux refusaient de se noyer en eux-mêmes, ils préservaient par leur sécheresse l’objet qui les émerveillait. Nos larmes gaspillent la nature, comme nos transes, Dieu… Mais à la fin, elles nous gaspillent nous-mêmes. Car nous ne sommes que par le refus de donner libre cours à nos désirs suprêmes : les choses qui entrent dans la sphère de notre admiration ou de notre tristessen’y demeurent que parce que nous ne les avons ni sacrifiées ni bénies de nos adieux liquides. … Et c’est ainsi qu’après chaque nuit, nous retrouvant en face d’un jour nouveau, l’irréalisable nécessité de le combler nous transporte d’effroi ; et, dépaysés dans la lumière, comme si le monde venait de s’ébranler, d’inventer son Astre, nous fuyons les larmes – dont une seule suffirait à nous évincer du temps.\n \n -\n \n Dans tout homme sommeille un prophète, et quand il s’éveille il y a un peu plus de mal dans le monde… La folie de prêcher est si ancrée en nous qu’elle émerge de profondeurs inconnues à l’instinct de conservation. Chacun attend son moment pour proposer quelque chose : n’importe quoi. Il a une voix : cela suffit. Nous payons cher de n’être ni sourds ni muets… Des boueux aux snobs, tous dépensent leur générosité criminelle, tous distribuent des recettes de bonheur, tous veulent diriger les pas de tous : la vie en commun en devient intolérable, et la vie avec soi-même plus intolérable encore : lorsqu’on n’intervient point dans les affaires des autres, on est si inquiet des siennes que l’on convertit son « moi » en religion, ou, apôtre à rebours, on le nie : nous sommes victimes du jeu universel">
+  <img src="D hiver/Palais_Idéal_(East_facade)_May_2014.jpg" alt="image 2">
+</div>
+
+<div class="card" 
+     data-text=" Scum Manifesto : Nous savons que le « Grand Art » est grand parce que les hommes, des « spécialistes », nous l’ont dit, et nous ne pouvons pas dire le contraire vu que seules des sensibilités exquises bien supérieures à la nôtre sont à même de percevoir et d’apprécier ce qui est grand, la preuve de leur sensibilité supérieure étant qu’ils apprécient les saloperies. \n \n  « Apprécier », c’est tout ce que sait faire l’homme « cultivé ». Passif, nul, dépourvu d’imagination et d’humour, il faut bien qu’il se débrouille avec ça. Incapable de se créer ses propres distractions, de se créer un monde à lui, d’agir d’une façon ou d’une autre sur son environnement, il doit se contenter de ce qu’on lui offre. Il ne sait pas créer, il ne sait pas communiquer : il est spectateur. En se gobergeant de culture, il cherche désespérément à prendre son pied dans un monde qui n’a rien de jouissif ; il cherche à fuir l’horreur d’une existence stérile d’où l’esprit est absent. La « culture » c’est le baba du pauvre, le croûton spirituel des tarés, une façon de justifier le spectateur dans son rôle passif. Elle permet aux hommes de se glorifier de leur faculté d’apprécier « les belles choses », de voir un bijou à la place d’une chiure. Ce qu’ils veulent, c’est qu’on admire leur admiration.\n \n  Il s accroche alors à n importe quelle femme dans le vague espoir de remplir son vide intérieur, et se nourrissant de l illusion mystique qu à force de toucher de l or il se transformera lui-même en or.\n Valérie Solanas">
+  <img src="D hiver/PalaisIdéal(East_facade)_May_2014.jpg" alt="image 2">
+</div>
+      
+    </div>
+  </div>
+
+  <script>
+    const container = document.getElementById('container');
+
+    function formatTextLiteral(str){
+      if(!str) return '';
+      let s = str.replace(/\\n\s*\\n/g, '<br><br>');
+      s = s.replace(/\\n/g, '<br>');
+      return s;
+    }
+
+    container.addEventListener('click', e => {
+      const card = e.target.closest('.card');
+      if(!card) return;
+
+      const raw = card.getAttribute('data-text') || '';
+      const html = formatTextLiteral(raw);
+
+      container.innerHTML = `
+        <div class="reader">
+          <div class="content">${html}</div>
+        </div>
+      `;
+      document.body.style.background = '#ffffff';
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  </script>
+</body>
+</html>
