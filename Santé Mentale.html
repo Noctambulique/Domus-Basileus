@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>État intérieur</title>
+
+<style>
+    body {
+        font-family: serif;
+        color: #111;
+        max-width: 700px;
+        margin: 80px auto;
+        text-align: center;
+
+        background-image: url("Fond/F1 Ciel et Herbe.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+
+        background-color: rgba(255, 255, 255, 0.65);
+        background-blend-mode: overlay;
+    }
+
+    h1 {
+        font-weight: normal;
+        margin-bottom: 40px;
+    }
+
+    .bar-container {
+        width: 100%;
+        height: 12px;
+        background: rgba(0,0,0,0.15);
+        margin: 30px 0 6px;
+    }
+
+    .bar {
+        height: 100%;
+        width: 50%;
+        background: #000;
+        transition: width 0.4s ease;
+    }
+
+    .label {
+        font-size: 14px;
+        margin-bottom: 14px;
+        color: #222;
+    }
+
+    .buttons {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-top: 40px;
+    }
+
+    button {
+        height: 52px;
+        background: rgba(255,255,255,0.75);
+        border: 1px solid rgba(0,0,0,0.4);
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        backdrop-filter: blur(2px);
+    }
+
+    button:hover {
+        background: rgba(0,0,0,0.85);
+        color: white;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>État intérieur</h1>
+
+<!-- Barres -->
+<div class="bar-container"><div id="adequation" class="bar"></div></div>
+<div class="label">Adéquation avec soi : <span id="adequationValue">50%</span></div>
+
+<div class="bar-container"><div id="resilience" class="bar"></div></div>
+<div class="label">Résilience : <span id="resilienceValue">50%</span></div>
+
+<div class="bar-container"><div id="motivation" class="bar"></div></div>
+<div class="label">Motivation : <span id="motivationValue">50%</span></div>
+
+<div class="bar-container"><div id="clarte" class="bar"></div></div>
+<div class="label">Clarté mentale : <span id="clarteValue">50%</span></div>
+
+<div class="bar-container"><div id="inspiration" class="bar"></div></div>
+<div class="label">Inspiration : <span id="inspirationValue">50%</span></div>
+
+<!-- Boutons multi-états -->
+<div class="buttons">
+    <button data-criterion="Sommeil"></button>
+    <button data-criterion="Nourriture"></button>
+    <button data-criterion="Sociabilité"></button>
+    <button data-criterion="Sortir"></button>
+    <button data-criterion="Imprévu"></button>
+    <button data-criterion="Temps"></button>
+    <button data-criterion="Problème"></button>
+    <button data-criterion="Musique"></button>
+    <button data-criterion="Réel"></button>
+    <button data-criterion="Film"></button>
+
+</div>
+
+<script>
+/* 🔢 Barres */
+const bars = {
+    adequation: 50,
+    resilience: 50,
+    motivation: 50,
+    clarte: 50,
+    inspiration: 50
+};
+
+/* ⚙️ CONFIGURATION DES CRITÈRES (PERSONNALISATION ICI) */
+const criteriaConfig = {
+
+    Sommeil: {
+        defaultState: 1,
+        states: [
+            {
+                label: "🛏️ Mauvais sommeil",
+                impact: { adequation: -10, resilience: -20, motivation: -15, clarte: -15 }
+            },
+            {
+                label: "🛏️ Sommeil moyen",
+                impact: { adequation: 0, resilience: 0, motivation: 0, clarte: 0 }
+            },
+            {
+                label: "🛏️ Bon sommeil",
+                impact: { adequation: 10, resilience: 10, motivation: 10, clarte: 10 }
+            }
+        ]
+    },
+
+    Nourriture: {
+        defaultState: 1,
+        states: [
+            {
+                label: "🥗 Mauvaise alimentation",
+                impact: { adequation: -10, resilience: -5, motivation: -10, clarte: -5, inspiration :0 }
+            },
+            {
+                label: "🥗 Alimentation correcte",
+                impact: { adequation: 0, resilience: 0, motivation: 0, clarte: 0, inspiration :0 }
+            },
+            {
+                label: "🥗 Bonne alimentation",
+                impact: { adequation: 5, resilience: 5, motivation: 5, clarte: 10, inspiration :0 }
+            }
+        ]
+    },
+
+    Sociabilité: {
+        defaultState: 1,
+        states: [
+            {
+                label: "🗣️ Isolement",
+                impact: { adequation: -10, resilience: -10, motivation: -10, clarte: -5, inspiration :0 }
+            },
+            {
+                label: "🗣️ Contacts normaux",
+                impact: { adequation: 0, resilience: 0, motivation: 0, clarte: 0, inspiration :0 }
+            },
+            {
+                label: "🗣️ Lien social nourrissant",
+                impact: { adequation: 15, resilience: 10, motivation: 10, clarte: 5, inspiration :0 }
+            }
+                 ]
+    },
+
+            
+                Sortir: {
+        defaultState: 1,
+        states: [
+            {
+                label: "🚶 Immobilité",
+                impact: { adequation: -10, resilience: -10, motivation: -20, clarte: -15, inspiration :0 }
+            },
+            {
+                label: "🚶 En Mouvement",
+                impact: { adequation: 0, resilience: 0, motivation: 0, clarte: 0, inspiration :10 }
+            },
+            {
+                label: "🚶 Haut Dynamisme",
+                impact: { adequation: 15, resilience: 15, motivation: 15, clarte: 10, inspiration :10 }
+            }
+        ]
+    },
+                    Imprévu: {
+        defaultState: 1,
+        states: [
+            {
+                label: "🗺️ Imprévu",
+                impact: { adequation: -10, resilience: -20, motivation: -20, clarte: 0, inspiration :0 }
+            },
+            {
+                label: "🗺️ Rien de prévu",
+                impact: { adequation: 0, resilience: 0, motivation: 0, clarte: 0, inspiration :0 }
+            },
+            {
+                label: "🗺️ Plan qui se déroule bien",
+                impact: { adequation: 15, resilience: 5, motivation: 5, clarte: 10, inspiration :0 }
+            }
+            ]
+    },
+        Temps: {
+        defaultState: 1,
+        states: [
+            {
+                label: "⏳ Pas de Temps",
+                impact: { adequation: -15, resilience: -10, motivation: 0, clarte: -5, inspiration :-10 }
+            },
+            {
+                label: "⏳ Un peu de temps",
+                impact: { adequation: 0, resilience: 0, motivation: 0, clarte: 0, inspiration :5 }
+            },
+            {
+                label: "⏳ Beaucoup de temps",
+                impact: { adequation: 5, resilience: 5, motivation: 5, clarte: 10, inspiration :5 }
+            },
+                        ]
+    },
+            Problème: {
+        defaultState: 1,
+        states: [
+            {
+                label: "❓ Problème Irrésolu",
+                impact: { adequation: -15, resilience: -20, motivation: 0, clarte: -10, inspiration :0 }
+            },
+            {
+                label: "❓ En recherche",
+                impact: { adequation: 10, resilience: 0, motivation: 0, clarte: 0, inspiration :0 }
+            },
+            {
+                label: "❓ Tout est compris",
+                impact: { adequation: 15, resilience: 15, motivation: 0, clarte: 10, inspiration :0 }
+            },
+                        ]
+    },
+            Musique: {
+        defaultState: 1,
+        states: [
+            {
+                label: "🎵 Pas de musique",
+                impact: { adequation: 0, resilience: 0, motivation: 0, clarte: 0, inspiration :0 }
+            },
+            {
+                label: "🎵 Un peu de musique",
+                impact: { adequation: 0, resilience: 0, motivation: 0, clarte: 0, inspiration :10 }
+            },
+            {
+                label: "🎵 Beaucoup de musique",
+                impact: { adequation: 15, resilience: 15, motivation: 15, clarte: 5, inspiration :5 }
+            },
+                        ]
+    },
+                    Réel: {
+        defaultState: 1,
+        states: [
+            {
+                label: "📞 Pas de réel",
+                impact: { adequation: 10, resilience: 0, motivation: 0, clarte: 0, inspiration :0 }
+            },
+            {
+                label: "📞 Un peu de Réel",
+                impact: { adequation: 0, resilience: 0, motivation: 0, clarte: 0, inspiration :0 }
+            },
+            {
+                label: "📞 Beaucoup de Réel",
+                impact: { adequation: -5, resilience: 20, motivation: -10, clarte: -10 }
+            },
+        ]
+    },
+                        Film: {
+        defaultState: 1,
+        states: [
+            {
+                label: "🎬 Aucun film",
+                impact: { adequation: 0, resilience: 0, motivation: 0, clarte: 0, inspiration :0 }
+            },
+            {
+                label: "🎬 Un épisode de série",
+                impact: { adequation: 0, resilience: 0, motivation: 0, clarte: 0, inspiration :5 }
+            },
+            {
+                label: "🎬 Beaucoup de cinéma",
+                impact: { adequation: -5, resilience: 10, motivation: -10, clarte: -10, inspiration :10 }
+            }
+        ]
+    }
+};
+
+
+function clamp(v) {
+    return Math.max(0, Math.min(100, v));
+}
+
+function updateUI() {
+    for (const key in bars) {
+        bars[key] = clamp(bars[key]);
+        document.getElementById(key).style.width = bars[key] + "%";
+        document.getElementById(key + "Value").textContent = bars[key] + "%";
+    }
+}
+
+document.querySelectorAll("[data-criterion]").forEach(button => {
+
+    const id = button.dataset.criterion;
+    const config = criteriaConfig[id];
+    let index = config.defaultState;
+    let currentImpact = config.states[index].impact;
+
+    button.textContent = config.states[index].label;
+
+    button.addEventListener("click", () => {
+
+        // Retirer impact actuel
+        for (const key in bars) {
+bars[key] -= currentImpact[key] || 0;
+        }
+
+        // État suivant
+        index = (index + 1) % config.states.length;
+        currentImpact = config.states[index].impact;
+
+        // Appliquer nouvel impact
+        for (const key in bars) {
+bars[key] += currentImpact[key] || 0;
+        }
+
+        button.textContent = config.states[index].label;
+        updateUI();
+    });
+});
+
+updateUI();
+</script>
+
+</body>
+</html>
