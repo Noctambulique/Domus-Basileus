@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Naos</title>
+
+<style>
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:system-ui,Segoe UI,Roboto,Arial;
+  background:#000;
+}
+
+#viewport{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  touch-action:none;
+}
+
+#map{
+  position:absolute;
+  width:1600px;
+  height:1600px;
+
+  background-repeat:no-repeat;
+  background-position:top center;
+  background-size:contain;
+
+  transform-origin:0 0;
+  will-change:transform;
+}
+
+/* ===== MARKERS ===== */
+
+.marker-wrap{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  z-index:10;
+  user-select:none;
+}
+
+.marker{
+  display:block;
+  cursor:pointer;
+  width:100%;
+  height:auto;
+  object-fit:contain;
+}
+
+.marker-label{
+  margin-top:4px;
+  padding:2px 6px;
+  font-size:12px;
+  color:#fff;
+  background:rgba(0,0,0,.65);
+  border-radius:6px;
+  white-space:nowrap;
+  pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<div id="viewport">
+  <div id="map"></div>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+
+const MAP = {
+  bg:"Fond/Map Métro.png",
+  width:1600,
+  height:1600
+};
+
+const LOCATIONS = [
+  ];
+
+/* ================= STATE ================= */
+
+const viewport = document.getElementById("viewport");
+const mapEl    = document.getElementById("map");
+
+let cam   = { x:0, y:0 };
+let scale = 1;
+
+let drag = { active:false, startX:0, startY:0, camX:0, camY:0 };
+
+/* ================= INIT MAP ================= */
+
+mapEl.style.backgroundImage = `url("${MAP.bg}")`;
+
+/* ================= MARKERS ================= */
+
+LOCATIONS.forEach(loc=>{
+  const wrap = document.createElement("div");
+  wrap.className = "marker-wrap";
+  wrap.style.left = loc.x + "px";
+  wrap.style.top  = loc.y + "px";
+
+  const img = document.createElement("img");
+  img.className = "marker";
+  img.src = loc.img;
+  img.style.width = loc.size + "px";
+  img.style.height = "auto";
+  img.onclick = ()=>location.href = loc.link;
+
+  const label = document.createElement("div");
+  label.className = "marker-label";
+  label.textContent = loc.label;
+
+  wrap.append(img,label);
+  mapEl.appendChild(wrap);
+});
+
+/* ================= CAMERA ================= */
+
+function clampCam(){
+  const vw = viewport.clientWidth;
+  const vh = viewport.clientHeight;
+
+  scale = Math.max(vw / MAP.width, vh / MAP.height);
+
+  const mapW = MAP.width  * scale;
+  const mapH = MAP.height * scale;
+
+  cam.x = mapW <= vw ? (vw - mapW)/2 : Math.min(0, Math.max(vw-mapW, cam.x));
+  cam.y = 0;
+
+  if(mapH > vh){
+    cam.y = Math.min(0, Math.max(vh-mapH, cam.y));
+  }
+}
+
+function renderCam(){
+  mapEl.style.transform =
+    `translate3d(${cam.x}px, ${cam.y}px, 0) scale(${scale})`;
+}
+
+function updateCam(){
+  clampCam();
+  renderCam();
+}
+
+updateCam();
+window.addEventListener("resize", updateCam);
+
+/* ================= DRAG ================= */
+
+function startDrag(x,y){
+  drag.active = true;
+  drag.startX = x;
+  drag.startY = y;
+  drag.camX   = cam.x;
+  drag.camY   = cam.y;
+}
+
+function moveDrag(x,y){
+  if(!drag.active) return;
+
+  const dx = x - drag.startX;
+  const dy = y - drag.startY;
+
+  const mapW = MAP.width * scale;
+  const mapH = MAP.height * scale;
+
+  if(mapW > viewport.clientWidth)  cam.x = drag.camX + dx;
+  if(mapH > viewport.clientHeight) cam.y = drag.camY + dy;
+
+  updateCam();
+}
+
+function endDrag(){ drag.active = false; }
+
+viewport.addEventListener("mousedown",e=>startDrag(e.clientX,e.clientY));
+window.addEventListener("mousemove",e=>moveDrag(e.clientX,e.clientY));
+window.addEventListener("mouseup",endDrag);
+
+viewport.addEventListener("touchstart",e=>{
+  const t=e.touches[0]; startDrag(t.clientX,t.clientY);
+});
+viewport.addEventListener("touchmove",e=>{
+  const t=e.touches[0]; moveDrag(t.clientX,t.clientY);
+});
+viewport.addEventListener("touchend",endDrag);
+</script>
+
+</body>
+</html>
