@@ -35,33 +35,31 @@ html,body{
   will-change:transform;
 }
 
-/* ===== MARKERS ===== */
+/* ===== CURSOR ===== */
 
-.marker-wrap{
+#cursor{
   position:absolute;
+  width:16px;
+  height:16px;
+  border:2px solid #00ffcc;
+  border-radius:50%;
   transform:translate(-50%,-50%);
-  text-align:center;
-  z-index:10;
-  user-select:none;
-}
-
-.marker{
-  display:block;
-  cursor:pointer;
-  width:100%;
-  height:auto;
-  object-fit:contain;
-}
-
-.marker-label{
-  margin-top:4px;
-  padding:2px 6px;
-  font-size:12px;
-  color:#fff;
-  background:rgba(0,0,0,.65);
-  border-radius:6px;
-  white-space:nowrap;
   pointer-events:none;
+  display:none;
+  z-index:20;
+}
+
+#coords{
+  position:fixed;
+  bottom:10px;
+  left:10px;
+  padding:6px 10px;
+  font-size:13px;
+  background:rgba(0,0,0,.7);
+  color:#0ff;
+  border-radius:6px;
+  font-family:monospace;
+  z-index:30;
 }
 </style>
 </head>
@@ -69,57 +67,49 @@ html,body{
 <body>
 
 <div id="viewport">
-  <div id="map"></div>
+  <div id="map">
+    <div id="cursor"></div>
+  </div>
 </div>
+
+<div id="coords">X: 0 | Y: 0</div>
 
 <script>
 /* ================= CONFIG ================= */
 
 const MAP = {
-  bg:"Fond/Map Métro.png",
-  width:1600,
-  height:1600
+  bg: "Fond/Map Métro.png",
+  width: 1600,
+  height: 1600
 };
-
-const LOCATIONS = [
-  ];
 
 /* ================= STATE ================= */
 
 const viewport = document.getElementById("viewport");
 const mapEl    = document.getElementById("map");
+const cursorEl = document.getElementById("cursor");
+const coordsEl = document.getElementById("coords");
 
 let cam   = { x:0, y:0 };
 let scale = 1;
 
-let drag = { active:false, startX:0, startY:0, camX:0, camY:0 };
+let drag = {
+  active:false,
+  startX:0,
+  startY:0,
+  camX:0,
+  camY:0
+};
+
+let cursor = {
+  active:false,
+  x: MAP.width / 2,
+  y: MAP.height / 2
+};
 
 /* ================= INIT MAP ================= */
 
 mapEl.style.backgroundImage = `url("${MAP.bg}")`;
-
-/* ================= MARKERS ================= */
-
-LOCATIONS.forEach(loc=>{
-  const wrap = document.createElement("div");
-  wrap.className = "marker-wrap";
-  wrap.style.left = loc.x + "px";
-  wrap.style.top  = loc.y + "px";
-
-  const img = document.createElement("img");
-  img.className = "marker";
-  img.src = loc.img;
-  img.style.width = loc.size + "px";
-  img.style.height = "auto";
-  img.onclick = ()=>location.href = loc.link;
-
-  const label = document.createElement("div");
-  label.className = "marker-label";
-  label.textContent = loc.label;
-
-  wrap.append(img,label);
-  mapEl.appendChild(wrap);
-});
 
 /* ================= CAMERA ================= */
 
@@ -178,19 +168,75 @@ function moveDrag(x,y){
   updateCam();
 }
 
-function endDrag(){ drag.active = false; }
+function endDrag(){
+  drag.active = false;
+}
 
-viewport.addEventListener("mousedown",e=>startDrag(e.clientX,e.clientY));
-window.addEventListener("mousemove",e=>moveDrag(e.clientX,e.clientY));
-window.addEventListener("mouseup",endDrag);
+/* ================= CURSOR ================= */
 
-viewport.addEventListener("touchstart",e=>{
-  const t=e.touches[0]; startDrag(t.clientX,t.clientY);
+function screenToMap(px, py){
+  return {
+    x: (px - cam.x) / scale,
+    y: (py - cam.y) / scale
+  };
+}
+
+function renderCursor(){
+  cursorEl.style.left = cursor.x + "px";
+  cursorEl.style.top  = cursor.y + "px";
+
+  coordsEl.textContent =
+    `X: ${cursor.x.toFixed(0)} | Y: ${cursor.y.toFixed(0)}`;
+}
+
+/* ================= EVENTS ================= */
+
+viewport.addEventListener("mousedown", e=>{
+  startDrag(e.clientX,e.clientY);
 });
-viewport.addEventListener("touchmove",e=>{
-  const t=e.touches[0]; moveDrag(t.clientX,t.clientY);
+
+window.addEventListener("mousemove", e=>{
+  moveDrag(e.clientX,e.clientY);
+
+  if(cursor.active){
+    const p = screenToMap(e.clientX, e.clientY);
+    cursor.x = Math.max(0, Math.min(MAP.width,  p.x));
+    cursor.y = Math.max(0, Math.min(MAP.height, p.y));
+    renderCursor();
+  }
 });
-viewport.addEventListener("touchend",endDrag);
+
+window.addEventListener("mouseup", endDrag);
+
+/* === TOUCH === */
+
+viewport.addEventListener("touchstart", e=>{
+  const t = e.touches[0];
+  startDrag(t.clientX,t.clientY);
+});
+
+viewport.addEventListener("touchmove", e=>{
+  const t = e.touches[0];
+  moveDrag(t.clientX,t.clientY);
+
+  if(cursor.active){
+    const p = screenToMap(t.clientX, t.clientY);
+    cursor.x = Math.max(0, Math.min(MAP.width,  p.x));
+    cursor.y = Math.max(0, Math.min(MAP.height, p.y));
+    renderCursor();
+  }
+});
+
+viewport.addEventListener("touchend", endDrag);
+
+/* === KEYBOARD === */
+
+window.addEventListener("keydown", e=>{
+  if(e.key.toLowerCase() === "a"){
+    cursor.active = !cursor.active;
+    cursorEl.style.display = cursor.active ? "block" : "none";
+  }
+});
 </script>
 
 </body>
