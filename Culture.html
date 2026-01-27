@@ -11,46 +11,52 @@ body{
   margin:0;
   height:100vh;
   font-family:"Trebuchet MS", Arial, sans-serif;
-  background:url("https://miro.medium.com/v2/resize:fit:1400/1*_zqJUXJaDneHRrXeXtR5vQ.webp") center/cover no-repeat;
+  background:url("Fond/F3 Ville au loin.jpg") center/cover no-repeat;
   display:flex;
   justify-content:center;
   align-items:center;
 }
 
 .panel{
-  background:#e8f2ff;
-  border:4px solid #4f8fd8;
   width:520px;
-  padding:28px;
-  box-shadow:8px 8px 0 #2d5f9b;
+  padding:30px;
+  background:linear-gradient(135deg, #6fb6ff, #3a7bd5, #5fa8ff);
+  background-size:300% 300%;
+  animation: gradientMove 8s ease infinite;
+  border-radius:16px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.25);
+  color:white;
+}
+
+@keyframes gradientMove{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
 }
 
 h1{
-  margin:0 0 20px;
+  margin:0 0 22px;
   text-align:center;
-  font-size:1.4rem;
-  color:#1e3d63;
+  font-size:1.5rem;
 }
 
+/* lien-item */
 .item{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:12px;
-  margin-bottom:12px;
-  background:#d6ebff;
-  border:3px solid #7aa8d8;
-  cursor:pointer;
+  display:block;
+  padding:14px 16px;
+  margin-bottom:14px;
+  background:rgba(255,255,255,0.18);
+  border-radius:10px;
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.25);
+  text-decoration:none;
+  color:white;
+  transition:transform 0.2s ease, background 0.2s ease;
 }
 
 .item:hover{
-  background:#c6e0ff;
-}
-
-.item input{
-  width:18px;
-  height:18px;
-  accent-color:#2f6fb2;
+  transform:translateX(6px);
+  background:rgba(255,255,255,0.30);
 }
 </style>
 </head>
@@ -60,48 +66,12 @@ h1{
 <div class="panel">
   <h1>Ce qui m'intéresse</h1>
 
-  <div class="item" data-url="Créativité obsessionnelle.html">
-    <input type="checkbox">
-    <label>Créativité obsessionnelle</label>
-  </div>
-
-  <div class="item" data-url="ordre-chaos.html">
-    <input type="checkbox">
-    <label>Ordre et chaos</label>
-  </div>
-
-  <div class="item" data-url="anticipation.html">
-    <input type="checkbox">
-    <label>Anticipation mentale</label>
-  </div>
-
-  <div class="item" data-url="depassement.html">
-    <input type="checkbox">
-    <label>Dépassement cognitif</label>
-  </div>
-
-  <div class="item" data-url="cartographie.html">
-    <input type="checkbox">
-    <label>Cartographie mentale</label>
-  </div>
+  <a class="item" href="creativite.html">Créativité obsessionnelle</a>
+  <a class="item" href="ordre-chaos.html">Ordre et chaos</a>
+  <a class="item" href="anticipation.html">Anticipation mentale</a>
+  <a class="item" href="depassement.html">Dépassement cognitif</a>
+  <a class="item" href="cartographie.html">Cartographie mentale</a>
 </div>
-
-<script>
-document.querySelectorAll(".item").forEach(item => {
-  item.addEventListener("click", e => {
-
-    // Empêche double déclenchement si on clique directement sur la checkbox
-    if (e.target.tagName === "INPUT") return;
-
-    const url = item.dataset.url;
-    const ok = confirm("Voulez-vous ouvrir la page associée à ce thème ?");
-
-    if (ok) {
-      window.location.href = url;
-    }
-  });
-});
-</script>
 
 </body>
 </html>
