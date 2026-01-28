@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Carnet de contacts — Fiches personnalisables</title>
+
+<style>
+:root{
+  --bg:#e7e7eb;
+  --card-radius:16px;
+  --gap:18px;
+  --max-width:1100px;
+}
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  padding:28px;
+  font-family:Inter, Arial, sans-serif;
+  background:var(--bg);
+  color:#111;
+}
+
+.wrap{width:100%; max-width:var(--max-width)}
+
+.grid{
+  display:grid;
+  gap:var(--gap);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.card{
+  border-radius:var(--card-radius);
+  padding:18px;
+  display:flex;
+  gap:18px;
+  align-items:flex-start;
+  transition:transform .12s ease, box-shadow .2s;
+  box-shadow:0 6px 20px rgba(20,20,20,0.12);
+}
+.card:hover{transform:translateY(-5px);}
+
+.left{
+  width:180px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:center;
+}
+
+.radar-wrap{
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+canvas.radar{
+  width:180px;
+  height:180px;
+}
+
+.content{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.title-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.name{
+  font-weight:600;
+  font-size:16px;
+  color:#fff;
+}
+
+.rects{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.rect{
+  width:100%;
+  min-height:52px;
+  border-radius:12px;
+  padding:10px;
+  background:rgba(255,255,255,0.25);
+  backdrop-filter:blur(3px);
+  font-size:13px;
+  font-weight:500;
+  line-height:1.25;
+  color:#fff;
+  border:1px solid rgba(255,255,255,0.35);
+}
+
+@media (max-width:520px){
+  .grid{grid-template-columns:1fr}
+  .left{width:140px}
+  canvas.radar{width:150px;height:150px}
+}
+</style>
+</head>
+
+<body>
+<div class="wrap"></div>
+<div id="cards" class="grid" aria-live="polite"></div>
+
+<script>
+/* ======================== CONTACTS ==========================*/
+const contacts = [
+{ id: 'amandine_cp', name: 'Amandine CP', rect1: 'S', rect2: 'MT', rect3: 'I', radar: [40,50,30,20,20,71], color:'#3F917F' },
+{ id: 'chara_f', name: 'Chara F', rect1: 'S', rect2: 'MT', rect3: 'F', radar: [65,14,40,52,42,62], color:'#00b699' },
+{ id: 'dounia', name: 'Dounia', rect1: '?', rect2: 'F', rect3: 'P', radar: [60,50,20,60,60,60], color:'#00b699' },
+{ id: 'jeanne', name: 'Jeanne', rect1: 'MT', rect2: 'NS', rect3: 'I', radar: [71,42,81,42,52,52], color:'#00b699' },
+{ id: 'juliette_f', name: 'Juliette F', rect1: 'O', rect2: 'O', rect3: 'F', radar: [61,50,60,71,71,81], color:'#00b699' },
+{ id: 'kalanie_f', name: 'Kalanie F', rect1: 'CS', rect2: 'MT / P',  rect3: 'I', radar: [70,42,42,52,71,71], color:'#00b699' },
+{ id: 'leny_f', name: 'Leny F', rect1: 'N', rect2: 'CS',  rect3: 'F', radar: [50,50,40,60,50,50], color:'#00b699' },
+{ id: 'lisa', name: 'Lisa', rect1: 'N', rect2: 'MT',  rect2: 'P', rect3: 'P', radar: [81,30,60,71,30,30], color:'#00b699' },
+{ id: 'ludovic_p', name: 'Ludovic F', rect1: 'F', rect2: 'R', rect3: 'I', radar: [71,33,33,81,71,52], color:'#00b699' },
+{ id: 'mael_p', name: 'Mael F', rect1: '?', rect2: '?', rect2: '?', rect3: 'I', radar: [52,42,52,50,61,61], color:'#00b699' },
+{ id: 'octavie', name: 'Octavie', rect1: '?', rect2: 'R',  rect3: 'I', radar: [91, 33, 33, 91, 91, 52], color:'#4F9359' },
+{ id: 'sabrina', name: 'Sabrina', rect1: '?', rect2: 'R',  rect3: 'F', radar: [14,14,14,14,30,14], color:'#00b699' },
+{ id: 'chloe_F', name: 'Chloé N', rect1: 'MR', rect2: 'MR',  rect3: 'I', rect3: 'I', radar: [52,71,81,42,61,42], color:'#00b699' },
+{ id: 'Lilly', name: 'Lilly F', rect1: '?', rect2: '?', rect3: 'P', radar: [52,42,42,71,61,61], color:'#00b699' },
+{ id: 'Solène', name: 'Solène CP', rect1: '?', rect2: '?', rect3: 'F', radar: [52,42,42,52,71,71], color:'#00b699' },
+
+];
+
+
+/* =================== RENDER ====================*/
+const cardsRoot = document.getElementById('cards');
+
+function createCard(contact){
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.style.background = contact.color;
+  card.dataset.id = contact.id;
+
+  const left = document.createElement('div');
+  left.className='left';
+
+  const radarWrap = document.createElement('div');
+  radarWrap.className='radar-wrap';
+  const cvs = document.createElement('canvas');
+  cvs.className='radar';
+  cvs.width = 350; cvs.height = 350;
+  radarWrap.appendChild(cvs);
+  left.appendChild(radarWrap);
+
+  const content = document.createElement('div');
+  content.className='content';
+
+  const titleRow = document.createElement('div');
+  titleRow.className='title-row';
+  const name = document.createElement('div');
+  name.className='name';
+  name.textContent = contact.name;
+  titleRow.appendChild(name);
+
+  const rects = document.createElement('div');
+  rects.className='rects';
+  const r1 = document.createElement('div'); r1.className='rect'; r1.innerHTML = (contact.rect1||'').replace(/\n/g,'<br>');
+  const r2 = document.createElement('div'); r2.className='rect'; r2.innerHTML = (contact.rect2||'').replace(/\n/g,'<br>');
+  const r3 = document.createElement('div'); r3.className='rect'; r3.innerHTML = (contact.rect3||'').replace(/\n/g,'<br>');
+  rects.appendChild(r1);
+  rects.appendChild(r2);
+  rects.appendChild(r3);
+
+  content.appendChild(titleRow);
+  content.appendChild(rects);
+
+  card.appendChild(left);
+  card.appendChild(content);
+
+  drawRadar(cvs, contact.radar, contact.color);
+
+  cvs.style.cursor='pointer';
+  cvs.title='Modifier radar';
+  cvs.addEventListener('click', ()=> editRadar(cvs, contact));
+
+  return card;
+}
+
+/* =================== RADAR ====================*/
+const LABELS = ["A", "B", "C", "D", "E", "F"];
+
+function drawRadar(canvas, values, baseColor){
+  const ctx = canvas.getContext('2d');
+  const w=canvas.width, h=canvas.height;
+  ctx.clearRect(0,0,w,h);
+
+  const cx=w/2, cy=h/2;
+  const radius=Math.min(w,h)*0.38;
+  const N=6;
+
+  const fill= "rgba(255,255,255,0.22)";
+  const stroke='#fff';
+
+  ctx.strokeStyle='rgba(255,255,255,0.35)';
+  ctx.lineWidth=1;
+
+  // Grille polygonale
+  for(let r=4;r>=1;r--){
+    const rr=radius*(r/4);
+    ctx.beginPath();
+    for(let i=0;i<N;i++){
+      const a=Math.PI/2 + i*(Math.PI*2/N);
+      const x=cx+Math.cos(a)*rr;
+      const y=cy-Math.sin(a)*rr;
+      i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  // Axes + labels
+  ctx.font="14px Arial";
+  ctx.fillStyle="#fff";
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+
+  for(let i=0;i<N;i++){
+    const a=Math.PI/2 + i*(Math.PI*2/N);
+    const x=cx+Math.cos(a)*radius;
+    const y=cy-Math.sin(a)*radius;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.lineTo(x,y);
+    ctx.stroke();
+
+    ctx.fillText(LABELS[i], x*1.05 - cx*0.05, y*1.05 - cy*0.05);
+  }
+
+  // Forme radar
+  ctx.beginPath();
+  for(let i=0;i<N;i++){
+    const v=(values[i]||0)/100;
+    const a=Math.PI/2 + i*(Math.PI*2/N);
+    const x=cx+Math.cos(a)*radius*v;
+    const y=cy-Math.sin(a)*radius*v;
+    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+  }
+  ctx.closePath();
+  ctx.fillStyle=fill; ctx.fill();
+  ctx.strokeStyle=stroke; ctx.lineWidth=2; ctx.stroke();
+}
+
+function editRadar(canvas, contact){
+  const input = prompt("Entrez 6 valeurs (0-100) :", (contact.radar || []).join(', '));
+  if(!input) return;
+  const arr = input.split(',').map(s=>parseFloat(s.trim())).slice(0,6);
+  if(arr.length!==6 || arr.some(v=>Number.isNaN(v))) return alert("Format incorrect");
+  contact.radar = arr.map(v=>Math.max(0,Math.min(100,v)));
+  drawRadar(canvas, contact.radar, contact.color);
+}
+
+function renderAll(){
+  cardsRoot.innerHTML='';
+  contacts.forEach(c=> cardsRoot.appendChild(createCard(c)));
+}
+renderAll();
+window.CARNET_CONTACTS = contacts;
+</script>
+
+</body>
