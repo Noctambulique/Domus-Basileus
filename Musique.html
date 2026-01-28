@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Musique</title>
+
+<style>
+  body{
+    margin:0;
+    padding:40px;
+    font-family:Georgia,serif;
+    color:#3b2f2f;
+    background-image:url("D hiver/Musique.jpg");
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+  }
+
+  .wrap{
+    background:rgba(255,247,240,0.92);
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.15);
+    max-width:420px;
+    margin:auto;
+    text-align:center;
+  }
+
+  h1{font-size:22px;margin:0}
+  p{font-size:13px;color:#8a7b74}
+
+  .playlist{
+    max-width:930px;
+    margin:25px auto;
+    background:rgba(255,247,240,0.90);
+    border-radius:10px;
+    padding:10px 0;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:6px;
+  }
+
+  .track{
+    padding:10px;
+    cursor:pointer;
+    text-align:center;
+    border-bottom:1px solid #e6d8cc;
+  }
+  .track:hover{background:#f0e4d9}
+  .active{background:#e9ddcf;font-weight:bold}
+
+  #playPause{
+    position:fixed;
+    right:30px;
+    bottom:30px;
+    background:#3b2f2f;
+    color:white;
+    border:none;
+    padding:15px 20px;
+    font-size:18px;
+    border-radius:50px;
+    cursor:pointer;
+  }
+
+  #loopBtn{
+    position:fixed;
+    right:30px;
+    bottom:90px;
+    background:#f0e4d9;
+    color:#3b2f2f;
+    border:none;
+    padding:12px 16px;
+    font-size:18px;
+    border-radius:50px;
+    cursor:pointer;
+    opacity:0.6;
+  }
+
+  #loopBtn.active{
+    background:#3b2f2f;
+    color:white;
+    opacity:1;
+  }
+
+  @media (max-width:700px){
+    .playlist{grid-template-columns:1fr;max-width:420px}
+  }
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+  <h1 id="title"></h1>
+  <p id="artist"></p>
+</div>
+
+<div class="playlist" id="playlist"></div>
+
+<audio id="audio"></audio>
+
+<button id="playPause">⏸️</button>
+<button id="loopBtn">🔁</button>
+
+<script>
+const tracks = [
+{ title:"C'est ainsi", artist:"Euphonik", url:"https://www.dropbox.com/scl/fi/kf50hho9yzed1revmvbic/C-est-ainsi-Euphonik.mp3?dl=1" },
+{ title:"L'erreur 404", artist:"L'Imperatrice", url:"https://www.dropbox.com/scl/fi/lmxrwkk2fln57eeg2lxck/Erreur-404-L-Imp-ratrice.mp3?dl=1" },
+{ title:"A l'heure où je me couche", artist:"Orelsan", url:"https://www.dropbox.com/scl/fi/dl22b20p51dayvqe9q4i5/l-heure-o-je-me-couche-Casseurs-Flowters.mp3?dl=1" },
+{ title:"Adolescente Pirate", artist:"Lea Paci", url:"https://www.dropbox.com/scl/fi/k3raqwid8gxmhwi3bth9v/Adolescente-Pirate-Lea-Paci.mp3?dl=1" },
+{ title:"Belle", artist:"Zaz", url:"https://www.dropbox.com/scl/fi/787fktw427nh6jlopwndk/Belle-ZAZ.mp3?dl=1" },
+{ title:"Bitch", artist:"Vald et Lefa", url:"https://www.dropbox.com/scl/fi/5xfn0lall0w66664o5i9a/Bitch-Lefa-ft.-Vald.mp3?dl=1" },
+{ title:"Comme tous les soirs", artist:"Zaho", url:"https://www.dropbox.com/scl/fi/cr2ibce1sg0ciayk7t1sy/Comme-tous-les-soirs-Zaho.mp3?dl=1" },
+{ title:"Dans mon dos", artist:"Camille Schneyder", url:"https://www.dropbox.com/scl/fi/8cwqlj9nkaz7c2l972wg8/Dans-Mon-Dos-Camille-Schneyder.mp3?dl=1" },
+{ title:"Déconnectés", artist:"Dj Hamida", url:"https://www.dropbox.com/scl/fi/cp027jytzs8x62x7yeku5/D-connect-s-DJ-Hamida-Ft.-Kayna-Samet-Lartiste-Rimk-du-113.mp3?dl=1" },
+{ title:"Demain", artist:"Alien", url:"https://www.dropbox.com/scl/fi/o6eoh5e6wm46m5su40hbs/Demain-Alien.mp3?dl=1" },
+{ title:"Envole-moi", artist:"Tal & M Pokora", url:"https://www.dropbox.com/scl/fi/tcixj44mgxr5hl9l8z8kg/Envole-Moi-Tal-MPokora.mp3?dl=1" },
+{ title:"Gabrielle Solis", artist:"Nusky", url:"https://www.dropbox.com/scl/fi/40i13z9wdcy3a54kmy52x/Gabrielle-Solis-Nusky.mp3?dl=1" },
+{ title:"I like the way you kiss me", artist:"Artemas", url:"https://www.dropbox.com/scl/fi/bowfloccmbnpqgroaru76/i-like-the-way-you-kiss-me-Artemas.mp3?dl=1" },
+{ title:"Inachevés", artist:"Casseurs Flowters", url:"https://www.dropbox.com/scl/fi/7g4vttjyp1ss7gm8lb9pj/Inachev-s-Casseurs-Flowters.mp3?dl=1" },
+{ title:"X", artist:"X", url:"https://www.dropbox.com/scl/fi/688xx1i0e6otqxwvu75ke/Inconnu.mp3?dl=1" },
+{ title:"Je cherche", artist:"Charlie et Mauss", url:"https://www.dropbox.com/scl/fi/a80dblg8hdbbczaxfi5w5/je-recherche-lyrics.mp3?dl=1" },
+{ title:"Je te promets", artist:"Zaho", url:"https://www.dropbox.com/scl/fi/1led71te9tiemoqvptf3j/Je-Te-Promets-Zaho.mp3?dl=1" },
+{ title:"J'écoute du Miles Davis", artist:"Navii", url:"https://www.dropbox.com/scl/fi/zjabf89at91yf7htbnx0h/J-coute-du-Miles-Davis-Navii.mp3?dl=1" },
+{ title:"La mort avec toi", artist:"Gargantua", url:"https://www.dropbox.com/scl/fi/9nkfsaft5z8ltq79cy3ci/La-mort-avec-toi-Garguantua.mp3?dl=1" },
+{ title:"Les anges de l'oubli", artist:"Euphonik", url:"https://www.dropbox.com/scl/fi/nzpqujlb8hws9fn5qfv4d/Les-anges-de-l-oubli-Euphonik.mp3?dl=1" },
+{ title:"Les Princes", artist:"Mz et Nekfeu", url:"https://www.dropbox.com/scl/fi/st69hixw3zjcsln1ck6bc/Les-princes-MZ-ft.-Nekfeu.mp3?dl=1" },
+{ title:"Charlie", artist:"Menteur", url:"https://www.dropbox.com/scl/fi/g638v1v0umojpcssip0va/Menteur-Charlie.mp3?dl=1" },
+{ title:"Moi Lolita", artist:"Trinix et Angèle", url:"https://www.dropbox.com/scl/fi/egwzmttp735ddm0x85uh0/Moi-Lolita-Remix-TRINIX-x-ANG-LE.mp3?dl=1" },
+{ title:"Monstre", artist:"Anabel", url:"https://www.dropbox.com/scl/fi/jcscc2kbph1jc4rsot7in/Monstre.mp3?dl=1" },
+{ title:"Murs de Poussière", artist:"Francis Cabrel", url:"https://www.dropbox.com/scl/fi/2mrbcpcjxu2g6tzmy203i/Murs-de-Poussi-re-Francis-Cabrel.mp3?dl=1" },
+{ title:"Notre Idylle", artist:"Jenifer", url:"https://www.dropbox.com/scl/fi/a5h4nst7ustsq29xqn1fi/Notre-idylle-Jenifer.mp3?dl=1" },
+{ title:"Oh ma vie", artist:"Achille", url:"https://www.dropbox.com/scl/fi/jk86klpk08y48bbh4mcxp/Oh-ma-vie-Achile.mp3?dl=1" },
+{ title:"Pokemon Advanced Battle", artist:"X", url:"https://www.dropbox.com/scl/fi/cxxaqf4puvuo2dgvr6myi/Pok-mon-Advanced-Battle-G-nerique-FR-HD.mp3?dl=1" },
+{ title:"PTSMR", artist:"Théa", url:"https://www.dropbox.com/scl/fi/j1x7fh40gta4n31d6tdkc/PTSMR-TH-A-ft.-Rok-Dudu.mp3?dl=1" },
+{ title:"Toute la nuit", artist:"Sainte Vitoire", url:"https://www.dropbox.com/scl/fi/sfgcayuxt6zhjvfyp7ybj/Sainte-Victoire-Toute-La-Nuit-Official-Video.mp3?dl=1" },
+{ title:"Si seulement si", artist:"Charlie", url:"https://www.dropbox.com/scl/fi/h7mhv8jyslhlpuft3yhkn/Si-seulement-si-Charlie.mp3?dl=1" },
+{ title:"Tourner la page", artist:"Zaho", url:"https://www.dropbox.com/scl/fi/e3k5w2qi3x56f10qzusq8/Tourner-la-page-Zaho.mp3?dl=1" },
+{ title:"Tu veux pas", artist:"Inès Souki", url:"https://www.dropbox.com/scl/fi/bcl32r8cwvdmoqjid4rpv/Tu-veux-pas-In-s-Souki.mp3?dl=1" },
+{ title:"Veridis Quo", artist:"Daft Punk", url:"https://www.dropbox.com/scl/fi/8t8p1u0115hcpxcwrtxb7/Veridis-Quo-Daft-Punk.mp3?dl=1" },
+{ title:"Au revoir mon amour", artist:"Zélie", url:"https://www.dropbox.com/scl/fi/xhgkzieawaacafmqadqfc/Z-lie-Au-revoir-mon-amour-Live-Session-cover.mp3?dl=1" },
+{ title:"Foulard rouge", artist:"Eve", url:"https://www.dropbox.com/scl/fi/71ffwawi2qkx65hagpj1j/Foulard-rouge.mp3?dl=1" },
+{ title:"Ils me rient tous au nez", artist:"Theodora", url:"https://www.dropbox.com/scl/fi/7aatks1epduuj06s4qven/Ils-me-rient-tous-au-nez-Live.mp3?dl=1" },
+{ title:"Gepetto", artist:"Bushi et Veridis Project", url:"https://www.dropbox.com/scl/fi/j3tzsuf3ktpza64xhrrfw/Bushi-GEPETTO-Veridis-Remix-1.mp3?dl=1" },
+];
+
+let index = 0;
+let loopMode = false;
+
+const audio = document.getElementById("audio");
+const title = document.getElementById("title");
+const artist = document.getElementById("artist");
+const playlist = document.getElementById("playlist");
+const btn = document.getElementById("playPause");
+const loopBtn = document.getElementById("loopBtn");
+
+function buildPlaylist(){
+  playlist.innerHTML = "";
+  tracks.forEach((t,i)=>{
+    const div = document.createElement("div");
+    div.className = "track" + (i===index ? " active":"");
+    div.textContent = t.title;
+    div.onclick = ()=>{ load(i); audio.play(); };
+    playlist.appendChild(div);
+  });
+}
+
+function load(i){
+  index = i;
+  audio.src = tracks[index].url;
+  title.textContent = tracks[index].title;
+  artist.textContent = tracks[index].artist;
+  buildPlaylist();
+}
+
+audio.addEventListener("ended", ()=>{
+  if(index < tracks.length - 1){
+    load(index + 1);
+    audio.play();
+  } else if(loopMode){
+    load(0);
+    audio.play();
+  }
+});
+
+btn.onclick = ()=>{
+  if(audio.paused){
+    audio.play();
+    btn.textContent = "⏸️";
+  } else {
+    audio.pause();
+    btn.textContent = "▶️";
+  }
+};
+
+loopBtn.onclick = ()=>{
+  loopMode = !loopMode;
+  loopBtn.classList.toggle("active", loopMode);
+};
+
+load(0);
+audio.volume = 0.9;
+</script>
+
+</body>
+</html>
