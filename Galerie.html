@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Galerie</title>
+
+<style>
+/* ------------------- GLOBAL ------------------- */
+body{
+  margin:0;
+  padding:30px;
+  background:linear-gradient(180deg, #2a80d7 0%, #0f4ea3 40%, #0e3569 100%);
+  font-family:"Segoe UI", sans-serif;
+  color:#fff;
+}
+
+h2{
+  text-align:center;
+  font-weight:300;
+  margin-bottom:30px;
+  text-shadow:0 2px 8px rgba(0,0,0,0.7);
+}
+
+/* ------------------- ZONE AERO ------------------- */
+.zone{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+  gap:40px;
+  padding:40px;
+
+  background:rgba(255,255,255,0.22);
+  backdrop-filter:blur(14px) saturate(150%);
+  -webkit-backdrop-filter:blur(14px) saturate(150%);
+  border-radius:18px;
+
+  border:1px solid rgba(255,255,255,0.55);
+  box-shadow:
+    inset 0 0 25px rgba(255,255,255,0.33),
+    0 18px 35px rgba(0,0,0,0.45),
+    0 0 40px rgba(40,130,255,0.35);
+}
+
+/* ------------------- IMAGES ------------------- */
+.zone img{
+  width:100%;
+  height:auto;
+  border-radius:8px;
+  display:block;
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.65),
+    0 0 15px rgba(160,200,255,0.35),
+    inset 0 0 18px rgba(255,255,255,0.18);
+
+  border:1px solid rgba(255,255,255,0.45);
+
+  transition:
+    transform 0.35s cubic-bezier(0.16, 0.84, 0.44, 1),
+    box-shadow 0.3s,
+    filter 0.25s;
+}
+
+.zone img:hover{
+  transform:scale(1.15);
+  filter:brightness(1.15);
+  z-index:10;
+  box-shadow:
+    0 0 22px rgba(70,150,255,0.85),
+    0 12px 35px rgba(0,0,0,0.55),
+    inset 0 0 18px rgba(255,255,255,0.28);
+}
+</style>
+</head>
+
+<body>
+
+<h2>Galerie Aero</h2>
+
+<div class="zone">
+  <img src="D hiver/20200905_151240.jpg">
+
+</div>
+
+</body>
+</html>
