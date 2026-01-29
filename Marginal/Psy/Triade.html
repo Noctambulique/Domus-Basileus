@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test de personnalité</title>
+
+  <style>
+    /* Typographie élégante et douce */
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&display=swap');
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: linear-gradient(145deg, #e9eef3, #d8dee6);
+      color: #2e2e2e;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(6px);
+      padding: 40px 35px;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      animation: fadeIn 1s ease-out;
+    }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 28px;
+      color: #3a3a3a;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .question {
+      font-size: 22px;
+      margin: 35px 0;
+      font-weight: 400;
+      color: #4b4b4b;
+    }
+
+    /* Boutons minimalistes, pastels, poétiques */
+    button {
+      margin: 12px;
+      padding: 12px 34px;
+      font-size: 17px;
+      border: none;
+      border-radius: 12px;
+      background: #d6dce4;
+      color: #2f2f2f;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      letter-spacing: 0.3px;
+    }
+
+    button:hover {
+      background: #c2c9d4;
+      transform: translateY(-2px);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Résultat */
+    #result h2 {
+      font-size: 26px;
+      margin-bottom: 18px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .grade {
+      font-size: 42px;
+      font-weight: 600;
+      margin-top: 20px;
+      padding: 12px 26px;
+      border-radius: 14px;
+      display: inline-block;
+      animation: pop 0.6s ease-in-out;
+      background: #e3e7ed;
+      color: #2f2f2f;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Test de personnalité</h1>
+
+    <div id="question-container">
+      <p id="question" class="question"></p>
+      <button onclick="answer(true)">Oui</button>
+      <button onclick="answer(false)">Non</button>
+    </div>
+
+    <div id="result" class="hidden"></div>
+  </div>
+
+  <script>
+    const questions = [
+      "J'ai un intérêt particulier pour l'humain",
+      "Les gens manquent d'efficacité, c'est un vrai problème",
+      "Les forums sont un lieu d'échange intéressants",
+      "L'esthétique est très importante",
+      "J'ai souvent vécu avec un Watson",
+      "Je me fais souvent trahir",
+      "J'ai des tendances nostalgiques",
+      "La notion de pureté a ou a eu un jour de l'importance pour moi",
+      "Il y a un lien entre forme et fond",
+      "J'aime créer des univers dans la réalité",
+      "J'ai un rapport particulier à la transgression",
+      "J'ai un goût pour le conflit et le chaos",
+      "Je me considère comme marginal",
+      "La notion de puissance me parle",
+      "Longtemps, je me suis laissé guider par le regard du sexe opposé",
+      "Les gens disent que j'ai de l'ego",
+      "Les gens introvertis m'apprécient",
+      "Malgré moi, j'ai souvent une posture enseignante",
+      "Mes émotions et sentiments ne me débordent jamais",
+      "Je ne crains jamais le contact d'autrui"
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function showQuestion() {
+      document.getElementById("question").innerText = questions[currentQuestion];
+    }
+
+    function answer(isYes) {
+      if(isYes) score++;
+      currentQuestion++;
+
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function getGrade(percentage) {
+      if (percentage < 50) return "A";
+      if (percentage < 60) return "B";
+      if (percentage < 70) return "C";
+      if (percentage < 80) return "D";
+      if (percentage < 90) return "E";
+      return "F";
+    }
+
+    function showResult() {
+      document.getElementById("question-container").classList.add("hidden");
+      const resultDiv = document.getElementById("result");
+      resultDiv.classList.remove("hidden");
+
+      const percentage = (score / questions.length) * 100;
+      const grade = getGrade(percentage);
+
+      resultDiv.innerHTML = `
+        <h2>Résultat</h2>
+        <div class="grade">${grade}</div>
+      `;
+    }
+
+    showQuestion();
+  </script>
+
+</body>
+</html>
