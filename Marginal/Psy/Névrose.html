@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Test — Boucle intérieure</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#7c3aed;--muted:#94a3b8;--glass:rgba(255,255,255,0.03)}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui;background:linear-gradient(180deg,#081226 0%, #071028 60%);color:#e6eef8;display:flex;align-items:center;justify-content:center;padding:24px}
+    .wrap{width:100%;max-width:820px}
+    .card{background:linear-gradient(180deg,var(--card),#071225);border-radius:14px;padding:20px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+    header{margin-bottom:10px}
+    header h1{margin:0;font-size:20px}
+    .q{padding:12px;border-radius:10px;background:var(--glass);margin-bottom:14px}
+    .qtop{display:grid;grid-template-columns:1fr 110px;gap:12px;align-items:center}
+    .answers{display:flex;gap:6px;justify-content:flex-end}
+    label.btn{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);cursor:pointer}
+    input[type=radio]{display:none}
+    input[type=radio]:checked + .btn{background:linear-gradient(90deg,var(--accent),#4c1d95);border:none}
+    .hintline{font-size:11px;color:var(--muted);margin-top:6px;text-align:right}
+    footer.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+    button.primary{background:linear-gradient(90deg,var(--accent),#4c1d95);border:none;color:white;padding:10px 14px;border-radius:10px;cursor:pointer}
+    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+    .result{margin-top:16px;padding:16px;border-radius:10px;background:rgba(255,255,255,0.04);font-size:26px;font-weight:700;text-align:center}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header><h1>Test — Boucle intérieure</h1></header>
+
+      <form id="testForm">
+        <div id="questions"></div>
+
+        <footer class="actions">
+          <button type="button" class="ghost" id="resetBtn">Réinitialiser</button>
+          <button type="button" class="primary" id="submitBtn">Résultat</button>
+        </footer>
+      </form>
+
+      <div id="resultBox" class="result" hidden></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {id:1, text:"Je rejette parfois des aspects de moi."},
+      {id:2, text:"Je revis souvent les mêmes schémas."},
+      {id:3, text:"Quand une émotion me dépasse, je me détourne."},
+      {id:4, text:"Certains comportements reviennent automatiquement."},
+      {id:5, text:"J'ai besoin d'aider les gens."},
+      {id:6, text:"Je fais souvent des repproches."},
+      {id:7, text:"Je me défends quand un aspect inconfortable de moi est pointé."}
+    ];
+
+    const qContainer = document.getElementById('questions');
+
+    function makeQuestion(q){
+      const div = document.createElement('div');
+      div.className = 'q';
+      div.innerHTML = `
+        <div class="qtop">
+          <div>${q.id}. ${q.text}</div>
+          <div class="answers">
+            ${[1,2,3].map(n=>`
+              <label>
+                <input type="radio" name="q${q.id}" value="${n}" />
+                <span class="btn">${n}</span>
+              </label>`).join('')}
+          </div>
+        </div>
+        <div class="hintline">1 = non · 3 = oui</div>
+      `;
+      return div;
+    }
+
+    questions.forEach(q=> qContainer.appendChild(makeQuestion(q)));
+
+    function getScore(){
+      let score = 0;
+      for(const q of questions){
+        const v = document.querySelector(`input[name=q${q.id}]:checked`);
+        if(!v) return null;
+        score += parseInt(v.value,10);
+      }
+      return score;
+    }
+
+    document.getElementById('submitBtn').addEventListener('click', ()=>{
+      const score = getScore();
+      const box = document.getElementById('resultBox');
+
+      if(score === null){
+        box.hidden = false;
+        box.textContent = "Veuillez répondre à tout.";
+        return;
+      }
+
+      const threshold = questions.length * 2;
+      const result = score >= threshold ? "N" : "Non-N";
+
+      box.hidden = false;
+      box.textContent = result;
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      document.getElementById('testForm').reset();
+      document.getElementById('resultBox').hidden = true;
+    });
+  </script>
+</body>
+</html>
