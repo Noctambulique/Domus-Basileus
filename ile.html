@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Map interactive</title>
+
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+    }
+
+    #map-container {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        cursor: grab;
+        position: relative;
+        background: #000;
+    }
+
+    #map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        user-select: none;
+    }
+
+    .marker {
+        position: absolute;
+        cursor: pointer;
+    }
+
+    #coords {
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 5px;
+        display: none;
+        font-size: 14px;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="map-container">
+    <img id="map" src="map.jpg" alt="map">
+</div>
+
+<div id="coords">X: 0 | Y: 0</div>
+
+<script>
+const map = document.getElementById("map");
+const container = document.getElementById("map-container");
+const coordsBox = document.getElementById("coords");
+
+let isDragging = false;
+let startX, startY;
+let mapX = 0, mapY = 0;
+let showCoords = false;
+let mouseX = 0, mouseY = 0;
+
+/* --- Déplacement de la map --- */
+container.addEventListener("mousedown", e => {
+    isDragging = true;
+    startX = e.clientX - mapX;
+    startY = e.clientY - mapY;
+    container.style.cursor = "grabbing";
+});
+
+window.addEventListener("mouseup", () => {
+    isDragging = false;
+    container.style.cursor = "grab";
+});
+
+window.addEventListener("mousemove", e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    if (isDragging) {
+        mapX = e.clientX - startX;
+        mapY = e.clientY - startY;
+        map.style.transform = `translate(${mapX}px, ${mapY}px)`;
+        document.querySelectorAll(".marker").forEach(m => {
+            m.style.transform = `translate(${mapX}px, ${mapY}px)`;
+        });
+    }
+
+    if (showCoords) {
+        coordsBox.innerHTML = `X: ${mouseX} | Y: ${mouseY}`;
+    }
+});
+
+/* --- Touche A pour afficher les coordonnées --- */
+window.addEventListener("keydown", e => {
+    if (e.key.toLowerCase() === "a") {
+        showCoords = !showCoords;
+        coordsBox.style.display = showCoords ? "block" : "none";
+    }
+});
+
+/* --- Ajouter un marker --- */
+function addMarker(x, y, size, image, link) {
+    const marker = document.createElement("img");
+    marker.src = image;
+    marker.className = "marker";
+    marker.style.width = size + "px";
+    marker.style.left = x + "px";
+    marker.style.top = y + "px";
+    marker.style.transform = `translate(${mapX}px, ${mapY}px)`;
+
+    marker.addEventListener("click", () => {
+        window.location.href = link;
+    });
+
+    container.appendChild(marker);
+}
+
+/* --- Exemples de markers --- */
+addMarker(300, 200, 40, "marker.png", "page1.html");
+addMarker(600, 450, 60, "marker.png", "https://example.com");
+</script>
+
+</body>
+</html>
