@@ -2,13 +2,14 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>M</title>
+<title>Map Drag</title>
 
 <style>
     body {
         margin: 0;
         overflow: hidden;
         font-family: Arial, sans-serif;
+        background: #000;
     }
 
     #map-container {
@@ -17,7 +18,6 @@
         overflow: hidden;
         cursor: grab;
         position: relative;
-        background: #000;
     }
 
     #map {
@@ -25,11 +25,15 @@
         top: 0;
         left: 0;
         user-select: none;
+        pointer-events: none;
+        transform-origin: top left;
+        will-change: transform;
     }
 
     .marker {
         position: absolute;
         cursor: pointer;
+        transform-origin: top left;
     }
 
     #coords {
@@ -55,17 +59,51 @@
 <div id="coords">X: 0 | Y: 0</div>
 
 <script>
-const map = document.getElementById("map");
 const container = document.getElementById("map-container");
+const map = document.getElementById("map");
 const coordsBox = document.getElementById("coords");
 
-let isDragging = false;
-let startX, startY;
-let mapX = 0, mapY = 0;
-let showCoords = false;
-let mouseX = 0, mouseY = 0;
+let mapX = 0;
+let mapY = 0;
+let scale = 1;
 
-/* --- Déplacement de la map --- */
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+let showCoords = false;
+
+/* -------- Ajustement plein écran -------- */
+function fitMap() {
+    const cw = container.clientWidth;
+    const ch = container.clientHeight;
+    const iw = map.naturalWidth;
+    const ih = map.naturalHeight;
+
+    scale = Math.max(cw / iw, ch / ih);
+
+    clampPosition();
+    updateTransform();
+}
+
+/* -------- Limites -------- */
+function clampPosition() {
+    const minX = container.clientWidth - map.naturalWidth * scale;
+    const minY = container.clientHeight - map.naturalHeight * scale;
+
+    mapX = Math.min(0, Math.max(minX, mapX));
+    mapY = Math.min(0, Math.max(minY, mapY));
+}
+
+/* -------- Transform -------- */
+function updateTransform() {
+    map.style.transform = `translate(${mapX}px, ${mapY}px) scale(${scale})`;
+
+    document.querySelectorAll(".marker").forEach(marker => {
+        marker.style.transform = `translate(${mapX}px, ${mapY}px) scale(${scale})`;
+    });
+}
+
+/* -------- Drag souris -------- */
 container.addEventListener("mousedown", e => {
     isDragging = true;
     startX = e.clientX - mapX;
@@ -79,24 +117,19 @@ window.addEventListener("mouseup", () => {
 });
 
 window.addEventListener("mousemove", e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-
     if (isDragging) {
         mapX = e.clientX - startX;
         mapY = e.clientY - startY;
-        map.style.transform = `translate(${mapX}px, ${mapY}px)`;
-        document.querySelectorAll(".marker").forEach(m => {
-            m.style.transform = `translate(${mapX}px, ${mapY}px)`;
-        });
+        clampPosition();
+        updateTransform();
     }
 
     if (showCoords) {
-        coordsBox.innerHTML = `X: ${mouseX} | Y: ${mouseY}`;
+        coordsBox.innerHTML = `X: ${e.clientX} | Y: ${e.clientY}`;
     }
 });
 
-/* --- Touche A pour afficher les coordonnées --- */
+/* -------- Touche A : coordonnées -------- */
 window.addEventListener("keydown", e => {
     if (e.key.toLowerCase() === "a") {
         showCoords = !showCoords;
@@ -104,7 +137,7 @@ window.addEventListener("keydown", e => {
     }
 });
 
-/* --- Ajouter un marker --- */
+/* -------- Markers -------- */
 function addMarker(x, y, size, image, link) {
     const marker = document.createElement("img");
     marker.src = image;
@@ -112,7 +145,6 @@ function addMarker(x, y, size, image, link) {
     marker.style.width = size + "px";
     marker.style.left = x + "px";
     marker.style.top = y + "px";
-    marker.style.transform = `translate(${mapX}px, ${mapY}px)`;
 
     marker.addEventListener("click", () => {
         window.location.href = link;
@@ -121,9 +153,15 @@ function addMarker(x, y, size, image, link) {
     container.appendChild(marker);
 }
 
-/* --- Exemples de markers --- */
-addMarker(300, 200, 40, "marker.png", "page1.html");
-addMarker(600, 450, 60, "marker.png", "https://example.com");
+/* -------- Init -------- */
+map.onload = () => {
+    fitMap();
+
+    addMarker(300, 200, 40, "marker.png", "page1.html");
+    addMarker(600, 450, 60, "marker.png", "https://example.com");
+};
+
+window.addEventListener("resize", fitMap);
 </script>
 
 </body>
