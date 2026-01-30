@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Map Drag</title>
+<title>Map Aube</title>
 
 <style>
     body {
@@ -72,7 +72,7 @@ let startX = 0;
 let startY = 0;
 let showCoords = false;
 
-/* -------- Ajustement plein écran -------- */
+/* -------- Ajustement + centrage -------- */
 function fitMap() {
     const cw = container.clientWidth;
     const ch = container.clientHeight;
@@ -80,6 +80,13 @@ function fitMap() {
     const ih = map.naturalHeight;
 
     scale = Math.max(cw / iw, ch / ih);
+
+    const scaledW = iw * scale;
+    const scaledH = ih * scale;
+
+    // 👉 centrage sur le centre de l'image
+    mapX = (cw - scaledW) / 2;
+    mapY = (ch - scaledH) / 2;
 
     clampPosition();
     updateTransform();
@@ -129,7 +136,7 @@ window.addEventListener("mousemove", e => {
     }
 });
 
-/* -------- Touche A : coordonnées -------- */
+/* -------- Touche A -------- */
 window.addEventListener("keydown", e => {
     if (e.key.toLowerCase() === "a") {
         showCoords = !showCoords;
