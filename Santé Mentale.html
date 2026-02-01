@@ -8,68 +8,62 @@
     body {
         font-family: serif;
         margin: 0;
-        padding: 0;
         background-image: url("Fond/Fille devant maison.jpg");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
     }
 
-    /* Carte centrale */
+    /* Carte */
     .panel {
-        max-width: 720px;
+        max-width: 700px;
         margin: 80px auto;
         padding: 50px 60px;
-        background: rgba(255, 255, 255, 0.78);
+        background: rgba(255,255,255,0.78);
         backdrop-filter: blur(6px);
         box-shadow: 0 20px 60px rgba(0,0,0,0.25);
         text-align: center;
+        color: #111;
     }
 
     h1 {
         font-weight: normal;
-        margin-bottom: 50px;
-        color: #111;
-        letter-spacing: 0.5px;
+        margin-bottom: 40px;
     }
 
     .bar-container {
         width: 100%;
-        height: 14px;
-        background: rgba(0,0,0,0.12);
-        border-radius: 8px;
+        height: 12px;
+        background: rgba(0,0,0,0.15);
+        margin: 30px 0 6px;
+        border-radius: 6px;
         overflow: hidden;
-        margin: 28px 0 6px;
     }
 
     .bar {
         height: 100%;
         width: 50%;
-        background: linear-gradient(
-            90deg,
-            #7a8cff,
-            #9bb0ff
-        );
+        background: linear-gradient(90deg, #6f7cff, #9aa8ff);
         transition: width 0.4s ease;
     }
 
     .label {
         font-size: 14px;
-        margin-bottom: 16px;
+        margin-bottom: 14px;
         color: #222;
     }
 
     .buttons {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-        margin-top: 50px;
+        gap: 14px;
+        margin-top: 40px;
     }
 
     button {
-        height: 54px;
+        height: 52px;
         background: rgba(255,255,255,0.9);
-        border: 1px solid rgba(0,0,0,0.25);
+        border: 1px solid rgba(0,0,0,0.4);
         font-size: 14px;
         cursor: pointer;
         transition: all 0.25s ease;
@@ -79,8 +73,7 @@
 
     button:hover {
         background: rgba(0,0,0,0.85);
-        color: #fff;
-        transform: translateY(-1px);
+        color: white;
     }
 </style>
 </head>
@@ -123,9 +116,99 @@
 
 </div>
 
-<!-- 🔽 JS IDENTIQUE AU TIEN 🔽 -->
 <script>
-/* (ton script exactement tel quel) */
+/* 🔢 Barres */
+const bars = {
+    adequation: 50,
+    resilience: 50,
+    motivation: 50,
+    clarte: 50,
+    inspiration: 50
+};
+
+/* ⚙️ CONFIGURATION DES CRITÈRES */
+const criteriaConfig = { /* IDENTIQUE À TON CODE ORIGINAL */
+    Sommeil:{defaultState:1,states:[
+        {label:"🛏️ Mauvais sommeil",impact:{adequation:-10,resilience:-20,motivation:-15,clarte:-15}},
+        {label:"🛏️ Sommeil moyen",impact:{}},
+        {label:"🛏️ Bon sommeil",impact:{adequation:10,resilience:10,motivation:10,clarte:10}}
+    ]},
+    Nourriture:{defaultState:1,states:[
+        {label:"🥗 Mauvaise alimentation",impact:{adequation:-10,resilience:-5,motivation:-10,clarte:-5}},
+        {label:"🥗 Alimentation correcte",impact:{}},
+        {label:"🥗 Bonne alimentation",impact:{adequation:5,resilience:5,motivation:5,clarte:10}}
+    ]},
+    Sociabilité:{defaultState:1,states:[
+        {label:"🗣️ Isolement",impact:{adequation:-10,resilience:-10,motivation:-10,clarte:-5}},
+        {label:"🗣️ Contacts normaux",impact:{}},
+        {label:"🗣️ Lien social nourrissant",impact:{adequation:15,resilience:10,motivation:10,clarte:5}}
+    ]},
+    Sortir:{defaultState:1,states:[
+        {label:"🚶 Immobilité",impact:{adequation:-10,resilience:-10,motivation:-20,clarte:-15}},
+        {label:"🚶 En mouvement",impact:{inspiration:10}},
+        {label:"🚶 Haut dynamisme",impact:{adequation:15,resilience:15,motivation:15,clarte:10,inspiration:10}}
+    ]},
+    Imprévu:{defaultState:1,states:[
+        {label:"🗺️ Imprévu",impact:{adequation:-10,resilience:-20,motivation:-20}},
+        {label:"🗺️ Rien de prévu",impact:{}},
+        {label:"🗺️ Plan fluide",impact:{adequation:15,resilience:5,motivation:5,clarte:10}}
+    ]},
+    Temps:{defaultState:1,states:[
+        {label:"⏳ Pas de temps",impact:{adequation:-15,resilience:-10,clarte:-5,inspiration:-10}},
+        {label:"⏳ Un peu de temps",impact:{inspiration:5}},
+        {label:"⏳ Beaucoup de temps",impact:{adequation:5,resilience:5,motivation:5,clarte:10,inspiration:5}}
+    ]},
+    Problème:{defaultState:1,states:[
+        {label:"❓ Problème irrésolu",impact:{adequation:-15,resilience:-20,clarte:-10}},
+        {label:"❓ En recherche",impact:{adequation:10}},
+        {label:"❓ Compris",impact:{adequation:15,resilience:15,clarte:10}}
+    ]},
+    Musique:{defaultState:1,states:[
+        {label:"🎵 Pas de musique",impact:{}},
+        {label:"🎵 Un peu de musique",impact:{inspiration:10}},
+        {label:"🎵 Beaucoup de musique",impact:{adequation:15,resilience:15,motivation:15,clarte:5,inspiration:5}}
+    ]},
+    Réel:{defaultState:1,states:[
+        {label:"📞 Pas de réel",impact:{adequation:10}},
+        {label:"📞 Un peu de réel",impact:{}},
+        {label:"📞 Beaucoup de réel",impact:{adequation:-5,resilience:20,motivation:-10,clarte:-10}}
+    ]},
+    Film:{defaultState:1,states:[
+        {label:"🎬 Aucun film",impact:{}},
+        {label:"🎬 Un épisode",impact:{inspiration:5}},
+        {label:"🎬 Beaucoup",impact:{adequation:-5,resilience:10,motivation:-10,clarte:-10,inspiration:10}}
+    ]}
+};
+
+function clamp(v){return Math.max(0,Math.min(100,v));}
+
+function updateUI(){
+    for(const key in bars){
+        bars[key]=clamp(bars[key]);
+        document.getElementById(key).style.width=bars[key]+"%";
+        document.getElementById(key+"Value").textContent=bars[key]+"%";
+    }
+}
+
+document.querySelectorAll("[data-criterion]").forEach(button=>{
+    const id=button.dataset.criterion;
+    const config=criteriaConfig[id];
+    let index=config.defaultState;
+    let currentImpact=config.states[index].impact;
+
+    button.textContent=config.states[index].label;
+
+    button.addEventListener("click",()=>{
+        for(const key in bars){bars[key]-=currentImpact[key]||0;}
+        index=(index+1)%config.states.length;
+        currentImpact=config.states[index].impact;
+        for(const key in bars){bars[key]+=currentImpact[key]||0;}
+        button.textContent=config.states[index].label;
+        updateUI();
+    });
+});
+
+updateUI();
 </script>
 
 </body>
