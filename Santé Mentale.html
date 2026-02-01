@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <title>État intérieur</title>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 body {
     font-family: serif;
@@ -16,7 +18,7 @@ body {
 }
 
 .panel {
-    max-width: 700px;
+    max-width: 720px;
     margin: 80px auto;
     padding: 50px 60px;
     background: rgba(255,255,255,0.70);
@@ -28,29 +30,12 @@ body {
 
 h1 {
     font-weight: normal;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
-.bar-container {
-    width: 100%;
-    height: 12px;
-    background: rgba(0,0,0,0.15);
-    margin: 30px 0 6px;
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.bar {
-    height: 100%;
-    width: 50%;
-    background: linear-gradient(90deg, #6f7cff, #9aa8ff);
-    transition: width 0.4s ease;
-}
-
-.label {
-    font-size: 14px;
-    margin-bottom: 14px;
-    color: #222;
+canvas {
+    max-width: 100%;
+    margin: 30px auto 20px;
 }
 
 .buttons {
@@ -81,23 +66,9 @@ button:hover {
 <body>
 
 <div class="panel">
-
 <h1>État intérieur</h1>
 
-<div class="bar-container"><div id="adequation" class="bar"></div></div>
-<div class="label">Adéquation avec soi : <span id="adequationValue">50%</span></div>
-
-<div class="bar-container"><div id="resilience" class="bar"></div></div>
-<div class="label">Résilience : <span id="resilienceValue">50%</span></div>
-
-<div class="bar-container"><div id="motivation" class="bar"></div></div>
-<div class="label">Motivation : <span id="motivationValue">50%</span></div>
-
-<div class="bar-container"><div id="clarte" class="bar"></div></div>
-<div class="label">Clarté mentale : <span id="clarteValue">50%</span></div>
-
-<div class="bar-container"><div id="inspiration" class="bar"></div></div>
-<div class="label">Inspiration : <span id="inspirationValue">50%</span></div>
+<canvas id="radarChart" height="300"></canvas>
 
 <div class="buttons">
     <button data-criterion="Sommeil"></button>
@@ -111,11 +82,10 @@ button:hover {
     <button data-criterion="Réel"></button>
     <button data-criterion="Film"></button>
 </div>
-
 </div>
 
 <script>
-/* 🔢 VALEURS DE BASE */
+/* 🔢 BASE */
 const baseBars = {
     adequation: 50,
     resilience: 50,
@@ -126,7 +96,7 @@ const baseBars = {
 
 let bars = { ...baseBars };
 
-/* ⚙️ CONFIGURATION DES CRITÈRES */
+/* ⚙️ CONFIG */
 const criteriaConfig = {
     Sommeil:{defaultState:1,states:[
         {label:"🛏️ Mauvais sommeil",impact:{adequation:-10,resilience:-20,motivation:-15,clarte:-15}},
@@ -145,7 +115,7 @@ const criteriaConfig = {
     ]},
     Sortir:{defaultState:1,states:[
         {label:"🚶 Immobilité",impact:{adequation:-10,resilience:-10,motivation:-20,clarte:-15}},
-        {label:"🚶 En mouvement",impact:{}},
+        {label:"🚶 En mouvement",impact:{inspiration:10}},
         {label:"🚶 Haut dynamisme",impact:{adequation:15,resilience:15,motivation:15,clarte:10,inspiration:10}}
     ]},
     Imprévu:{defaultState:1,states:[
@@ -180,50 +150,78 @@ const criteriaConfig = {
     ]}
 };
 
-/* État actif par critère */
 const activeStates = {};
 
 /* Clamp */
-function clamp(v) {
-    return Math.max(0, Math.min(100, v));
-}
+const clamp = v => Math.max(0, Math.min(100, v));
 
-/* Recalcul global depuis l’état neutre */
+/* Radar */
+const ctx = document.getElementById("radarChart");
+
+const radarChart = new Chart(ctx, {
+    type: "radar",
+    data: {
+        labels: ["Adéquation", "Résilience", "Motivation", "Clarté", "Inspiration"],
+        datasets: [{
+            data: Object.values(baseBars),
+            backgroundColor: "rgba(110,125,255,0.25)",
+            borderColor: "rgba(110,125,255,0.8)",
+            pointBackgroundColor: "#6f7cff"
+        }]
+    },
+    options: {
+        scales: {
+            r: {
+                min: 0,
+                max: 100,
+                ticks: { display: false },
+                grid: { color: "rgba(0,0,0,0.15)" },
+                angleLines: { color: "rgba(0,0,0,0.15)" }
+            }
+        },
+        plugins: {
+            legend: { display: false }
+        }
+    }
+});
+
+/* Recalcul */
 function recomputeBars() {
     bars = { ...baseBars };
 
-    for (const criterion in activeStates) {
-        const impact = activeStates[criterion];
+    for (const c in activeStates) {
+        const impact = activeStates[c];
         for (const key in impact) {
             bars[key] += impact[key];
         }
     }
 
-    updateUI();
-}
+    for (const k in bars) bars[k] = clamp(bars[k]);
 
-/* UI */
-function updateUI() {
-    for (const key in bars) {
-        bars[key] = clamp(bars[key]);
-        document.getElementById(key).style.width = bars[key] + "%";
-        document.getElementById(key + "Value").textContent = bars[key] + "%";
-    }
+    radarChart.data.datasets[0].data = [
+        bars.adequation,
+        bars.resilience,
+        bars.motivation,
+        bars.clarte,
+        bars.inspiration
+    ];
+
+    radarChart.update();
 }
 
 /* Boutons */
-document.querySelectorAll("[data-criterion]").forEach(button => {
-    const id = button.dataset.criterion;
-    const config = criteriaConfig[id];
-    let index = config.defaultState;
+document.querySelectorAll("[data-criterion]").forEach(btn => {
+    const id = btn.dataset.criterion;
+    const cfg = criteriaConfig[id];
+    let index = cfg.defaultState;
 
-    button.textContent = config.states[index].label;
-    activeStates[id] = config.states[index].impact;
+    btn.textContent = cfg.states[index].label;
+    activeStates[id] = cfg.states[index].impact;
 
-    button.addEventListener("click", () => {
-        index = (index + 1) % config.states.length;
-        button.textContent = config.states[index].label;
-        activeStates[id] = config.states[index].impact;
+    btn.addEventListener("click", () => {
+        index = (index + 1) % cfg.states.length;
+        btn.textContent = cfg.states[index].label;
+        activeStates[id] = cfg.states[index].impact;
         recomputeBars();
     });
 });
