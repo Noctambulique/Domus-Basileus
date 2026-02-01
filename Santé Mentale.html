@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<title>État intérieur</title>
-
 <style>
     body {
         font-family: serif;
         margin: 0;
+
+        /* Image portrait respectée */
         background-image: url("Fond/Fille devant maison.jpg");
-        background-size: cover;
-        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center top;
         background-attachment: fixed;
+
+        /* Fond neutre pour les zones non couvertes */
+        background-color: #111;
     }
 
     /* Carte */
@@ -19,8 +19,11 @@
         max-width: 700px;
         margin: 80px auto;
         padding: 50px 60px;
-        background: rgba(255,255,255,0.78);
+
+        /* Un poil plus transparent */
+        background: rgba(255,255,255,0.70);
         backdrop-filter: blur(6px);
+
         box-shadow: 0 20px 60px rgba(0,0,0,0.25);
         text-align: center;
         color: #111;
@@ -76,6 +79,7 @@
         color: white;
     }
 </style>
+
 </head>
 
 <body>
