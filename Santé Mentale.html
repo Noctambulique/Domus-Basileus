@@ -17,7 +17,6 @@ body {
     background-attachment: fixed;
 }
 
-/* PANNEAU PRINCIPAL */
 .panel {
     max-width: 720px;
     margin: 80px auto;
@@ -30,20 +29,17 @@ body {
     border: 1px solid rgba(255,255,255,0.15);
 }
 
-/* TITRE */
 h1 {
     font-weight: normal;
     margin-bottom: 30px;
     letter-spacing: 1px;
 }
 
-/* GRAPH */
 canvas {
     max-width: 100%;
     margin: 30px auto 20px;
 }
 
-/* BOUTONS */
 .buttons {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -70,35 +66,28 @@ button:hover {
 </style>
 </head>
 
-
-<h1>État intérieur</h1>
-
-<canvas id="radarChart" height="450"></canvas>
-
-<div class="buttons">
-    <button data-criterion="Sommeil"></button>
-    <button data-criterion="Nourriture"></button>
-    <button data-criterion="Sociabilité"></button>
-    <button data-criterion="Sortir"></button>
-    <button data-criterion="Imprévu"></button>
-    <button data-criterion="Temps"></button>
-    <button data-criterion="Problème"></button>
-    <button data-criterion="Musique"></button>
-    <button data-criterion="Réel"></button>
-    <button data-criterion="Film"></button>
-</div>
-</div>
-
-<script>
-
-
-</body>
+<body>
 
 <div class="panel">
+    <h1>État intérieur</h1>
 
+    <canvas id="radarChart" height="450"></canvas>
+
+    <div class="buttons">
+        <button data-criterion="Sommeil"></button>
+        <button data-criterion="Nourriture"></button>
+        <button data-criterion="Sociabilité"></button>
+        <button data-criterion="Sortir"></button>
+        <button data-criterion="Imprévu"></button>
+        <button data-criterion="Temps"></button>
+        <button data-criterion="Problème"></button>
+        <button data-criterion="Musique"></button>
+        <button data-criterion="Réel"></button>
+        <button data-criterion="Film"></button>
+    </div>
+</div>
 
 <script>
-/* 🔢 BASE */
 const baseBars = {
     adequation: 50,
     resilience: 50,
@@ -109,10 +98,9 @@ const baseBars = {
 
 let bars = { ...baseBars };
 
-/* ⚙️ CONFIG */
 const criteriaConfig = {
     Sommeil:{defaultState:1,states:[
-        {label:"🛏️ Mauvais sommeil",impact:{adequation:-10,resilience:-20,motivation:-15,clarte:-15, inspiration:-10}},
+        {label:"🛏️ Mauvais sommeil",impact:{adequation:-10,resilience:-20,motivation:-15,clarte:-15,inspiration:-10}},
         {label:"🛏️ Sommeil moyen",impact:{}},
         {label:"🛏️ Bon sommeil",impact:{adequation:10,resilience:10,motivation:10,clarte:10}}
     ]},
@@ -165,10 +153,8 @@ const criteriaConfig = {
 
 const activeStates = {};
 
-/* Clamp */
 const clamp = v => Math.max(0, Math.min(100, v));
 
-/* Radar */
 const ctx = document.getElementById("radarChart");
 
 const radarChart = new Chart(ctx, {
@@ -188,8 +174,9 @@ const radarChart = new Chart(ctx, {
                 min: 0,
                 max: 100,
                 ticks: { display: false },
-                grid: { color: "rgba(0,0,0,0.15)" },
-                angleLines: { color: "rgba(0,0,0,0.15)" }
+                grid: { color: "rgba(255,255,255,0.15)" },
+                angleLines: { color: "rgba(255,255,255,0.15)" },
+                pointLabels: { color: "#ffffff" }
             }
         },
         plugins: {
@@ -198,7 +185,6 @@ const radarChart = new Chart(ctx, {
     }
 });
 
-/* Recalcul */
 function recomputeBars() {
     bars = { ...baseBars };
 
@@ -222,7 +208,6 @@ function recomputeBars() {
     radarChart.update();
 }
 
-/* Boutons */
 document.querySelectorAll("[data-criterion]").forEach(btn => {
     const id = btn.dataset.criterion;
     const cfg = criteriaConfig[id];
@@ -239,7 +224,6 @@ document.querySelectorAll("[data-criterion]").forEach(btn => {
     });
 });
 
-/* Init */
 recomputeBars();
 </script>
 
