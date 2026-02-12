@@ -17,27 +17,33 @@ body {
     background-attachment: fixed;
 }
 
+/* PANNEAU PRINCIPAL */
 .panel {
     max-width: 720px;
     margin: 80px auto;
     padding: 50px 60px;
-    background: rgba(255,255,255,0.70);
-    backdrop-filter: blur(6px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    background: rgba(0,0,0,0.65); /* noir transparent */
+    backdrop-filter: blur(8px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     text-align: center;
-    color: #02060a;
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.15);
 }
 
+/* TITRE */
 h1 {
     font-weight: normal;
     margin-bottom: 30px;
+    letter-spacing: 1px;
 }
 
+/* GRAPH */
 canvas {
     max-width: 100%;
     margin: 30px auto 20px;
 }
 
+/* BOUTONS */
 .buttons {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -47,18 +53,19 @@ canvas {
 
 button {
     height: 52px;
-    background: rgba(255,255,255,0.9);
-    border: 1px solid rgba(0,0,0,0.4);
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.2);
     font-size: 14px;
     cursor: pointer;
     transition: all 0.25s ease;
-    backdrop-filter: blur(2px);
-    color: #111;
+    backdrop-filter: blur(4px);
+    color: #ffffff;
 }
 
 button:hover {
-    background: rgba(0,0,0,0.85);
-    color: white;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.6);
+    transform: translateY(-2px);
 }
 </style>
 </head>
