@@ -22,7 +22,7 @@ body {
     max-width: 720px;
     margin: 80px auto;
     padding: 50px 60px;
-    background: rgba(0,0,0,0.65); /* noir transparent */
+    background: rgba(0,0,0,0.65);
     backdrop-filter: blur(8px);
     box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     text-align: center;
@@ -71,6 +71,93 @@ button:hover {
 </head>
 
 <body>
+
+<div class="panel">
+<h1>État intérieur</h1>
+
+<canvas id="radarChart" height="450"></canvas>
+
+<div class="buttons">
+    <button data-criterion="Sommeil"></button>
+    <button data-criterion="Nourriture"></button>
+    <button data-criterion="Sociabilité"></button>
+    <button data-criterion="Sortir"></button>
+    <button data-criterion="Imprévu"></button>
+    <button data-criterion="Temps"></button>
+    <button data-criterion="Problème"></button>
+    <button data-criterion="Musique"></button>
+    <button data-criterion="Réel"></button>
+    <button data-criterion="Film"></button>
+</div>
+</div>
+
+<script>
+const baseBars = {
+    adequation: 50,
+    resilience: 50,
+    motivation: 50,
+    clarte: 50,
+    inspiration: 50
+};
+
+const ctx = document.getElementById('radarChart').getContext('2d');
+
+const radarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+        labels: [
+            "Adéquation",
+            "Résilience",
+            "Motivation",
+            "Clarté",
+            "Inspiration"
+        ],
+        datasets: [{
+            data: Object.values(baseBars),
+            backgroundColor: "rgba(140, 82, 255, 0.35)",
+            borderColor: "rgba(180, 140, 255, 1)",
+            borderWidth: 2,
+            pointBackgroundColor: "#ffffff",
+            pointBorderColor: "#8c52ff",
+            pointRadius: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            r: {
+                min: 0,
+                max: 100,
+                ticks: {
+                    color: "#ffffff",
+                    backdropColor: "transparent",
+                    stepSize: 20
+                },
+                grid: {
+                    color: "rgba(255,255,255,0.25)"
+                },
+                angleLines: {
+                    color: "rgba(255,255,255,0.25)"
+                },
+                pointLabels: {
+                    color: "#ffffff",
+                    font: {
+                        size: 14
+                    }
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+</script>
+
+</body>
+
 
 <div class="panel">
 <h1>État intérieur</h1>
