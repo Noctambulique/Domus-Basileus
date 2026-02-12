@@ -1,205 +1,122 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frutiger Aero - Galerie</title>
+
 <style>
+/* ===== VARIABLES ===== */
 :root {
   --gap: 22px;
   --radius: 14px;
-
-  --aero-blue-top: #54c7ff;
-  --aero-blue-bottom: #0073d9;
-
-  --aero-green: #8bf25b;
   --aero-white: #e8faff;
-  --aero-glass: rgba(255, 255, 255, 0.55);
-
-  --shadow-dark: 0 8px 22px rgba(0, 0, 0, 0.45);
+  --aero-glass: rgba(255,255,255,.55);
+  --shadow-dark: 0 8px 22px rgba(0,0,0,.45);
 }
 
-/* FOND FRUTIGER AERO */
+/* ===== FOND ===== */
 html, body {
   margin: 0;
   height: 100%;
   font-family: "Segoe UI", Tahoma, sans-serif;
-  background:
-    radial-gradient(circle at 70% 20%, #bafffc 0%, #5dc8ff 35%, #0074d9 100%);
+  background: radial-gradient(circle at 70% 20%, #bafffc 0%, #5dc8ff 35%, #0074d9 100%);
   background-attachment: fixed;
   color: #002242;
-  overflow-x: hidden;
 }
 
-/* Ajout nuageux + bulles flottantes */
-html::before {
-  content:"";
-  position: fixed;
-  top:0; left:0;
-  width:100vw; height:100vh;
-  pointer-events:none;
-  background:
-    url('Fond/F3 Ville au loin.jpg') center/cover no-repeat;
-  opacity: .22;
-  filter: blur(2px);
-}
-
-/* Mise en page */
 .wrap {
-  max-width: 1150px;
-  margin: 0 auto;
-  padding: 38px;
-  box-sizing: border-box;
+  max-width: 1100px;
+  margin: auto;
+  padding: 40px;
 }
 
-/* Titres façon Vista */
-.title {
-  font-weight: 600;
-  margin: 0 0 14px;
-  color: #003e73;
-  text-shadow: 0 2px 0 rgba(255,255,255,.7);
-}
-
-/* Grille */
+/* ===== GRID ===== */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
   gap: var(--gap);
 }
 
-/* VRAIES CARTES FRUTIGER AERO */
+/* ===== CARD ===== */
 .card {
-  position: relative;
   border-radius: var(--radius);
-  overflow:hidden;
-  min-height: 180px;
-  border: 1px solid rgba(255,255,255,0.8);
-
-  background: linear-gradient(
-    135deg,
-    var(--aero-white) 0%,
-    rgba(255,255,255,.75) 40%,
-    var(--aero-glass) 100%
-  );
-  box-shadow:
-    var(--shadow-dark),
-    inset 0 0 20px rgba(255,255,255,0.7);
-
+  overflow: hidden;
+  min-height: 200px;
   cursor: pointer;
-  transition: .18s ease-out;
-  backdrop-filter: blur(4px);
-}
-
-/* Reflet glossy typique Web 2.0 */
-.card::before {
-  content:"";
-  position:absolute;
-  top:0; left:0;
-  width:100%; height:45%;
-  background:linear-gradient(
-    rgba(255,255,255,.85),
-    rgba(255,255,255,.1)
-  );
-  pointer-events:none;
+  background: linear-gradient(135deg,var(--aero-white),var(--aero-glass));
+  box-shadow: var(--shadow-dark);
+  transition: .2s ease;
 }
 
 .card:hover {
   transform: translateY(-6px) scale(1.03);
-  box-shadow:
-    0 12px 26px rgba(0,0,0,.5),
-    inset 0 0 26px rgba(255,255,255,.92);
-  border-color: #7befff;
 }
 
 .card img {
-  width:100%; height:100%;
-  object-fit:cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* READER : FENÊTRE AERO SUREXPLOSÉE */
+/* ===== READER ===== */
 .reader {
-  position:relative;
-  min-height:360px;
+  padding: 40px;
+  background: white;
   border-radius: var(--radius);
-  padding:40px;
-  border:1px solid #dff8ff;
-  background:linear-gradient(
-    to bottom,
-    rgba(255,255,255,.9),
-    rgba(180,230,255,.8)
-  );
-  box-shadow:
-    0 0 0 2px rgba(0,140,255,.6),
-    0 18px 36px rgba(0,0,0,.55);
-  animation:fadeIn .32s ease-out;
+  box-shadow: var(--shadow-dark);
+  animation: fadeIn .3s ease;
 }
 
-.reader::after {
-  content:"";
-  position:absolute; inset:0;
-  background:linear-gradient(
-    to bottom,
-    rgba(255,255,255,.48),
-    rgba(255,255,255,0)
-  );
-  pointer-events:none;
-}
-
-.reader .content {
+.content {
   font-size: 17px;
   line-height: 1.6;
-  color: #00325f;
-  text-shadow: 0 1px 0 rgba(255,255,255,.8);
 }
 
-/* Anim */
 @keyframes fadeIn {
-  from { opacity:0; transform:translateY(12px); }
-  to { opacity:1; transform:translateY(0); }
+  from {opacity:0; transform:translateY(10px);}
+  to {opacity:1; transform:translateY(0);}
 }
-
 </style>
-
-
 </head>
+
 <body>
 
-  <div class="wrap">
+<div class="wrap">
+  <div id="container" class="grid">
 
-    <div id="container" class="grid"
-
-<div class="card" 
-     data-text="Ferdinand Cheval était un simple facteur rural de la Drôme (France), né en 1836, et mort en 1924. \n \n  À 43 ans (en 1879), lors d’une de ses tournées quotidiennes qui lui faisaient parfois parcourir 30-40 km à pied, il trébuche sur une pierre d’une forme étrange — une “pierre d’achoppement”. L’objet éveilla en lui un rêve qu’il gardait dans un coin de sa tête. Il décide alors de commencer à ramasser des pierres peu ordinaires qu’il trouve en chemin — d’abord dans ses poches, puis dans un panier, puis dans une brouette — afin de les rapporter chez lui. \n \n  Pendant 33 ans — de 1879 à 1912 — il consacre ses soirées (et souvent ses nuits) à construire, de ses mains, un “palais idéal” dans le petit terrain derrière sa maison, dans le village de Hauterives. À l’intérieur comme à l’extérieur : sculptures, bas-reliefs d’animaux, motifs organiques, grottes, galeries — certaines parties évoquent une jungle minérale, d’autres des temples anciens.\n \n Tu en as un autre avec un peu la même histoire. Nek Chand. employé ordinaire (inspecteur des routes), a commencé, dans les années 1950, à collecter des déchets et gravats, céramiques cassées, pierres, matériaux récupérés  pour bâtir un jardin entier, peuplé de sculptures de figures humaines, d’animaux, de mosaïques, d’allées, de passages, de cascades, bref : un monde entier créé avec des « restes » de la société.">
-  <img src="Marginal/Internet/Palais Idéal.jpg" alt="image 2">
-</div>
-      
+    <div class="card"
+      data-text="Ferdinand Cheval était un simple facteur rural de la Drôme, né en 1836 et mort en 1924.\n\nÀ 43 ans, en 1879, il trébuche sur une pierre étrange qui déclenche un rêve ancien.\n\nPendant 33 ans, de 1879 à 1912, il construit seul son Palais Idéal à Hauterives.\n\nNek Chand, inspecteur des routes en Inde, commence dans les années 1950 à collecter des déchets pour créer un immense jardin de sculptures.">
+      <img src="Marginal/Internet/Palais Idéal.jpg" alt="Palais Idéal">
     </div>
+
   </div>
+</div>
 
-  <script>
-    const container = document.getElementById('container');
+<script>
+const container = document.getElementById("container");
 
-    function formatTextLiteral(str){
-      if(!str) return '';
-      let s = str.replace(/\\n\s*\\n/g, '<br><br>');
-      s = s.replace(/\\n/g, '<br>');
-      return s;
-    }
+function formatText(str){
+  return str
+    .replace(/\\n\\n/g,"<br><br>")
+    .replace(/\\n/g,"<br>");
+}
 
-    container.addEventListener('click', e => {
-      const card = e.target.closest('.card');
-      if(!card) return;
+container.addEventListener("click", e => {
+  const card = e.target.closest(".card");
+  if(!card) return;
 
-      const raw = card.getAttribute('data-text') || '';
-      const html = formatTextLiteral(raw);
+  const html = formatText(card.dataset.text);
 
-      container.innerHTML = `
-        <div class="reader">
-          <div class="content">${html}</div>
-        </div>
-      `;
-      document.body.style.background = '#ffffff';
-      window.scrollTo({top:0,behavior:'smooth'});
-    });
-  </script>
+  container.innerHTML = `
+    <div class="reader">
+      <div class="content">${html}</div>
+    </div>
+  `;
+
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+</script>
+
 </body>
 </html>
