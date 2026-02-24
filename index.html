@@ -1,136 +1,206 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Débordement</title>
- <style>
-  :root{
-    --btn-bg: #0b141b;
-    --btn-border: rgba(255,255,255,.75);
-    --text: rgba(255,255,255,.92);
-    --frame-gap: clamp(16px, 2vw, 30px);
-  }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Débordement</title>
 
-  *{ box-sizing: border-box; }
+<style>
+:root{
+  --btn-bg: #0b141b;
+  --btn-border: rgba(255,255,255,.75);
+  --text: rgba(255,255,255,.92);
+  --frame-gap: clamp(16px, 2vw, 30px);
+}
 
-  body{
-    margin:0;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#2b5561; /* ton fond */
-    font-family: "MingLiU", "MingLiU", serif;
-  }
+*{ box-sizing: border-box; }
 
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#2b5561;
+  font-family: "MingLiU", serif;
+}
+
+.stage{
+  width: min(1400px, 95vw);
+  min-height: 100vh;
+  display:grid;
+  grid-template-columns: 1fr minmax(240px, 460px) 1fr;
+  gap: var(--frame-gap);
+  align-items:center;
+  padding: 40px 30px;
+}
+
+.col{
+  display:flex;
+  flex-direction:column;
+  gap: 22px;
+  justify-content:center;
+}
+
+.col.left{ align-items:flex-start; }
+.col.right{ align-items:flex-end; }
+
+.nav-btn{
+  width: min(320px, 24vw);
+  min-width: 240px;
+  background: var(--btn-bg);
+  color: var(--text);
+  border: 2px solid var(--btn-border);
+  padding: 20px 18px;
+  font-size: clamp(20px, 1.7vw, 30px);
+  line-height: 1.1;
+  text-align:center;
+  cursor:pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.nav-btn:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,.25);
+}
+
+.center{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding-top: 20px;
+}
+
+.center .hero{
+  width: min(440px, 32vw);
+  object-fit:contain;
+}
+
+/* ---------------- MODAL ---------------- */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,.6);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .3s ease;
+}
+
+.modal.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.modal-box{
+  background:#0b141b;
+  color:white;
+  padding:40px;
+  max-width:600px;
+  width:90%;
+  border:2px solid rgba(255,255,255,.7);
+  text-align:center;
+  position:relative;
+  animation: pop .25s ease;
+}
+
+@keyframes pop{
+  from{ transform: scale(.9); opacity:0; }
+  to{ transform: scale(1); opacity:1; }
+}
+
+.close-btn{
+  position:absolute;
+  top:10px;
+  right:15px;
+  font-size:22px;
+  cursor:pointer;
+}
+
+/* Responsive */
+@media (max-width: 980px){
   .stage{
-    width: min(1400px, 95vw);
-    min-height: 100vh;               /* évite que ça coupe */
-    display:grid;
-    grid-template-columns: 1fr minmax(240px, 460px) 1fr;
-    gap: var(--frame-gap);
+    grid-template-columns: 1fr;
+    padding: 30px 20px;
+  }
+
+  .col.left, .col.right{
     align-items:center;
-    padding: 40px 30px;              /* plus d’espace haut/bas */
   }
-
-  .col{
-    display:flex;
-    flex-direction:column;
-    gap: 22px;                       /* espace entre boutons réduit */
-    justify-content:center;
-  }
-
-  .col.left{ align-items:flex-start; }
-  .col.right{ align-items:flex-end; }
 
   .nav-btn{
-    width: min(320px, 24vw);         /* plus petit */
-    min-width: 240px;
-    background: var(--btn-bg);
-    color: var(--text);
-    border: 2px solid var(--btn-border);
-    padding: 20px 18px;              /* padding réduit */
-    font-size: clamp(20px, 1.7vw, 30px); /* texte plus petit */
-    line-height: 1.1;
-    text-align:center;
-    cursor:pointer;
-    transition: transform .15s ease, box-shadow .15s ease;
-  }
-
-  .nav-btn:hover{
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(0,0,0,.25);
+    width: 90%;
+    min-width: 0;
   }
 
   .center{
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;          /* remonte le vase */
-    padding-top: 20px;               /* petit décalage vers le haut */
+    padding: 20px 0;
+    align-items:center;
   }
-
-  .center .hero{
-    width: min(440px, 32vw);         /* vase plus petit */
-    object-fit:contain;
-  }
-
-  /* Responsive */
-  @media (max-width: 980px){
-    .stage{
-      grid-template-columns: 1fr;
-      padding: 30px 20px;
-    }
-
-    .col.left, .col.right{
-      align-items:center;
-    }
-
-    .nav-btn{
-      width: 90%;
-      min-width: 0;
-    }
-
-    .center{
-      padding: 20px 0;
-      align-items:center;
-    }
-  }
+}
 </style>
 </head>
 
 <body>
-  <main class="stage">
-    <!-- Colonne gauche -->
-    <nav class="col left" aria-label="Navigation gauche">
-      <button class="nav-btn" data-href="modele-de-debordement.html">Modèle de<br>débordement</button>
-      <button class="nav-btn" data-href="evaluer-un-recipient.html">Evaluer un<br>récipient</button>
-      <button class="nav-btn" data-href="strat-de-debordement.html">Strat de<br>débordement</button>
-      <button class="nav-btn" data-href="historique-de-debordement.html">Historique de<br>débordement</button>
-    </nav>
 
-    <!-- Centre -->
-    <section class="center" aria-label="Illustration centrale">
-      <!-- Remplace src par ton image (ou enlève l'img si tu gères autrement) -->
-      <img class="hero" src="Fond/Vase.png" alt="Illustration d'un vase" />
-    </section>
+<main class="stage">
 
-    <!-- Colonne droite -->
-    <nav class="col right" aria-label="Navigation droite">
-      <button class="nav-btn" data-href="possibilite-de-debordement.html">Possibilité de<br>débordement</button>
-      <button class="nav-btn" data-href="ideal-de-debordement.html">Idéal de<br>débordement</button>
-      <button class="nav-btn" data-href="esthetique-de-debordement.html">Esthétique de<br>débordement</button>
-    </nav>
-  </main>
+  <!-- Colonne gauche -->
+  <nav class="col left">
+    <button class="nav-btn" data-text="Voici le contenu du Modèle de débordement.">Modèle de<br>débordement</button>
+    <button class="nav-btn" data-text="Ici tu peux évaluer un récipient selon différents critères.">Evaluer un<br>récipient</button>
+    <button class="nav-btn" data-text="Les stratégies de débordement permettent d’anticiper les excès.">Strat de<br>débordement</button>
+    <button class="nav-btn" data-text="Historique complet des débordements enregistrés.">Historique de<br>débordement</button>
+  </nav>
 
-  <script>
-    // Navigation : remplace les data-href par tes liens
-    document.querySelectorAll(".nav-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const href = btn.getAttribute("data-href");
-        if (href) window.location.href = href;
-      });
-    });
-  </script>
+  <!-- Centre -->
+  <section class="center">
+    <img class="hero" src="Fond/Vase.png" alt="Illustration d'un vase" />
+  </section>
+
+  <!-- Colonne droite -->
+  <nav class="col right">
+    <button class="nav-btn" data-text="Analyse des possibilités de débordement selon le contexte.">Possibilité de<br>débordement</button>
+    <button class="nav-btn" data-text="L’idéal de débordement représente le point d’équilibre critique.">Idéal de<br>débordement</button>
+    <button class="nav-btn" data-text="Étude esthétique des formes liées au débordement.">Esthétique de<br>débordement</button>
+  </nav>
+
+</main>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <span class="close-btn" id="close">&times;</span>
+    <p id="modal-text"></p>
+  </div>
+</div>
+
+<script>
+const modal = document.getElementById("modal");
+const modalText = document.getElementById("modal-text");
+const closeBtn = document.getElementById("close");
+
+document.querySelectorAll(".nav-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const text = btn.getAttribute("data-text");
+    modalText.textContent = text;
+    modal.classList.add("active");
+  });
+});
+
+closeBtn.addEventListener("click", () => {
+  modal.classList.remove("active");
+});
+
+modal.addEventListener("click", (e) => {
+  if(e.target === modal){
+    modal.classList.remove("active");
+  }
+});
+</script>
+
 </body>
 </html>
