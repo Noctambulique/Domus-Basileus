@@ -1,204 +1,150 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Débordement</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cercle + 4 images</title>
+  <style>
+    :root{
+      --outer: 420px;      /* diamètre cercle extérieur */
+      --inner: 140px;      /* diamètre cercle central */
+      --gap: 18px;         /* espace entre extérieur et intérieur (visuel) */
+      --bg: #0f1220;
+      --ring: rgba(255,255,255,.15);
+    }
 
-<style>
-:root{
-  --btn-bg: #0b141b;
-  --btn-border: rgba(255,255,255,.75);
-  --text: rgba(255,255,255,.92);
-  --frame-gap: clamp(16px, 2vw, 30px);
-}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background: radial-gradient(1200px 600px at 50% 40%, #1a2050, var(--bg));
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
 
-*{ box-sizing: border-box; }
+    .wrap{
+      width: var(--outer);
+      height: var(--outer);
+      position: relative;
+      display:grid;
+      place-items:center;
+    }
 
-body{
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#2b5561;
-  font-family: "MingLiU", serif;
-}
+    /* Cercle extérieur (masque) */
+    .outer{
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      overflow:hidden; /* important: tout est coupé dans le cercle */
+      box-shadow: 0 18px 60px rgba(0,0,0,.55);
+      outline: 2px solid var(--ring);
+      background: rgba(255,255,255,.03);
+    }
 
-.stage{
-  width: min(1400px, 95vw);
-  min-height: 100vh;
-  display:grid;
-  grid-template-columns: 1fr minmax(240px, 460px) 1fr;
-  gap: var(--frame-gap);
-  align-items:center;
-  padding: 40px 30px;
-}
+    /* Chaque quadrant prend la moitié largeur/hauteur */
+    .quad{
+      position:absolute;
+      width:50%;
+      height:50%;
+      overflow:hidden; /* coupe l'image dans le quartier */
+    }
 
-.col{
-  display:flex;
-  flex-direction:column;
-  gap: 22px;
-  justify-content:center;
-}
+    .q1{ left:0; top:0; }
+    .q2{ right:0; top:0; }
+    .q3{ left:0; bottom:0; }
+    .q4{ right:0; bottom:0; }
 
-.col.left{ align-items:flex-start; }
-.col.right{ align-items:flex-end; }
+    /* Images: couvrent leur zone, et donc seront coupées */
+    .quad img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transform: scale(1.08); /* léger zoom pour plus joli */
+      filter: saturate(1.05) contrast(1.05);
+    }
 
-.nav-btn{
-  width: min(320px, 24vw);
-  min-width: 240px;
-  background: var(--btn-bg);
-  color: var(--text);
-  border: 2px solid var(--btn-border);
-  padding: 20px 18px;
-  font-size: clamp(20px, 1.7vw, 30px);
-  line-height: 1.1;
-  text-align:center;
-  cursor:pointer;
-  transition: transform .15s ease, box-shadow .15s ease;
-}
+    /* Ligne de séparation en croix */
+    .outer::before,
+    .outer::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:0;
+      width:2px;
+      height:100%;
+      background: rgba(255,255,255,.22);
+      transform: translateX(-50%);
+      pointer-events:none;
+    }
+    .outer::after{
+      left:0;
+      top:50%;
+      width:100%;
+      height:2px;
+      transform: translateY(-50%);
+    }
 
-.nav-btn:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(0,0,0,.25);
-}
+    /* Cercle central (par-dessus) */
+    .inner{
+      width: var(--inner);
+      height: var(--inner);
+      border-radius:50%;
+      background: rgba(10,12,25,.85);
+      outline: 2px solid rgba(255,255,255,.22);
+      box-shadow: 0 14px 40px rgba(0,0,0,.55);
+      position: relative;
+      z-index: 2;
+      display:grid;
+      place-items:center;
+    }
 
-.center{
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-  padding-top: 20px;
-}
+    /* Un petit “anneau” entre extérieur et intérieur (optionnel) */
+    .inner::before{
+      content:"";
+      position:absolute;
+      inset: calc(-1 * var(--gap));
+      border-radius:50%;
+      border: 2px solid rgba(255,255,255,.12);
+      z-index:-1;
+    }
 
-.center .hero{
-  width: min(440px, 32vw);
-  object-fit:contain;
-}
+    .label{
+      color: rgba(255,255,255,.9);
+      font-weight:700;
+      letter-spacing:.4px;
+      text-align:center;
+      padding: 10px 14px;
+      font-size: 14px;
+      line-height: 1.2;
+    }
 
-/* ---------------- MODAL ---------------- */
-
-.modal{
-  position:fixed;
-  inset:0;
-  background: rgba(0,0,0,.6);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  opacity:0;
-  pointer-events:none;
-  transition: opacity .3s ease;
-}
-
-.modal.active{
-  opacity:1;
-  pointer-events:auto;
-}
-
-.modal-box{
-  background:#0b141b;
-  color:white;
-  padding:40px;
-  max-width:600px;
-  width:90%;
-  border:2px solid rgba(255,255,255,.7);
-  text-align:center;
-  position:relative;
-  animation: pop .25s ease;
-}
-
-@keyframes pop{
-  from{ transform: scale(.9); opacity:0; }
-  to{ transform: scale(1); opacity:1; }
-}
-
-.close-btn{
-  position:absolute;
-  top:10px;
-  right:15px;
-  font-size:22px;
-  cursor:pointer;
-}
-
-/* Responsive */
-@media (max-width: 980px){
-  .stage{
-    grid-template-columns: 1fr;
-    padding: 30px 20px;
-  }
-
-  .col.left, .col.right{
-    align-items:center;
-  }
-
-  .nav-btn{
-    width: 90%;
-    min-width: 0;
-  }
-
-  .center{
-    padding: 20px 0;
-    align-items:center;
-  }
-}
-</style>
+    /* Responsive */
+    @media (max-width: 520px){
+      :root{ --outer: 320px; --inner: 110px; --gap: 14px; }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="wrap">
+    <div class="outer">
+      <div class="quad q1">
+        <img src="https://picsum.photos/id/1015/800/800" alt="image 1">
+      </div>
+      <div class="quad q2">
+        <img src="https://picsum.photos/id/1025/800/800" alt="image 2">
+      </div>
+      <div class="quad q3">
+        <img src="https://picsum.photos/id/1035/800/800" alt="image 3">
+      </div>
+      <div class="quad q4">
+        <img src="https://picsum.photos/id/1041/800/800" alt="image 4">
+      </div>
+    </div>
 
-<main class="stage">
-
-  <!-- Colonne gauche -->
-  <nav class="col left">
-    <button class="nav-btn" data-text="Faire déborder le vase, le sceller, remplir le vide.">Modèle de<br>débordement</button>
-    <button class="nav-btn" data-text="Entre névrose, sain, rare et mythique">Evaluer un<br>récipient</button>
-    <button class="nav-btn" data-text="Par le jeu, par le loup ou par l'archer">Stratégie de<br>débordement</button>
-  </nav>
-
-  <!-- Centre -->
-  <section class="center">
-    <img class="hero" src="Fond/Vase.png" alt="Illustration d'un vase" />
-  </section>
-
-  <!-- Colonne droite -->
-  <nav class="col right">
-    <button class="nav-btn" data-text="Historique complet des débordements enregistrés.">Historique de<br>débordement</button>
-    <button class="nav-btn" data-text="Étude esthétique des formes liées au débordement.">Esthétique de<br>débordement</button>
-  </nav>
-
-</main>
-
-<!-- Modal -->
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <span class="close-btn" id="close">&times;</span>
-    <p id="modal-text"></p>
+    <div class="inner">
+      <div class="label">Cercle<br>central</div>
+    </div>
   </div>
-</div>
-
-<script>
-const modal = document.getElementById("modal");
-const modalText = document.getElementById("modal-text");
-const closeBtn = document.getElementById("close");
-
-document.querySelectorAll(".nav-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const text = btn.getAttribute("data-text");
-    modalText.textContent = text;
-    modal.classList.add("active");
-  });
-});
-
-closeBtn.addEventListener("click", () => {
-  modal.classList.remove("active");
-});
-
-modal.addEventListener("click", (e) => {
-  if(e.target === modal){
-    modal.classList.remove("active");
-  }
-});
-</script>
-
 </body>
 </html>
