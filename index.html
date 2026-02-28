@@ -3,148 +3,167 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Cercle + 4 images</title>
+  <title>5 quartiers autour d’un cercle</title>
   <style>
-    :root{
-      --outer: 420px;      /* diamètre cercle extérieur */
-      --inner: 140px;      /* diamètre cercle central */
-      --gap: 18px;         /* espace entre extérieur et intérieur (visuel) */
-      --bg: #0f1220;
-      --ring: rgba(255,255,255,.15);
-    }
-
     body{
       margin:0;
       min-height:100vh;
       display:grid;
       place-items:center;
-      background: radial-gradient(1200px 600px at 50% 40%, #1a2050, var(--bg));
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:#000;
+      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
 
-    .wrap{
-      width: var(--outer);
-      height: var(--outer);
-      position: relative;
-      display:grid;
-      place-items:center;
+    .scene{
+      width:min(720px, 92vw);
+      aspect-ratio: 1/1;
+      position:relative;
     }
 
-    /* Cercle extérieur (masque) */
-    .outer{
+    /* SVG responsive */
+    svg{ width:100%; height:100%; display:block; }
+
+    /* icônes décor (optionnel) */
+    .icon{
       position:absolute;
-      inset:0;
-      border-radius:50%;
-      overflow:hidden; /* important: tout est coupé dans le cercle */
-      box-shadow: 0 18px 60px rgba(0,0,0,.55);
-      outline: 2px solid var(--ring);
-      background: rgba(255,255,255,.03);
-    }
-
-    /* Chaque quadrant prend la moitié largeur/hauteur */
-    .quad{
-      position:absolute;
-      width:50%;
-      height:50%;
-      overflow:hidden; /* coupe l'image dans le quartier */
-    }
-
-    .q1{ left:0; top:0; }
-    .q2{ right:0; top:0; }
-    .q3{ left:0; bottom:0; }
-    .q4{ right:0; bottom:0; }
-
-    /* Images: couvrent leur zone, et donc seront coupées */
-    .quad img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      transform: scale(1.08); /* léger zoom pour plus joli */
-      filter: saturate(1.05) contrast(1.05);
-    }
-
-    /* Ligne de séparation en croix */
-    .outer::before,
-    .outer::after{
-      content:"";
-      position:absolute;
-      left:50%;
-      top:0;
-      width:2px;
-      height:100%;
-      background: rgba(255,255,255,.22);
-      transform: translateX(-50%);
+      width:16%;
+      height:auto;
+      filter: drop-shadow(0 10px 25px rgba(0,0,0,.65));
+      user-select:none;
       pointer-events:none;
     }
-    .outer::after{
-      left:0;
-      top:50%;
-      width:100%;
-      height:2px;
-      transform: translateY(-50%);
-    }
-
-    /* Cercle central (par-dessus) */
-    .inner{
-      width: var(--inner);
-      height: var(--inner);
-      border-radius:50%;
-      background: rgba(10,12,25,.85);
-      outline: 2px solid rgba(255,255,255,.22);
-      box-shadow: 0 14px 40px rgba(0,0,0,.55);
-      position: relative;
-      z-index: 2;
-      display:grid;
-      place-items:center;
-    }
-
-    /* Un petit “anneau” entre extérieur et intérieur (optionnel) */
-    .inner::before{
-      content:"";
-      position:absolute;
-      inset: calc(-1 * var(--gap));
-      border-radius:50%;
-      border: 2px solid rgba(255,255,255,.12);
-      z-index:-1;
-    }
-
-    .label{
-      color: rgba(255,255,255,.9);
-      font-weight:700;
-      letter-spacing:.4px;
-      text-align:center;
-      padding: 10px 14px;
-      font-size: 14px;
-      line-height: 1.2;
-    }
-
-    /* Responsive */
-    @media (max-width: 520px){
-      :root{ --outer: 320px; --inner: 110px; --gap: 14px; }
-    }
+    .icon.left  { left: 6%;  top: 44%; transform: translate(-50%,-50%); }
+    .icon.right { right: 6%; top: 44%; transform: translate(50%,-50%); }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="outer">
-      <div class="quad q1">
-        <img src="https://picsum.photos/id/1015/800/800" alt="image 1">
-      </div>
-      <div class="quad q2">
-        <img src="https://picsum.photos/id/1025/800/800" alt="image 2">
-      </div>
-      <div class="quad q3">
-        <img src="https://picsum.photos/id/1035/800/800" alt="image 3">
-      </div>
-      <div class="quad q4">
-        <img src="https://picsum.photos/id/1041/800/800" alt="image 4">
-      </div>
-    </div>
+  <div class="scene">
+    <!-- Optionnel : images décor comme ton pot / dés -->
+    <!-- <img class="icon left"  src="pot.png" alt=""> -->
+    <!-- <img class="icon right" src="dice.png" alt=""> -->
 
-    <div class="inner">
-      <div class="label">Cercle<br>central</div>
-    </div>
+    <svg viewBox="0 0 600 600" aria-label="Anneau en 5 secteurs">
+      <defs id="defs"></defs>
+
+      <!-- Fond (facultatif) -->
+      <rect x="0" y="0" width="600" height="600" fill="transparent"></rect>
+
+      <!-- Ici on injecte les secteurs + images via JS -->
+
+      <!-- Séparations + cercles (dessinées au-dessus) -->
+      <g id="lines"></g>
+
+      <!-- Cercle central -->
+      <circle cx="300" cy="300" r="120" fill="#1a1a1a" stroke="#fff" stroke-width="10"></circle>
+    </svg>
   </div>
+
+  <script>
+    // =============== CONFIG ===============
+    const cx = 300, cy = 300;
+    const rOuter = 280;   // rayon externe de l'anneau
+    const rInner = 140;   // rayon interne (juste autour du cercle central)
+    const strokeW = 8;
+
+    // 5 images (remplace par les tiennes)
+    const images = [
+      "https://picsum.photos/id/1011/1200/1200",
+      "https://picsum.photos/id/1025/1200/1200",
+      "https://picsum.photos/id/1035/1200/1200",
+      "https://picsum.photos/id/1047/1200/1200",
+      "https://picsum.photos/id/1062/1200/1200"
+    ];
+
+    // Angles (en degrés) : 5 secteurs égaux de 72°
+    // Départ à -90° (= en haut). Tu peux modifier pour coller encore plus à ta compo.
+    const sectors = Array.from({length: 5}, (_, i) => {
+      const a0 = -90 + i * 72;
+      const a1 = a0 + 72;
+      return [a0, a1];
+    });
+
+    // =============== UTILS ===============
+    const svg = document.querySelector("svg");
+    const defs = document.getElementById("defs");
+    const lines = document.getElementById("lines");
+
+    const toRad = d => (d * Math.PI) / 180;
+
+    function polar(cx, cy, r, angDeg){
+      const a = toRad(angDeg);
+      return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+    }
+
+    // Path d'un secteur "anneau" (entre rInner et rOuter)
+    function annulusSectorPath(cx, cy, r0, r1, a0, a1){
+      const p1 = polar(cx, cy, r1, a0);
+      const p2 = polar(cx, cy, r1, a1);
+      const p3 = polar(cx, cy, r0, a1);
+      const p4 = polar(cx, cy, r0, a0);
+
+      const largeArc = (a1 - a0) > 180 ? 1 : 0;
+
+      return [
+        `M ${p1.x} ${p1.y}`,
+        `A ${r1} ${r1} 0 ${largeArc} 1 ${p2.x} ${p2.y}`,
+        `L ${p3.x} ${p3.y}`,
+        `A ${r0} ${r0} 0 ${largeArc} 0 ${p4.x} ${p4.y}`,
+        "Z"
+      ].join(" ");
+    }
+
+    function create(tag, attrs = {}){
+      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      for (const [k,v] of Object.entries(attrs)) el.setAttribute(k, v);
+      return el;
+    }
+
+    // =============== BUILD ===============
+    sectors.forEach(([a0,a1], idx) => {
+      const clipId = `clip-${idx}`;
+      const d = annulusSectorPath(cx, cy, rInner, rOuter, a0, a1);
+
+      // clipPath
+      const cp = create("clipPath", { id: clipId });
+      cp.appendChild(create("path", { d }));
+      defs.appendChild(cp);
+
+      // image clippée
+      const img = create("image", {
+        href: images[idx],
+        x: 0, y: 0, width: 600, height: 600,
+        preserveAspectRatio: "xMidYMid slice",
+        clip-path: `url(#${clipId})`
+      });
+      svg.insertBefore(img, lines); // sous les lignes
+
+      // contour blanc du secteur (optionnel mais proche de ta compo)
+      const outline = create("path", {
+        d,
+        fill: "transparent",
+        stroke: "white",
+        "stroke-width": strokeW,
+        "stroke-linejoin": "round"
+      });
+      lines.appendChild(outline);
+    });
+
+    // Cercle externe de l'anneau (petit plus esthétique)
+    lines.appendChild(create("circle", {
+      cx, cy, r: rOuter,
+      fill: "transparent",
+      stroke: "white",
+      "stroke-width": strokeW
+    }));
+
+    // Cercle interne de l'anneau (autour du cercle central)
+    lines.appendChild(create("circle", {
+      cx, cy, r: rInner,
+      fill: "transparent",
+      stroke: "white",
+      "stroke-width": strokeW
+    }));
+  </script>
 </body>
 </html>
