@@ -13,48 +13,23 @@
       background:#000;
       font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
-
     .scene{
       width:min(720px, 92vw);
       aspect-ratio: 1/1;
       position:relative;
     }
-
-    /* SVG responsive */
     svg{ width:100%; height:100%; display:block; }
-
-    /* icônes décor (optionnel) */
-    .icon{
-      position:absolute;
-      width:16%;
-      height:auto;
-      filter: drop-shadow(0 10px 25px rgba(0,0,0,.65));
-      user-select:none;
-      pointer-events:none;
-    }
-    .icon.left  { left: 6%;  top: 44%; transform: translate(-50%,-50%); }
-    .icon.right { right: 6%; top: 44%; transform: translate(50%,-50%); }
   </style>
 </head>
 
 <body>
   <div class="scene">
-    <!-- Optionnel : images décor comme ton pot / dés -->
-    <!-- <img class="icon left"  src="pot.png" alt=""> -->
-    <!-- <img class="icon right" src="dice.png" alt=""> -->
-
-    <svg viewBox="0 0 600 600" aria-label="Anneau en 5 secteurs">
+    <svg id="wheel" viewBox="0 0 600 600" aria-label="Anneau en 5 secteurs">
       <defs id="defs"></defs>
+      <g id="layerImages"></g>
+      <g id="layerLines"></g>
 
-      <!-- Fond (facultatif) -->
-      <rect x="0" y="0" width="600" height="600" fill="transparent"></rect>
-
-      <!-- Ici on injecte les secteurs + images via JS -->
-
-      <!-- Séparations + cercles (dessinées au-dessus) -->
-      <g id="lines"></g>
-
-      <!-- Cercle central -->
+      <!-- Cercle central (au-dessus) -->
       <circle cx="300" cy="300" r="120" fill="#1a1a1a" stroke="#fff" stroke-width="10"></circle>
     </svg>
   </div>
@@ -63,10 +38,10 @@
     // =============== CONFIG ===============
     const cx = 300, cy = 300;
     const rOuter = 280;   // rayon externe de l'anneau
-    const rInner = 140;   // rayon interne (juste autour du cercle central)
+    const rInner = 140;   // rayon interne (autour du cercle central)
     const strokeW = 8;
 
-    // 5 images (remplace par les tiennes)
+    // Remplace par tes images
     const images = [
       "https://picsum.photos/id/1011/1200/1200",
       "https://picsum.photos/id/1025/1200/1200",
@@ -75,8 +50,7 @@
       "https://picsum.photos/id/1062/1200/1200"
     ];
 
-    // Angles (en degrés) : 5 secteurs égaux de 72°
-    // Départ à -90° (= en haut). Tu peux modifier pour coller encore plus à ta compo.
+    // 5 secteurs égaux (72°) - départ en haut
     const sectors = Array.from({length: 5}, (_, i) => {
       const a0 = -90 + i * 72;
       const a1 = a0 + 72;
@@ -84,9 +58,10 @@
     });
 
     // =============== UTILS ===============
-    const svg = document.querySelector("svg");
+    const svg = document.getElementById("wheel");
     const defs = document.getElementById("defs");
-    const lines = document.getElementById("lines");
+    const layerImages = document.getElementById("layerImages");
+    const layerLines = document.getElementById("layerLines");
 
     const toRad = d => (d * Math.PI) / 180;
 
@@ -95,7 +70,6 @@
       return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
     }
 
-    // Path d'un secteur "anneau" (entre rInner et rOuter)
     function annulusSectorPath(cx, cy, r0, r1, a0, a1){
       const p1 = polar(cx, cy, r1, a0);
       const p2 = polar(cx, cy, r1, a1);
@@ -119,46 +93,53 @@
       return el;
     }
 
+    // Pour compat image (certains navigateurs)
+    function setHref(imgEl, url){
+      imgEl.setAttribute("href", url);
+      imgEl.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", url);
+    }
+
     // =============== BUILD ===============
     sectors.forEach(([a0,a1], idx) => {
       const clipId = `clip-${idx}`;
       const d = annulusSectorPath(cx, cy, rInner, rOuter, a0, a1);
 
-      // clipPath
-      const cp = create("clipPath", { id: clipId });
+      // clipPath (important: userSpaceOnUse)
+      const cp = create("clipPath", { id: clipId, clipPathUnits: "userSpaceOnUse" });
       cp.appendChild(create("path", { d }));
       defs.appendChild(cp);
 
       // image clippée
       const img = create("image", {
-        href: images[idx],
         x: 0, y: 0, width: 600, height: 600,
-        preserveAspectRatio: "xMidYMid slice",
-        clip-path: `url(#${clipId})`
+        preserveAspectRatio: "xMidYMid slice"
       });
-      svg.insertBefore(img, lines); // sous les lignes
+      setHref(img, images[idx]);
 
-      // contour blanc du secteur (optionnel mais proche de ta compo)
-      const outline = create("path", {
+      // ✅ ici le bug était: clip-path sans guillemets
+      img.setAttribute("clip-path", `url(#${clipId})`);
+
+      layerImages.appendChild(img);
+
+      // contour blanc du secteur
+      layerLines.appendChild(create("path", {
         d,
         fill: "transparent",
         stroke: "white",
         "stroke-width": strokeW,
         "stroke-linejoin": "round"
-      });
-      lines.appendChild(outline);
+      }));
     });
 
-    // Cercle externe de l'anneau (petit plus esthétique)
-    lines.appendChild(create("circle", {
+    // cercles de l’anneau
+    layerLines.appendChild(create("circle", {
       cx, cy, r: rOuter,
       fill: "transparent",
       stroke: "white",
       "stroke-width": strokeW
     }));
 
-    // Cercle interne de l'anneau (autour du cercle central)
-    lines.appendChild(create("circle", {
+    layerLines.appendChild(create("circle", {
       cx, cy, r: rInner,
       fill: "transparent",
       stroke: "white",
