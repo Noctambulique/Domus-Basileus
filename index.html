@@ -20,12 +20,11 @@
 
 <body>
   <div class="scene">
-    <svg id="wheel" viewBox="0 0 600 600">
+    <svg viewBox="0 0 600 600">
       <defs id="defs"></defs>
       <g id="layerImages"></g>
       <g id="layerLines"></g>
 
-      <!-- Cercle central -->
       <circle cx="300" cy="300" r="120" fill="#1a1a1a" stroke="#fff" stroke-width="10"></circle>
     </svg>
   </div>
@@ -36,13 +35,12 @@
     const rInner = 140;
     const strokeW = 8;
 
-    // ✅ Réglages image par image : taille + décalage vertical
-    // offsetY > 0 descend, offsetY < 0 monte
+    // 🔥 Réglages ajustés
     const images = [
-      { src: "Fond/Rafael.png",  size: 225, offsetY: 18 },
-      { src: "Fond/Octavie.png", size: 225, offsetY: 18 },
+      { src: "Fond/Rafael.png",  size: 230, offsetY: 30 },  // un peu plus bas
+      { src: "Fond/Octavie.png", size: 230, offsetY: 30 },  // un peu plus bas
       { src: "Fond/Vase.png",    size: 200, offsetY: 0  },
-      { src: "Fond/Basile.png",  size: 270, offsetY: 10 }, // plus gros + moins coupé
+      { src: "Fond/Basile.png",  size: 310, offsetY: 45 },  // beaucoup plus gros + bien descendu
       { src: "Fond/Dé.png",      size: 200, offsetY: 0  }
     ];
 
@@ -112,7 +110,6 @@
       const midRadius = (rInner + rOuter) / 2;
       const centerPos = polar(cx, cy, midRadius, midAngle);
 
-      // ✅ taille par image
       const imgSize = images[idx].size;
 
       const img = create("image", {
