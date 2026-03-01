@@ -15,6 +15,10 @@
     }
     .scene{ width:min(720px, 92vw); aspect-ratio:1/1; }
     svg{ width:100%; height:100%; display:block; }
+
+    /* Bonus UX */
+    a { cursor: pointer; }
+    a:focus-visible { outline: 2px solid #fff; outline-offset: 6px; }
   </style>
 </head>
 
@@ -22,7 +26,7 @@
   <div class="scene">
     <svg viewBox="0 0 600 600">
       <defs id="defs"></defs>
-      <g id="layerImages"></g>
+      <g id="layerLinks"></g>
       <g id="layerLines"></g>
 
       <circle cx="300" cy="300" r="120" fill="#1a1a1a" stroke="#fff" stroke-width="10"></circle>
@@ -35,13 +39,24 @@
     const rInner = 140;
     const strokeW = 8;
 
-    // 🔥 NOUVELLES TAILLES
+    // Images + réglages
+    // - preserveAspectRatio est géré globalement via "meet" (pas de rognage)
+    // - scale te permet d'agrandir/rétrécir sans couper (car "meet")
     const images = [
-      { src: "Fond/Rafael.png",  size: 230, offsetY: 30 },
-      { src: "Fond/Octavie.png", size: 230, offsetY: 30 },
-      { src: "Fond/Vase.png",    size: 162, offsetY: 0  },   // -10% encore
-      { src: "Fond/Basile.png",  size: 390, offsetY: 130 },   // +36 px
-      { src: "Fond/Dé.png",      size: 162, offsetY: 0  }    // -10% encore
+      { src: "Fond/Rafael.png",  size: 230, offsetY: 30,  scale: 1 },
+      { src: "Fond/Octavie.png", size: 230, offsetY: 30,  scale: 1 },
+      { src: "Fond/Vase.png",    size: 162, offsetY: 0,   scale: 1 },
+      { src: "Fond/Basile.png",  size: 390, offsetY: 130, scale: 1 }, // <- ajuste scale ici si besoin
+      { src: "Fond/Dé.png",      size: 162, offsetY: 0,   scale: 1 }
+    ];
+
+    // Liens cliquables (1 lien par case, même ordre que images[])
+    const links = [
+      "https://exemple.com/rafael",
+      "https://exemple.com/octavie",
+      "https://exemple.com/vase",
+      "https://exemple.com/basile",
+      "https://exemple.com/de"
     ];
 
     const smallDeg = 36;
@@ -61,7 +76,7 @@
     ];
 
     const defs = document.getElementById("defs");
-    const layerImages = document.getElementById("layerImages");
+    const layerLinks = document.getElementById("layerLinks");
     const layerLines = document.getElementById("layerLines");
 
     const toRad = d => (d * Math.PI) / 180;
@@ -93,9 +108,11 @@
       return el;
     }
 
-    function setHref(imgEl, url){
-      imgEl.setAttribute("href", url);
-      imgEl.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", url);
+    function setHref(el, url){
+      // SVG2
+      el.setAttribute("href", url);
+      // compat xlink
+      el.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", url);
     }
 
     sectors.forEach(([a0,a1], idx) => {
@@ -111,30 +128,57 @@
       const centerPos = polar(cx, cy, midRadius, midAngle);
 
       const imgSize = images[idx].size;
+      const imgScale = images[idx].scale ?? 1;
 
+      // Lien cliquable par secteur
+      const a = create("a", { target: "_blank", rel: "noopener noreferrer" });
+      setHref(a, links[idx]);
+
+      // Groupe clippé
+      const g = create("g", { "clip-path": `url(#${clipId})` });
+
+      // Image (sans rognage)
       const img = create("image", {
         x: centerPos.x - imgSize / 2,
         y: centerPos.y - imgSize / 2 + images[idx].offsetY,
         width: imgSize,
         height: imgSize,
-        preserveAspectRatio: "xMidYMid slice"
+        preserveAspectRatio: "xMidYMid meet"
       });
-
       setHref(img, images[idx].src);
-      img.setAttribute("clip-path", `url(#${clipId})`);
-      layerImages.appendChild(img);
 
+      // Si tu veux agrandir/rétrécir une image sans la couper :
+      // on scale autour du centre du carré de l'image.
+      if (imgScale !== 1) {
+        const ox = centerPos.x;
+        const oy = centerPos.y + images[idx].offsetY; // pivot cohérent avec offset
+        img.setAttribute("transform", `translate(${ox} ${oy}) scale(${imgScale}) translate(${-ox} ${-oy})`);
+      }
+
+      g.appendChild(img);
+
+      // Hit area (au cas où l'image a des zones transparentes)
+      const hit = create("path", { d, fill: "transparent" });
+      g.appendChild(hit);
+
+      a.appendChild(g);
+      layerLinks.appendChild(a);
+
+      // Contour
       layerLines.appendChild(create("path", {
         d, fill:"transparent", stroke:"white",
-        "stroke-width": strokeW, "stroke-linejoin":"round"
+        "stroke-width": strokeW, "stroke-linejoin":"round",
+        "pointer-events":"none"
       }));
     });
 
     layerLines.appendChild(create("circle", {
-      cx, cy, r: rOuter, fill:"transparent", stroke:"white", "stroke-width": strokeW
+      cx, cy, r: rOuter, fill:"transparent", stroke:"white", "stroke-width": strokeW,
+      "pointer-events":"none"
     }));
     layerLines.appendChild(create("circle", {
-      cx, cy, r: rInner, fill:"transparent", stroke:"white", "stroke-width": strokeW
+      cx, cy, r: rInner, fill:"transparent", stroke:"white", "stroke-width": strokeW,
+      "pointer-events":"none"
     }));
   </script>
 </body>
