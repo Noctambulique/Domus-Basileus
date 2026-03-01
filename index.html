@@ -36,13 +36,14 @@
     const rInner = 140;
     const strokeW = 8;
 
-    // ✅ Images + décalage vertical (descendre si trop haut)
+    // ✅ Réglages image par image : taille + décalage vertical
+    // offsetY > 0 descend, offsetY < 0 monte
     const images = [
-      { src: "Fond/Rafael.png",  offsetY: 25 },
-      { src: "Fond/Octavie.png", offsetY: 25 },
-      { src: "Fond/Vase.png",    offsetY: 0  },
-      { src: "Fond/Basile.png",  offsetY: 45 },
-      { src: "Fond/Dé.png",      offsetY: 0  }
+      { src: "Fond/Rafael.png",  size: 225, offsetY: 18 },
+      { src: "Fond/Octavie.png", size: 225, offsetY: 18 },
+      { src: "Fond/Vase.png",    size: 200, offsetY: 0  },
+      { src: "Fond/Basile.png",  size: 270, offsetY: 10 }, // plus gros + moins coupé
+      { src: "Fond/Dé.png",      size: 200, offsetY: 0  }
     ];
 
     const smallDeg = 36;
@@ -61,7 +62,6 @@
       [smallEnd + 2*bigDeg, smallEnd + 3*bigDeg]
     ];
 
-    const svg = document.getElementById("wheel");
     const defs = document.getElementById("defs");
     const layerImages = document.getElementById("layerImages");
     const layerLines = document.getElementById("layerLines");
@@ -112,23 +112,18 @@
       const midRadius = (rInner + rOuter) / 2;
       const centerPos = polar(cx, cy, midRadius, midAngle);
 
-      const angleSize = a1 - a0;
-
-      // ✅ IMAGES PLUS PETITES (tu gardes 200 partout)
-      const imgSize = angleSize <= 40 ? 200 : 200;
+      // ✅ taille par image
+      const imgSize = images[idx].size;
 
       const img = create("image", {
         x: centerPos.x - imgSize / 2,
-        // ✅ applique le décalage vertical propre à l'image
         y: centerPos.y - imgSize / 2 + images[idx].offsetY,
         width: imgSize,
         height: imgSize,
         preserveAspectRatio: "xMidYMid slice"
       });
 
-      // ✅ maintenant images[idx] est un objet {src, offsetY}
       setHref(img, images[idx].src);
-
       img.setAttribute("clip-path", `url(#${clipId})`);
       layerImages.appendChild(img);
 
