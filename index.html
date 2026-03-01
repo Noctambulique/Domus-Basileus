@@ -36,12 +36,13 @@
     const rInner = 140;
     const strokeW = 8;
 
+    // ✅ Images + décalage vertical (descendre si trop haut)
     const images = [
-      "Fond/Rafael.png",
-      "Fond/Octavie.png",
-      "Fond/Vase.png",
-      "Fond/Basile.png",
-      "Fond/Dé.png"
+      { src: "Fond/Rafael.png",  offsetY: 25 },
+      { src: "Fond/Octavie.png", offsetY: 25 },
+      { src: "Fond/Vase.png",    offsetY: 0  },
+      { src: "Fond/Basile.png",  offsetY: 45 },
+      { src: "Fond/Dé.png",      offsetY: 0  }
     ];
 
     const smallDeg = 36;
@@ -113,18 +114,21 @@
 
       const angleSize = a1 - a0;
 
-      // ✅ IMAGES PLUS PETITES
+      // ✅ IMAGES PLUS PETITES (tu gardes 200 partout)
       const imgSize = angleSize <= 40 ? 200 : 200;
 
       const img = create("image", {
         x: centerPos.x - imgSize / 2,
-        y: centerPos.y - imgSize / 2,
+        // ✅ applique le décalage vertical propre à l'image
+        y: centerPos.y - imgSize / 2 + images[idx].offsetY,
         width: imgSize,
         height: imgSize,
         preserveAspectRatio: "xMidYMid slice"
       });
 
-      setHref(img, images[idx]);
+      // ✅ maintenant images[idx] est un objet {src, offsetY}
+      setHref(img, images[idx].src);
+
       img.setAttribute("clip-path", `url(#${clipId})`);
       layerImages.appendChild(img);
 
