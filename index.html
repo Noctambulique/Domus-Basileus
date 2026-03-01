@@ -40,18 +40,17 @@
       "Fond/Rafael.png",
       "Fond/Octavie.png",
       "Fond/Vase.png",
-      "Fond/Basile.png",   // === En haut ===
+      "Fond/Basile.png",
       "Fond/Dé.png"
     ];
 
-    // ========= ICI LA COMPOSITION =========
     const smallDeg = 36;
     const bottomCenter = 90;
-    const smallStart = bottomCenter - smallDeg; // 54
-    const smallMid   = bottomCenter;            // 90
-    const smallEnd   = bottomCenter + smallDeg; // 126
+    const smallStart = bottomCenter - smallDeg;
+    const smallMid   = bottomCenter;
+    const smallEnd   = bottomCenter + smallDeg;
 
-    const bigDeg = (360 - 2 * smallDeg) / 3; // 96
+    const bigDeg = (360 - 2 * smallDeg) / 3;
 
     const sectors = [
       [smallStart, smallMid],
@@ -60,7 +59,6 @@
       [smallEnd + bigDeg, smallEnd + 2*bigDeg],
       [smallEnd + 2*bigDeg, smallEnd + 3*bigDeg]
     ];
-    // =====================================
 
     const svg = document.getElementById("wheel");
     const defs = document.getElementById("defs");
@@ -105,18 +103,18 @@
       const clipId = `clip-${idx}`;
       const d = annulusSectorPath(cx, cy, rInner, rOuter, a0, a1);
 
-      // clipPath
       const cp = create("clipPath", { id: clipId, clipPathUnits: "userSpaceOnUse" });
       cp.appendChild(create("path", { d }));
       defs.appendChild(cp);
 
-      // ======= ICI : IMAGE ADAPTÉE AU SECTEUR =======
       const midAngle = (a0 + a1) / 2;
       const midRadius = (rInner + rOuter) / 2;
       const centerPos = polar(cx, cy, midRadius, midAngle);
 
       const angleSize = a1 - a0;
-      const imgSize = angleSize <= 40 ? 380 : 520; // petits vs grands secteurs
+
+      // ✅ IMAGES PLUS PETITES
+      const imgSize = angleSize <= 40 ? 260 : 380;
 
       const img = create("image", {
         x: centerPos.x - imgSize / 2,
@@ -125,13 +123,11 @@
         height: imgSize,
         preserveAspectRatio: "xMidYMid slice"
       });
-      // =============================================
 
       setHref(img, images[idx]);
       img.setAttribute("clip-path", `url(#${clipId})`);
       layerImages.appendChild(img);
 
-      // contours
       layerLines.appendChild(create("path", {
         d, fill:"transparent", stroke:"white",
         "stroke-width": strokeW, "stroke-linejoin":"round"
