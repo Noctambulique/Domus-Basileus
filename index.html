@@ -1,185 +1,262 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Disque</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Structure radiale personnalisable</title>
   <style>
-    body{
-      margin:0;
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      background:#000;
-      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    .scene{ width:min(720px, 92vw); aspect-ratio:1/1; }
-    svg{ width:100%; height:100%; display:block; }
+    :root {
+      --bg: #000;
+      --line: #fff;
+      --line-width: 8;
+      --size: min(92vmin, 980px);
+      --font: Arial, Helvetica, sans-serif;
 
-    /* Bonus UX */
-    a { cursor: pointer; }
-    a:focus-visible { outline: 2px solid #fff; outline-offset: 6px; }
+      /* Cercles */
+      --outer-ring-inner: 78;
+      --middle-ring-inner: 42;
+      --center-radius: 16;
+      --center-double-gap: 1.8;
+
+      /* Images : changer seulement ces variables pour personnaliser facilement */
+      --img-top-start: 218;
+      --img-top-end: 321;
+      --img-top-inner: 42;
+      --img-top-outer: 72;
+      --img-top-url: url('https://picsum.photos/id/1011/900/500');
+
+      --img-bottom-left-start: 148;
+      --img-bottom-left-end: 182;
+      --img-bottom-left-inner: 42;
+      --img-bottom-left-outer: 58;
+      --img-bottom-left-url: url('https://picsum.photos/id/1025/500/500');
+
+      --img-bottom-right-start: 182;
+      --img-bottom-right-end: 218;
+      --img-bottom-right-inner: 42;
+      --img-bottom-right-outer: 58;
+      --img-bottom-right-url: url('https://picsum.photos/id/1005/500/500');
+
+      /* Icônes / contenus flottants */
+      --left-item-x: 26;
+      --left-item-y: 60;
+      --right-item-x: 73;
+      --right-item-y: 58;
+
+      /* Labels externes */
+      --label-social-x: 50;
+      --label-social-y: 10;
+      --label-philo-x: 11;
+      --label-philo-y: 37;
+      --label-livre-x: 8;
+      --label-livre-y: 57;
+      --label-doc-x: 12;
+      --label-doc-y: 75;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #111;
+      font-family: var(--font);
+    }
+
+    .wheel {
+      position: relative;
+      width: var(--size);
+      aspect-ratio: 1;
+      background: var(--bg);
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    /* Grand cercle externe */
+    .wheel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: calc(var(--line-width) * 1px) solid var(--line);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Grand cercle intermédiaire */
+    .ring-middle {
+      position: absolute;
+      inset: calc((100% - (var(--middle-ring-inner) * 2%)) / 2);
+      border-radius: 50%;
+      border: calc(var(--line-width) * 1px) solid var(--line);
+      z-index: 8;
+      pointer-events: none;
+    }
+
+    /* Double cercle central */
+    .center-outer,
+    .center-inner {
+      position: absolute;
+      border-radius: 50%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .center-outer {
+      width: calc(var(--center-radius) * 2% + var(--center-double-gap) * 2%);
+      height: calc(var(--center-radius) * 2% + var(--center-double-gap) * 2%);
+      border: calc(var(--line-width) * 1px) solid var(--line);
+      z-index: 9;
+    }
+
+    .center-inner {
+      width: calc(var(--center-radius) * 2%);
+      height: calc(var(--center-radius) * 2%);
+      border: calc(var(--line-width) * 1px) solid var(--line);
+      z-index: 9;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* Lignes radiales personnalisables */
+    .line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 52%;
+      height: calc(var(--line-width) * 1px);
+      background: var(--line);
+      transform-origin: 0 50%;
+      z-index: 7;
+    }
+
+    /* Images en secteur via conic + radial mask */
+    .sector-image {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background-image: var(--img-url);
+      background-size: cover;
+      background-position: center;
+      z-index: 3;
+
+      -webkit-mask-image:
+        radial-gradient(circle at center,
+          transparent 0 calc(var(--inner) * 1%),
+          #000 calc(var(--inner) * 1%) calc(var(--outer) * 1%),
+          transparent calc(var(--outer) * 1%) 100%),
+        conic-gradient(from -90deg,
+          transparent 0deg calc(var(--start) * 1deg),
+          #000 calc(var(--start) * 1deg) calc(var(--end) * 1deg),
+          transparent calc(var(--end) * 1deg) 360deg);
+      -webkit-mask-composite: source-in;
+
+      mask-image:
+        radial-gradient(circle at center,
+          transparent 0 calc(var(--inner) * 1%),
+          #000 calc(var(--inner) * 1%) calc(var(--outer) * 1%),
+          transparent calc(var(--outer) * 1%) 100%),
+        conic-gradient(from -90deg,
+          transparent 0deg calc(var(--start) * 1deg),
+          #000 calc(var(--start) * 1deg) calc(var(--end) * 1deg),
+          transparent calc(var(--end) * 1deg) 360deg);
+      mask-composite: intersect;
+    }
+
+    .label {
+      position: absolute;
+      color: #fff;
+      font-size: clamp(18px, 2.1vmin, 28px);
+      font-weight: 500;
+      transform: translate(-50%, -50%);
+      z-index: 12;
+      user-select: none;
+    }
+
+    .item {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      z-index: 12;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      user-select: none;
+    }
+
+    .item img {
+      max-width: 84px;
+      width: 7.5vmin;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,0.12));
+    }
+
+    .item.emoji {
+      font-size: clamp(34px, 5vmin, 72px);
+    }
+
+    /* Petits repères pour personnalisation */
+    .panel {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      max-width: 360px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(20,20,20,0.88);
+      color: #fff;
+      font-size: 14px;
+      line-height: 1.45;
+      border: 1px solid rgba(255,255,255,0.14);
+      backdrop-filter: blur(8px);
+    }
+
+    .panel code {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
   </style>
 </head>
-
 <body>
-  <div class="scene">
-    <svg viewBox="0 0 600 600">
-      <defs id="defs"></defs>
-      <g id="layerLinks"></g>
-      <g id="layerLines"></g>
+  <div class="wheel">
+    <!-- Images en secteurs : change simplement les variables CSS dans :root -->
+    <div class="sector-image" style="--start: var(--img-top-start); --end: var(--img-top-end); --inner: var(--img-top-inner); --outer: var(--img-top-outer); --img-url: var(--img-top-url);"></div>
+    <div class="sector-image" style="--start: var(--img-bottom-left-start); --end: var(--img-bottom-left-end); --inner: var(--img-bottom-left-inner); --outer: var(--img-bottom-left-outer); --img-url: var(--img-bottom-left-url);"></div>
+    <div class="sector-image" style="--start: var(--img-bottom-right-start); --end: var(--img-bottom-right-end); --inner: var(--img-bottom-right-inner); --outer: var(--img-bottom-right-outer); --img-url: var(--img-bottom-right-url);"></div>
 
-      <circle cx="300" cy="300" r="120" fill="#1a1a1a" stroke="#fff" stroke-width="10"></circle>
-    </svg>
+    <!-- Grandes lignes blanches -->
+    <div class="line" style="transform: rotate(40deg);"></div>
+    <div class="line" style="transform: rotate(140deg);"></div>
+    <div class="line" style="transform: rotate(170deg);"></div>
+    <div class="line" style="transform: rotate(228deg);"></div>
+    <div class="line" style="transform: rotate(271deg);"></div>
+    <div class="line" style="transform: rotate(320deg);"></div>
+
+    <div class="ring-middle"></div>
+    <div class="center-outer"></div>
+    <div class="center-inner"></div>
+
+    <!-- Labels externes -->
+    <div class="label" style="left: calc(var(--label-social-x) * 1%); top: calc(var(--label-social-y) * 1%);">Social</div>
+    <div class="label" style="left: calc(var(--label-philo-x) * 1%); top: calc(var(--label-philo-y) * 1%);">Philo</div>
+    <div class="label" style="left: calc(var(--label-livre-x) * 1%); top: calc(var(--label-livre-y) * 1%);">Livre</div>
+    <div class="label" style="left: calc(var(--label-doc-x) * 1%); top: calc(var(--label-doc-y) * 1%);">Doc</div>
+
+    <!-- Contenus flottants remplaçables -->
+    <div class="item emoji" style="left: calc(var(--left-item-x) * 1%); top: calc(var(--left-item-y) * 1%);">🏺</div>
+    <div class="item emoji" style="left: calc(var(--right-item-x) * 1%); top: calc(var(--right-item-y) * 1%);">🎲</div>
   </div>
 
-  <script>
-    const cx = 300, cy = 300;
-    const rOuter = 280;
-    const rInner = 140;
-    const strokeW = 8;
-
-    // Images + réglages
-    // - preserveAspectRatio est géré globalement via "meet" (pas de rognage)
-    // - scale te permet d'agrandir/rétrécir sans couper (car "meet")
-    const images = [
-      { src: "Fond/Rafael.png",  size: 230, offsetY: 30,  scale: 1 },
-      { src: "Fond/Octavie.png", size: 230, offsetY: 30,  scale: 1 },
-      { src: "Fond/Vase.png",    size: 162, offsetY: 0,   scale: 1 },
-      { src: "Fond/Basile.png",  size: 390, offsetY: 50, scale: 1 }, // <- ajuste scale ici si besoin
-      { src: "Fond/Dé.png",      size: 162, offsetY: 0,   scale: 1 }
-    ];
-
-    // Liens cliquables (1 lien par case, même ordre que images[])
-    const links = [
-      "https://exemple.com/rafael",
-      "https://exemple.com/octavie",
-      "https://exemple.com/vase",
-      "https://exemple.com/basile",
-      "https://exemple.com/de"
-    ];
-
-    const smallDeg = 36;
-    const bottomCenter = 90;
-    const smallStart = bottomCenter - smallDeg;
-    const smallMid   = bottomCenter;
-    const smallEnd   = bottomCenter + smallDeg;
-
-    const bigDeg = (360 - 2 * smallDeg) / 3;
-
-    const sectors = [
-      [smallStart, smallMid],
-      [smallMid, smallEnd],
-      [smallEnd, smallEnd + bigDeg],
-      [smallEnd + bigDeg, smallEnd + 2*bigDeg],
-      [smallEnd + 2*bigDeg, smallEnd + 3*bigDeg]
-    ];
-
-    const defs = document.getElementById("defs");
-    const layerLinks = document.getElementById("layerLinks");
-    const layerLines = document.getElementById("layerLines");
-
-    const toRad = d => (d * Math.PI) / 180;
-
-    function polar(cx, cy, r, angDeg){
-      const a = toRad(angDeg);
-      return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
-    }
-
-    function annulusSectorPath(cx, cy, r0, r1, a0, a1){
-      const p1 = polar(cx, cy, r1, a0);
-      const p2 = polar(cx, cy, r1, a1);
-      const p3 = polar(cx, cy, r0, a1);
-      const p4 = polar(cx, cy, r0, a0);
-      const largeArc = (a1 - a0) > 180 ? 1 : 0;
-
-      return [
-        `M ${p1.x} ${p1.y}`,
-        `A ${r1} ${r1} 0 ${largeArc} 1 ${p2.x} ${p2.y}`,
-        `L ${p3.x} ${p3.y}`,
-        `A ${r0} ${r0} 0 ${largeArc} 0 ${p4.x} ${p4.y}`,
-        "Z"
-      ].join(" ");
-    }
-
-    function create(tag, attrs = {}){
-      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
-      for (const [k,v] of Object.entries(attrs)) el.setAttribute(k, v);
-      return el;
-    }
-
-    function setHref(el, url){
-      // SVG2
-      el.setAttribute("href", url);
-      // compat xlink
-      el.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", url);
-    }
-
-    sectors.forEach(([a0,a1], idx) => {
-      const clipId = `clip-${idx}`;
-      const d = annulusSectorPath(cx, cy, rInner, rOuter, a0, a1);
-
-      const cp = create("clipPath", { id: clipId, clipPathUnits: "userSpaceOnUse" });
-      cp.appendChild(create("path", { d }));
-      defs.appendChild(cp);
-
-      const midAngle = (a0 + a1) / 2;
-      const midRadius = (rInner + rOuter) / 2;
-      const centerPos = polar(cx, cy, midRadius, midAngle);
-
-      const imgSize = images[idx].size;
-      const imgScale = images[idx].scale ?? 1;
-
-      // Lien cliquable par secteur
-      const a = create("a", { target: "_blank", rel: "noopener noreferrer" });
-      setHref(a, links[idx]);
-
-      // Groupe clippé
-      const g = create("g", { "clip-path": `url(#${clipId})` });
-
-      // Image (sans rognage)
-      const img = create("image", {
-        x: centerPos.x - imgSize / 2,
-        y: centerPos.y - imgSize / 2 + images[idx].offsetY,
-        width: imgSize,
-        height: imgSize,
-        preserveAspectRatio: "xMidYMid meet"
-      });
-      setHref(img, images[idx].src);
-
-      // Si tu veux agrandir/rétrécir une image sans la couper :
-      // on scale autour du centre du carré de l'image.
-      if (imgScale !== 1) {
-        const ox = centerPos.x;
-        const oy = centerPos.y + images[idx].offsetY; // pivot cohérent avec offset
-        img.setAttribute("transform", `translate(${ox} ${oy}) scale(${imgScale}) translate(${-ox} ${-oy})`);
-      }
-
-      g.appendChild(img);
-
-      // Hit area (au cas où l'image a des zones transparentes)
-      const hit = create("path", { d, fill: "transparent" });
-      g.appendChild(hit);
-
-      a.appendChild(g);
-      layerLinks.appendChild(a);
-
-      // Contour
-      layerLines.appendChild(create("path", {
-        d, fill:"transparent", stroke:"white",
-        "stroke-width": strokeW, "stroke-linejoin":"round",
-        "pointer-events":"none"
-      }));
-    });
-
-    layerLines.appendChild(create("circle", {
-      cx, cy, r: rOuter, fill:"transparent", stroke:"white", "stroke-width": strokeW,
-      "pointer-events":"none"
-    }));
-    layerLines.appendChild(create("circle", {
-      cx, cy, r: rInner, fill:"transparent", stroke:"white", "stroke-width": strokeW,
-      "pointer-events":"none"
-    }));
-  </script>
+  <div class="panel">
+    Modifie surtout les variables dans <code>:root</code>.<br>
+    Pour changer une image, remplace <code>--img-*-url</code>.<br>
+    Pour déplacer une séparation, change l'angle d'une <code>.line</code>.<br>
+    Pour ajuster les anneaux, change <code>--middle-ring-inner</code> et <code>--center-radius</code>.
+  </div>
 </body>
 </html>
