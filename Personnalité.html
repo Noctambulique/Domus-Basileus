@@ -9,8 +9,8 @@
       --text: #161616;
       --muted: #666;
       --line: rgba(0, 0, 0, 0.08);
-      --panel: rgba(255, 255, 255, 0.84);
-      --panel-strong: rgba(255, 255, 255, 0.94);
+      --panel: rgba(255, 255, 255, 0.86);
+      --panel-strong: rgba(255, 255, 255, 0.96);
       --accent: #111;
       --radius: 18px;
       --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
@@ -20,7 +20,7 @@
 
     body {
       margin: 0;
-      font-family: "Cormorant Garamond", Georgia, serif;
+      font-family: Georgia, "Times New Roman", serif;
       color: var(--text);
       background-color: #ece8e1;
       background-image: var(--bg-image, none);
@@ -177,7 +177,9 @@
       backdrop-filter: blur(8px);
     }
 
-    .hidden { display: none; }
+    .hidden {
+      display: none;
+    }
 
     .dominant {
       margin: 0 0 16px;
@@ -322,7 +324,7 @@
     const traitsBox = document.getElementById("traits");
     const selected = new Set();
 
-    title.textContent = SETTINGS.title;
+    title.textContent = SETTINGS.title || "Test";
 
     if (SETTINGS.topImage) {
       hero.classList.remove("hidden");
@@ -333,13 +335,15 @@
       document.body.style.setProperty("--bg-image", `url('${SETTINGS.backgroundImage}')`);
     }
 
-    const allPhrases = ITEMS.flatMap((item, itemIndex) =>
-      item.phrases.map((text, phraseIndex) => ({
-        id: `${itemIndex}-${phraseIndex}`,
-        itemIndex,
-        text
-      }))
-    );
+    function buildPhrases() {
+      return ITEMS.flatMap((item, itemIndex) =>
+        item.phrases.map((text, phraseIndex) => ({
+          id: `${itemIndex}-${phraseIndex}`,
+          itemIndex,
+          text
+        }))
+      );
+    }
 
     function shuffle(list) {
       const copy = [...list];
@@ -352,16 +356,23 @@
 
     function renderQuestions() {
       questions.innerHTML = "";
+      const allPhrases = shuffle(buildPhrases());
 
-      shuffle(allPhrases).forEach(entry => {
+      allPhrases.forEach((entry) => {
         const el = document.createElement("div");
         el.className = "question";
         el.innerHTML = `
           <div class="checkbox"></div>
-          <div class="question-text">${entry.text}</div>
+          <div class="question-text"></div>
         `;
 
-        el.onclick = () => {
+        el.querySelector(".question-text").textContent = entry.text;
+
+        if (selected.has(entry.id)) {
+          el.classList.add("selected");
+        }
+
+        el.addEventListener("click", () => {
           if (selected.has(entry.id)) {
             selected.delete(entry.id);
             el.classList.remove("selected");
@@ -369,21 +380,20 @@
             selected.add(entry.id);
             el.classList.add("selected");
           }
-        };
+        });
 
         questions.appendChild(el);
       });
     }
 
     function getScores() {
-      const scores = Object.fromEntries(Object.keys(TRAITS).map(k => [k, 0]));
+      const scores = Object.fromEntries(Object.keys(TRAITS).map((k) => [k, 0]));
 
       ITEMS.forEach((item, itemIndex) => {
         const checked = item.phrases.filter((_, phraseIndex) => selected.has(`${itemIndex}-${phraseIndex}`)).length;
         const percent = item.phrases.length ? (checked / item.phrases.length) * 100 : 0;
-        const active = percent >= item.threshold;
 
-        if (active) {
+        if (percent >= item.threshold) {
           Object.entries(item.traits).forEach(([trait, value]) => {
             scores[trait] += value;
           });
@@ -414,4 +424,9 @@
       results.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    document.getElementById("calculate-btn")
+    document.getElementById("calculate-btn").addEventListener("click", renderResults);
+
+    renderQuestions();
+  </script>
+</body>
+</html>
