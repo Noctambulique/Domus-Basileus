@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test de personnalité personnalisable</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --border: #dbe2ea;
+      --success: #0f766e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1, h2, h3 { margin-top: 0; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+    }
+
+    .muted { color: var(--muted); }
+
+    .questions-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .question-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      background: #fff;
+      cursor: pointer;
+      transition: 0.15s ease;
+      user-select: none;
+    }
+
+    .question-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+    }
+
+    .question-card.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .question-text {
+      font-size: 16px;
+    }
+
+    .question-state {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover { opacity: 0.95; }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .result-box {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      background: #fafcff;
+    }
+
+    .bar {
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0;
+    }
+
+    .active-item {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #075985;
+      margin: 4px 6px 0 0;
+      font-size: 14px;
+    }
+
+    .summary {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--success);
+    }
+
+    .hidden { display: none; }
+
+    code.inline {
+      background: #eef2ff;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.95em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1 id="test-title">Test de personnalité</h1>
+      <p id="test-description" class="muted"></p>
+      <p class="muted">
+        Personnalisation rapide : modifiez l'objet <code class="inline">CONFIG</code> dans le script. Les phrases sont mélangées automatiquement à l'affichage, mais chaque phrase garde dans le code son lien avec un item, et chaque item garde son lien avec les traits finaux.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Questions</h2>
+      <p class="muted">Cliquez simplement sur une phrase pour la sélectionner ou la désélectionner.</p>
+      <div id="questions-container" class="questions-grid"></div>
+      <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
+        <button type="button" id="calculate-btn">Calculer le résultat</button>
+        <button type="button" id="reset-btn">Réinitialiser</button>
+      </div>
+    </div>
+
+    <div class="card hidden" id="results-card">
+      <h2>Résultats</h2>
+      <p class="summary" id="dominant-trait"></p>
+
+      <h3>Traits finaux</h3>
+      <div class="results-grid" id="trait-results"></div>
+
+      <h3>Items activés</h3>
+      <div id="active-items"></div>
+
+      <h3>Détail par item</h3>
+      <div class="results-grid" id="item-results"></div>
+    </div>
+  </div>
+
+  <script>
+    /*
+      ==========================
+      CONFIGURATION PRINCIPALE
+      ==========================
+
+      Structure voulue :
+      1. Chaque phrase appartient à un item.
+      2. Les phrases sont mélangées visuellement dans l'interface.
+      3. Chaque item est activé si le pourcentage de ses phrases cochées atteint son seuil.
+      4. Chaque item contribue ensuite à un ou plusieurs des 4 traits finaux.
+
+      Vous pouvez donc modifier très facilement :
+      - les 4 traits finaux dans traits
+      - les items dans items
+      - pour chaque item :
+        - son seuil
+        - ses poids vers les traits
+        - ses phrases
+    */
+
+    const CONFIG = {
+      title: "Test de personnalité personnalisable",
+      description: "Cochez les phrases qui vous correspondent. Les phrases sont volontairement mélangées à l'écran.",
+
+      // Les quatre traits finaux
+      traits: {
+        A: "Trait A",
+        B: "Trait B",
+        C: "Trait C",
+        D: "Trait D"
+      },
+
+      // Seuil par défaut si un item n'a pas de seuil spécifique
+      defaultThreshold: 70,
+
+      /*
+        Chaque item contient :
+        - id : identifiant interne
+        - label : nom lisible
+        - threshold : pourcentage requis pour activer l'item
+        - contributions : poids vers les 4 traits
+        - statements : phrases liées à cet item
+      */
+      items: [
+        {
+          id: "item1",
+          label: "Énergie sociale",
+          threshold: 70,
+          contributions: { A: 35, B: 10 },
+          statements: [
+            "J'aime être entouré de nombreuses personnes.",
+            "Je prends facilement la parole en groupe.",
+            "Les environnements stimulants me motivent.",
+            "Je recherche souvent les échanges sociaux.",
+            "Je me sens à l'aise dans les situations publiques."
+          ]
+        },
+        {
+          id: "item2",
+          label: "Organisation",
+          threshold: 70,
+          contributions: { B: 40 },
+          statements: [
+            "Je planifie mes tâches à l'avance.",
+            "J'aime que les choses soient structurées.",
+            "Je respecte facilement un calendrier.",
+            "Je préfère l'ordre à l'improvisation.",
+            "Je termine ce que j'ai commencé."
+          ]
+        },
+        {
+          id: "item3",
+          label: "Imagination",
+          threshold: 70,
+          contributions: { C: 45 },
+          statements: [
+            "J'aime explorer des idées nouvelles.",
+            "Je fais souvent appel à mon imagination.",
+            "Les concepts abstraits m'intéressent.",
+            "Je cherche des solutions originales.",
+            "J'aime expérimenter de nouvelles approches."
+          ]
+        },
+        {
+          id: "item4",
+          label: "Stabilité émotionnelle",
+          threshold: 70,
+          contributions: { D: 50 },
+          statements: [
+            "Je garde mon calme sous pression.",
+            "Je gère bien les imprévus.",
+            "Je me remets vite d'un stress ponctuel.",
+            "Je prends du recul face aux difficultés.",
+            "Je reste globalement posé(e) dans les moments tendus."
+          ]
+        },
+        {
+          id: "item5",
+          label: "Empathie",
+          threshold: 70,
+          contributions: { A: 10, D: 20 },
+          statements: [
+            "Je remarque facilement les émotions des autres.",
+            "J'écoute avec attention ce que les gens ressentent.",
+            "Je cherche à comprendre les points de vue différents.",
+            "Les relations humaines comptent beaucoup pour moi.",
+            "Je fais attention à l'impact de mes paroles."
+          ]
+        }
+      ]
+    };
+
+    const questionsContainer = document.getElementById("questions-container");
+    const calculateBtn = document.getElementById("calculate-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const resultsCard = document.getElementById("results-card");
+    const traitResults = document.getElementById("trait-results");
+    const itemResults = document.getElementById("item-results");
+    const activeItems = document.getElementById("active-items");
+    const dominantTrait = document.getElementById("dominant-trait");
+
+    document.getElementById("test-title").textContent = CONFIG.title;
+    document.getElementById("test-description").textContent = CONFIG.description;
+
+    // État local des phrases sélectionnées
+    const selectedStatements = new Set();
+
+    function shuffleArray(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function flattenStatements() {
+      const flat = [];
+
+      CONFIG.items.forEach(item => {
+        item.statements.forEach((text, index) => {
+          flat.push({
+            uniqueId: `${item.id}_s${index}`,
+            itemId: item.id,
+            text
+          });
+        });
+      });
+
+      return flat;
+    }
+
+    function renderQuestions() {
+      questionsContainer.innerHTML = "";
+      const shuffledStatements = shuffleArray(flattenStatements());
+
+      shuffledStatements.forEach(statement => {
+        const card = document.createElement("div");
+        card.className = "question-card";
+        card.dataset.statementId = statement.uniqueId;
+
+        const text = document.createElement("div");
+        text.className = "question-text";
+        text.textContent = statement.text;
+
+        const state = document.createElement("div");
+        state.className = "question-state";
+        state.textContent = "Cliquer pour sélectionner";
+
+        card.appendChild(text);
+        card.appendChild(state);
+
+        card.addEventListener("click", () => {
+          const id = statement.uniqueId;
+          if (selectedStatements.has(id)) {
+            selectedStatements.delete(id);
+            card.classList.remove("selected");
+            state.textContent = "Cliquer pour sélectionner";
+          } else {
+            selectedStatements.add(id);
+            card.classList.add("selected");
+            state.textContent = "Sélectionné";
+          }
+        });
+
+        questionsContainer.appendChild(card);
+      });
+    }
+
+    function calculateResults() {
+      const traitScores = {};
+      const itemDetails = [];
+      const activatedItems = [];
+
+      Object.keys(CONFIG.traits).forEach(traitLetter => {
+        traitScores[traitLetter] = 0;
+      });
+
+      CONFIG.items.forEach(item => {
+        const threshold = item.threshold ?? CONFIG.defaultThreshold;
+        const total = item.statements.length;
+        const checked = item.statements.reduce((count, _, idx) => {
+          const id = `${item.id}_s${idx}`;
+          return count + (selectedStatements.has(id) ? 1 : 0);
+        }, 0);
+
+        const percentChecked = total === 0 ? 0 : (checked / total) * 100;
+        const activated = percentChecked >= threshold;
+
+        if (activated) {
+          activatedItems.push({
+            label: item.label,
+            contributions: item.contributions
+          });
+
+          Object.entries(item.contributions).forEach(([trait, value]) => {
+            traitScores[trait] = (traitScores[trait] || 0) + value;
+          });
+        }
+
+        itemDetails.push({
+          label: item.label,
+          checked,
+          total,
+          percentChecked,
+          threshold,
+          activated
+        });
+      });
+
+      const totalTraitPoints = Object.values(traitScores).reduce((sum, v) => sum + v, 0);
+      const normalizedTraits = {};
+
+      Object.entries(traitScores).forEach(([trait, value]) => {
+        normalizedTraits[trait] = totalTraitPoints > 0 ? (value / totalTraitPoints) * 100 : 0;
+      });
+
+      displayResults(normalizedTraits, itemDetails, activatedItems);
+    }
+
+    function displayResults(normalizedTraits, itemDetails, activatedItemsList) {
+      resultsCard.classList.remove("hidden");
+      traitResults.innerHTML = "";
+      itemResults.innerHTML = "";
+      activeItems.innerHTML = "";
+
+      const sortedTraits = Object.entries(normalizedTraits).sort((a, b) => b[1] - a[1]);
+      const [topTrait, topValue] = sortedTraits[0] || [null, 0];
+
+      dominantTrait.textContent = topTrait
+        ? `Trait dominant : ${topTrait} — ${CONFIG.traits[topTrait]} (${topValue.toFixed(1)}%)`
+        : "Aucun trait dominant";
+
+      sortedTraits.forEach(([trait, value]) => {
+        const box = document.createElement("div");
+        box.className = "result-box";
+        box.innerHTML = `
+          <strong>${trait} — ${CONFIG.traits[trait]}</strong>
+          <div>${value.toFixed(1)}%</div>
+          <div class="bar"><div class="bar-fill" style="width:${value.toFixed(1)}%"></div></div>
+        `;
+        traitResults.appendChild(box);
+      });
+
+      if (activatedItemsList.length === 0) {
+        activeItems.innerHTML = `<p class="muted">Aucun item n'a été activé.</p>`;
+      } else {
+        activatedItemsList.forEach(item => {
+          const span = document.createElement("span");
+          span.className = "active-item";
+          const contributionsText = Object.entries(item.contributions)
+            .map(([trait, value]) => `${trait}: +${value}`)
+            .join(" | ");
+          span.textContent = `${item.label} (${contributionsText})`;
+          activeItems.appendChild(span);
+        });
+      }
+
+      itemDetails.forEach(detail => {
+        const box = document.createElement("div");
+        box.className = "result-box";
+        box.innerHTML = `
+          <strong>${detail.label}</strong>
+          <div>${detail.checked}/${detail.total} phrases sélectionnées</div>
+          <div>${detail.percentChecked.toFixed(1)}% — seuil ${detail.threshold}%</div>
+          <div>${detail.activated ? "✅ Item activé" : "❌ Item non activé"}</div>
+          <div class="bar"><div class="bar-fill" style="width:${Math.min(detail.percentChecked, 100)}%"></div></div>
+        `;
+        itemResults.appendChild(box);
+      });
+
+      resultsCard.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function resetForm() {
+      selectedStatements.clear();
+      resultsCard.classList.add("hidden");
+      renderQuestions();
+    }
+
+    calculateBtn.addEventListener("click", calculateResults);
+    resetBtn.addEventListener("click", resetForm);
+
+    renderQuestions();
+  </script>
+</body>
+</html>
