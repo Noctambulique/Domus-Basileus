@@ -6,16 +6,14 @@
   <title>Test</title>
   <style>
     :root {
-      --bg: #0b1020;
-      --panel: rgba(255,255,255,0.08);
-      --panel-2: rgba(255,255,255,0.05);
-      --text: #f8fafc;
-      --muted: rgba(248,250,252,0.6);
-      --line: rgba(255,255,255,0.08);
-      --accent: #7c3aed;
-      --accent-2: #22d3ee;
-      --selected: rgba(124,58,237,0.22);
+      --text: #161616;
+      --muted: #666;
+      --line: rgba(0, 0, 0, 0.08);
+      --panel: rgba(255, 255, 255, 0.84);
+      --panel-strong: rgba(255, 255, 255, 0.94);
+      --accent: #111;
       --radius: 18px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     }
 
     * { box-sizing: border-box; }
@@ -24,15 +22,42 @@
       margin: 0;
       font-family: Inter, Arial, sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(124,58,237,0.30), transparent 30%),
-        radial-gradient(circle at top right, rgba(34,211,238,0.18), transparent 28%),
-        var(--bg);
+      background-color: #ece8e1;
+      background-image: var(--bg-image, none);
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.34);
+      backdrop-filter: blur(2px);
+      pointer-events: none;
     }
 
     .wrap {
-      width: min(920px, calc(100% - 32px));
-      margin: 32px auto 56px;
+      position: relative;
+      z-index: 1;
+      width: min(860px, calc(100% - 28px));
+      margin: 28px auto 56px;
+    }
+
+    .hero {
+      margin-bottom: 18px;
+    }
+
+    .hero img {
+      display: block;
+      width: 100%;
+      max-height: 280px;
+      object-fit: cover;
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.7);
     }
 
     .topbar {
@@ -45,7 +70,8 @@
 
     h1 {
       margin: 0;
-      font-size: clamp(28px, 4vw, 42px);
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 600;
       letter-spacing: -0.03em;
     }
 
@@ -56,90 +82,115 @@
     }
 
     button {
-      border: 0;
+      border: 1px solid var(--line);
       border-radius: 999px;
       padding: 12px 18px;
       font: inherit;
-      cursor: pointer;
-      transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease;
-    }
-
-    button:hover { transform: translateY(-1px); }
-    button:active { transform: translateY(0); }
-
-    #calculate-btn {
-      color: white;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    }
-
-    #reset-btn {
+      background: var(--panel-strong);
       color: var(--text);
-      background: var(--panel);
-      border: 1px solid var(--line);
-      backdrop-filter: blur(10px);
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: transform 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      background: white;
     }
 
     .questions {
       display: grid;
-      gap: 12px;
+      gap: 10px;
     }
 
     .question {
-      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
       border-radius: var(--radius);
-      background: var(--panel-2);
-      border: 1px solid var(--line);
-      backdrop-filter: blur(12px);
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
       cursor: pointer;
       user-select: none;
-      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+      transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
     }
 
     .question:hover {
-      transform: translateY(-2px);
-      border-color: rgba(255,255,255,0.16);
-      box-shadow: 0 14px 34px rgba(0,0,0,0.18);
+      transform: translateY(-1px);
+      background: var(--panel-strong);
     }
 
     .question.selected {
-      background: linear-gradient(135deg, var(--selected), rgba(34,211,238,0.12));
-      border-color: rgba(124,58,237,0.6);
-      box-shadow: 0 16px 36px rgba(124,58,237,0.18);
+      border-color: rgba(0, 0, 0, 0.16);
+      background: white;
+    }
+
+    .checkbox {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+      border-radius: 6px;
+      border: 1.5px solid rgba(0, 0, 0, 0.2);
+      background: white;
+      position: relative;
+      transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+    }
+
+    .question.selected .checkbox {
+      background: var(--accent);
+      border-color: var(--accent);
+      transform: scale(1.03);
+    }
+
+    .question.selected .checkbox::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 2px;
+      width: 6px;
+      height: 12px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
     }
 
     .question-text {
       font-size: 17px;
-      line-height: 1.45;
+      line-height: 1.42;
     }
 
     .results {
-      margin-top: 22px;
-      padding: 20px;
+      margin-top: 20px;
+      padding: 18px;
       border-radius: 24px;
       background: var(--panel);
-      border: 1px solid var(--line);
-      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
     }
 
     .hidden { display: none; }
 
     .dominant {
-      margin: 0 0 18px;
+      margin: 0 0 16px;
       font-size: 22px;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
+      gap: 10px;
     }
 
     .box {
       padding: 16px;
       border-radius: 18px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.72);
     }
 
     .label {
@@ -150,7 +201,7 @@
 
     .value {
       font-size: 28px;
-      font-weight: 700;
+      font-weight: 600;
       letter-spacing: -0.03em;
     }
 
@@ -159,18 +210,37 @@
       margin-top: 12px;
       border-radius: 999px;
       overflow: hidden;
-      background: rgba(255,255,255,0.08);
+      background: rgba(0, 0, 0, 0.08);
     }
 
     .fill {
       height: 100%;
       border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      background: #111;
+    }
+
+    @media (max-width: 680px) {
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .actions {
+        width: 100%;
+      }
+
+      .actions button {
+        flex: 1;
+      }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
+    <div id="hero" class="hero hidden">
+      <img id="hero-image" alt="Image d'en-tête" />
+    </div>
+
     <div class="topbar">
       <h1 id="title"></h1>
       <div class="actions">
@@ -188,7 +258,18 @@
   </div>
 
   <script>
-    // Personnalisation : modifiez uniquement TRAITS + ITEMS
+    // Personnalisation : modifiez seulement SETTINGS, TRAITS et ITEMS
+
+    const SETTINGS = {
+      title: "Test",
+
+      // Image tout en haut. Laissez vide pour ne rien afficher.
+      topImage: "",
+
+      // Image de fond. Laissez vide pour ne rien afficher.
+      backgroundImage: ""
+    };
+
     const TRAITS = {
       A: "Trait A",
       B: "Trait B",
@@ -248,13 +329,24 @@
     ];
 
     const title = document.getElementById("title");
+    const hero = document.getElementById("hero");
+    const heroImage = document.getElementById("hero-image");
     const questions = document.getElementById("questions");
     const results = document.getElementById("results");
     const dominant = document.getElementById("dominant");
     const traitsBox = document.getElementById("traits");
     const selected = new Set();
 
-    title.textContent = "Test";
+    title.textContent = SETTINGS.title;
+
+    if (SETTINGS.topImage) {
+      hero.classList.remove("hidden");
+      heroImage.src = SETTINGS.topImage;
+    }
+
+    if (SETTINGS.backgroundImage) {
+      document.body.style.setProperty("--bg-image", `url('${SETTINGS.backgroundImage}')`);
+    }
 
     const allPhrases = ITEMS.flatMap((item, itemIndex) =>
       item.phrases.map((text, phraseIndex) => ({
@@ -275,10 +367,15 @@
 
     function renderQuestions() {
       questions.innerHTML = "";
+
       shuffle(allPhrases).forEach(entry => {
         const el = document.createElement("div");
         el.className = "question";
-        el.innerHTML = `<div class="question-text">${entry.text}</div>`;
+        el.innerHTML = `
+          <div class="checkbox"></div>
+          <div class="question-text">${entry.text}</div>
+        `;
+
         el.onclick = () => {
           if (selected.has(entry.id)) {
             selected.delete(entry.id);
@@ -288,6 +385,7 @@
             el.classList.add("selected");
           }
         };
+
         questions.appendChild(el);
       });
     }
@@ -316,7 +414,7 @@
     function renderResults() {
       const scores = getScores();
       const ordered = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-      const [best, bestValue] = ordered[0];
+      const [best, bestValue] = ordered[0] || [];
 
       dominant.textContent = best ? `${best} — ${TRAITS[best]} (${bestValue.toFixed(0)}%)` : "";
       traitsBox.innerHTML = ordered.map(([trait, value]) => `
