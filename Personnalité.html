@@ -268,7 +268,7 @@
       {
         name: "Énergie sociale",
         threshold: 70,
-        traits: { A: 35, B: 10 },
+        trait: "A",
         phrases: [
           "J'aime être entouré de nombreuses personnes.",
           "Je prends facilement la parole en groupe.",
@@ -280,7 +280,7 @@
       {
         name: "Organisation",
         threshold: 70,
-        traits: { B: 40 },
+        trait: "A",
         phrases: [
           "Je planifie mes tâches à l'avance.",
           "J'aime que les choses soient structurées.",
@@ -292,7 +292,7 @@
       {
         name: "Imagination",
         threshold: 70,
-        traits: { C: 45 },
+        trait: "B",
         phrases: [
           "J'aime explorer des idées nouvelles.",
           "Je fais souvent appel à mon imagination.",
@@ -304,7 +304,7 @@
       {
         name: "Stabilité émotionnelle",
         threshold: 70,
-        traits: { D: 50 },
+        trait: "C",
         phrases: [
           "Je garde mon calme sous pression.",
           "Je gère bien les imprévus.",
@@ -387,22 +387,28 @@
     }
 
     function getScores() {
-      const scores = Object.fromEntries(Object.keys(TRAITS).map((k) => [k, 0]));
+      const details = Object.fromEntries(
+        Object.keys(TRAITS).map((k) => [k, { active: 0, total: 0 }])
+      );
 
       ITEMS.forEach((item, itemIndex) => {
+        if (!details[item.trait]) return;
+
+        details[item.trait].total += 1;
+
         const checked = item.phrases.filter((_, phraseIndex) => selected.has(`${itemIndex}-${phraseIndex}`)).length;
         const percent = item.phrases.length ? (checked / item.phrases.length) * 100 : 0;
 
         if (percent >= item.threshold) {
-          Object.entries(item.traits).forEach(([trait, value]) => {
-            scores[trait] += value;
-          });
+          details[item.trait].active += 1;
         }
       });
 
-      const total = Object.values(scores).reduce((a, b) => a + b, 0);
       return Object.fromEntries(
-        Object.entries(scores).map(([trait, value]) => [trait, total ? (value / total) * 100 : 0])
+        Object.entries(details).map(([trait, info]) => [
+          trait,
+          info.total ? (info.active / info.total) * 100 : 0
+        ])
       );
     }
 
