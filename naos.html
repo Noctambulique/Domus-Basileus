@@ -33,19 +33,6 @@
         position: absolute;
         cursor: pointer;
     }
-
-    #coords {
-        position: fixed;
-        bottom: 10px;
-        left: 10px;
-        background: rgba(0,0,0,0.8);
-        color: white;
-        padding: 8px 12px;
-        border-radius: 5px;
-        display: none;
-        font-size: 14px;
-        z-index: 1000;
-    }
 </style>
 </head>
 
@@ -55,17 +42,13 @@
     <img id="map" src="Fond/Naos.png" alt="map">
 </div>
 
-<div id="coords">X: 0 | Y: 0</div>
-
 <script>
 const map = document.getElementById("map");
 const container = document.getElementById("map-container");
-const coordsBox = document.getElementById("coords");
 
 let isDragging = false;
 let startX, startY;
 let mapX = 0, mapY = 0;
-let showCoords = false;
 
 /* --- Limites de déplacement --- */
 function clampMapPosition(x, y) {
@@ -91,21 +74,6 @@ function updateMapPosition() {
     });
 }
 
-/* --- Coordonnées réelles sur la map --- */
-function updateCoordsDisplay(e) {
-    if (!showCoords) return;
-
-    const rect = container.getBoundingClientRect();
-
-    const mouseInContainerX = e.clientX - rect.left;
-    const mouseInContainerY = e.clientY - rect.top;
-
-    const mapLocalX = mouseInContainerX - mapX;
-    const mapLocalY = mouseInContainerY - mapY;
-
-    coordsBox.innerHTML = `X: ${Math.round(mapLocalX)} | Y: ${Math.round(mapLocalY)}`;
-}
-
 /* --- Déplacement de la map --- */
 container.addEventListener("mousedown", e => {
     isDragging = true;
@@ -129,16 +97,6 @@ window.addEventListener("mousemove", e => {
         mapY = clamped.y;
 
         updateMapPosition();
-    }
-
-    updateCoordsDisplay(e);
-});
-
-/* --- Touche A pour afficher/masquer les coordonnées --- */
-window.addEventListener("keydown", e => {
-    if (e.key.toLowerCase() === "a") {
-        showCoords = !showCoords;
-        coordsBox.style.display = showCoords ? "block" : "none";
     }
 });
 
