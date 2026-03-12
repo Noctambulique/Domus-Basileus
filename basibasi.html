@@ -1,384 +1,89 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Moteur de recherche personnalisé</title>
-  <style>
-    :root {
-      --bg: #f8f9fa;
-      --card: #ffffff;
-      --text: #202124;
-      --muted: #5f6368;
-      --border: #dfe1e5;
-      --shadow: 0 2px 10px rgba(0,0,0,0.08);
-      --blue: #1a73e8;
-      --blue-hover: #1765cc;
-      --result-hover: #f1f3f4;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px 16px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 760px;
-    }
-
-    .logo {
-      text-align: center;
-      font-size: 3rem;
-      font-weight: bold;
-      letter-spacing: -1px;
-      margin-bottom: 24px;
-      color: #4285f4;
-    }
-
-    .logo span:nth-child(2) { color: #ea4335; }
-    .logo span:nth-child(3) { color: #fbbc05; }
-    .logo span:nth-child(4) { color: #4285f4; }
-    .logo span:nth-child(5) { color: #34a853; }
-    .logo span:nth-child(6) { color: #ea4335; }
-
-    .search-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      box-shadow: var(--shadow);
-      padding: 12px 18px;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .search-box input {
-      flex: 1;
-      border: none;
-      outline: none;
-      font-size: 1rem;
-      background: transparent;
-    }
-
-    .actions {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 18px;
-      flex-wrap: wrap;
-    }
-
-    button {
-      background: var(--blue);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 10px 16px;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: var(--blue-hover);
-    }
-
-    .secondary {
-      background: #e8f0fe;
-      color: var(--blue);
-    }
-
-    .secondary:hover {
-      background: #dbe8fd;
-    }
-
-    .results {
-      margin-top: 28px;
-      display: none;
-    }
-
-    .results.visible {
-      display: block;
-    }
-
-    .results-title {
-      font-size: 0.95rem;
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
-
-    .result-item {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 12px;
-      transition: background 0.2s ease;
-    }
-
-    .result-item:hover {
-      background: var(--result-hover);
-    }
-
-    .result-link {
-      color: var(--blue);
-      font-size: 1.1rem;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .result-link:hover {
-      text-decoration: underline;
-    }
-
-    .result-url {
-      color: #188038;
-      font-size: 0.9rem;
-      margin: 6px 0;
-      word-break: break-all;
-    }
-
-    .result-desc {
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .no-result {
-      background: #fff4f4;
-      border: 1px solid #f3c7c7;
-      color: #a33a3a;
-      border-radius: 12px;
-      padding: 16px;
-    }
-
-    .config {
-      margin-top: 30px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .config h2 {
-      margin-top: 0;
-      font-size: 1.1rem;
-    }
-
-    .config p,
-    .config li {
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    code {
-      background: #f1f3f4;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-
-    pre {
-      background: #f1f3f4;
-      padding: 12px;
-      border-radius: 10px;
-      overflow-x: auto;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    @media (max-width: 600px) {
-      .logo {
-        font-size: 2.2rem;
-      }
-
-      .search-box {
-        padding: 10px 14px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moteur</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#2b1055,#4b2a8a,#6d46c2);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.header{width:100%;max-height:220px;overflow:hidden}
+.header img{width:100%;display:block;object-fit:cover}
+.search-area{margin-top:80px;width:90%;max-width:600px;text-align:center}
+input{width:100%;padding:14px 18px;border-radius:30px;border:none;font-size:16px;outline:none;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+button{margin-top:20px;padding:10px 20px;border:none;border-radius:20px;background:#ffffff22;color:white;font-size:15px;cursor:pointer;backdrop-filter:blur(4px)}
+button:hover{background:#ffffff33}
+.results{margin-top:40px;width:90%;max-width:600px}
+.result{background:#ffffff10;padding:14px;border-radius:10px;margin-bottom:10px;backdrop-filter:blur(6px)}
+.result a{color:white;text-decoration:none;font-weight:bold}
+.result a:hover{text-decoration:underline}
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="logo">
-      <span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span>
-    </div>
 
-    <form id="searchForm">
-      <div class="search-box">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Entrez un nom, un texte, ou une longue suite de mots..."
-          autocomplete="off"
-        />
-      </div>
+<div class="header">
+<img src="header.jpg" alt="entete">
+</div>
 
-      <div class="actions">
-        <button type="submit">Rechercher</button>
-        <button type="button" class="secondary" id="clearBtn">Effacer</button>
-      </div>
-    </form>
+<div class="search-area">
+<form id="searchForm">
+<input id="searchInput" type="text" placeholder="Recherche...">
+<button type="submit">Chercher</button>
+</form>
+</div>
 
-    <div id="results" class="results"></div>
+<div id="results" class="results"></div>
 
-    <div class="config">
-      <h2>Comment ajouter vos propres pages</h2>
-      <p>
-        Modifiez simplement le tableau <code>searchIndex</code> dans le script plus bas.
-        Chaque entrée représente une page cible et la liste des mots ou expressions qui peuvent y renvoyer.
-      </p>
-      <p>
-        Le moteur fonctionne même si l'utilisateur colle un long texte : il cherche si un ou plusieurs mots-clés sont présents dans la requête.
-      </p>
-      <pre>// Exemple à compléter
-{
-  title: "Page Jean Dupont",
-  url: "pages/jean-dupont.html",
-  description: "Page personnalisée pour Jean Dupont.",
-  keywords: ["jean dupont", "dupont", "jean", "professeur dupont"]
-}</pre>
-    </div>
-  </div>
+<script>
 
-  <script>
-    // =============================
-    // INDEX PERSONNALISABLE
-    // Ajoutez ici toutes vos pages.
-    // =============================
-    const searchIndex = [
-      {
-        title: "Page Jean Dupont",
-        url: "pages/jean-dupont.html",
-        description: "Accès à la page personnalisée de Jean Dupont.",
-        keywords: ["jean dupont", "dupont", "jean", "monsieur dupont"]
-      },
-      {
-        title: "Page Marie Curie",
-        url: "pages/marie-curie.html",
-        description: "Accès à la page personnalisée de Marie Curie.",
-        keywords: ["marie curie", "curie", "marie", "madame curie"]
-      },
-      {
-        title: "Page Service RH",
-        url: "pages/service-rh.html",
-        description: "Page personnalisée liée au service des ressources humaines.",
-        keywords: ["rh", "ressources humaines", "service rh", "recrutement"]
-      }
-    ];
+const searchIndex=[
+{title:"Jean Dupont",url:"pages/jean.html",keywords:["jean","dupont","jean dupont"]},
+{title:"Marie Curie",url:"pages/marie.html",keywords:["marie","curie","marie curie"]},
+{title:"Service RH",url:"pages/rh.html",keywords:["rh","ressources humaines","service rh"]}
+];
 
-    const form = document.getElementById('searchForm');
-    const input = document.getElementById('searchInput');
-    const results = document.getElementById('results');
-    const clearBtn = document.getElementById('clearBtn');
+function normalize(text){
+return text.toLowerCase().normalize("NFD").replace(/[^a-z0-9 ]/g," ");
+}
 
-    function normalizeText(text) {
-      return text
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9\s]/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-    }
+function search(query){
+query=normalize(query);
+let results=[];
 
-    function findMatches(query) {
-      const normalizedQuery = normalizeText(query);
-      if (!normalizedQuery) return [];
+for(let page of searchIndex){
+for(let word of page.keywords){
+if(query.includes(normalize(word))){results.push(page);break}
+}
+}
 
-      const matches = [];
+return results;
+}
 
-      for (const item of searchIndex) {
-        let score = 0;
-        const foundKeywords = [];
+const form=document.getElementById("searchForm");
+const input=document.getElementById("searchInput");
+const resultsDiv=document.getElementById("results");
 
-        for (const keyword of item.keywords) {
-          const normalizedKeyword = normalizeText(keyword);
+form.addEventListener("submit",function(e){
+e.preventDefault();
 
-          if (!normalizedKeyword) continue;
+const query=input.value;
+const results=search(query);
 
-          if (normalizedQuery.includes(normalizedKeyword)) {
-            score += normalizedKeyword.split(' ').length > 1 ? 3 : 1;
-            foundKeywords.push(keyword);
-          }
-        }
+resultsDiv.innerHTML="";
 
-        if (score > 0) {
-          matches.push({ ...item, score, foundKeywords });
-        }
-      }
+if(results.length===0){
+resultsDiv.innerHTML="<div class='result'>Aucun résultat</div>";
+return;
+}
 
-      matches.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title, 'fr'));
-      return matches;
-    }
+for(let r of results){
+const el=document.createElement("div");
+el.className="result";
+el.innerHTML=`<a href="${r.url}">${r.title}</a>`;
+resultsDiv.appendChild(el);
+}
+});
 
-    function renderResults(query, matches) {
-      results.classList.add('visible');
+</script>
 
-      if (matches.length === 0) {
-        results.innerHTML = `
-          <div class="results-title">Aucun résultat pour : <strong>${escapeHtml(query)}</strong></div>
-          <div class="no-result">
-            Aucun mot-clé correspondant n'a été trouvé dans votre index personnalisé.
-            Vérifiez votre tableau <code>searchIndex</code> ou ajoutez davantage de mots-clés.
-          </div>
-        `;
-        return;
-      }
-
-      const itemsHtml = matches.map(item => `
-        <div class="result-item">
-          <a class="result-link" href="${escapeAttribute(item.url)}">${escapeHtml(item.title)}</a>
-          <div class="result-url">${escapeHtml(item.url)}</div>
-          <div class="result-desc">${escapeHtml(item.description)}</div>
-          <div class="result-desc" style="margin-top:8px; font-size:0.92rem;">
-            Mot(s) détecté(s) : ${item.foundKeywords.map(escapeHtml).join(', ')}
-          </div>
-        </div>
-      `).join('');
-
-      results.innerHTML = `
-        <div class="results-title">${matches.length} résultat(s) pour : <strong>${escapeHtml(query)}</strong></div>
-        ${itemsHtml}
-      `;
-    }
-
-    function escapeHtml(str) {
-      return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    function escapeAttribute(str) {
-      return escapeHtml(str);
-    }
-
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-      const query = input.value;
-      const matches = findMatches(query);
-      renderResults(query, matches);
-    });
-
-    clearBtn.addEventListener('click', function () {
-      input.value = '';
-      results.classList.remove('visible');
-      results.innerHTML = '';
-      input.focus();
-    });
-  </script>
 </body>
 </html>
