@@ -25,6 +25,8 @@
         top: 0;
         left: 0;
         user-select: none;
+        -webkit-user-drag: none;
+        pointer-events: none;
     }
 
     .marker {
@@ -42,6 +44,7 @@
         border-radius: 5px;
         display: none;
         font-size: 14px;
+        z-index: 1000;
     }
 </style>
 </head>
@@ -49,7 +52,7 @@
 <body>
 
 <div id="map-container">
-    <img id="map" src="map.jpg" alt="map">
+    <img id="map" src="Fond/Map Ile.png" alt="map">
 </div>
 
 <div id="coords">X: 0 | Y: 0</div>
@@ -63,7 +66,45 @@ let isDragging = false;
 let startX, startY;
 let mapX = 0, mapY = 0;
 let showCoords = false;
-let mouseX = 0, mouseY = 0;
+
+/* --- Limites de déplacement --- */
+function clampMapPosition(x, y) {
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    const mapWidth = map.offsetWidth;
+    const mapHeight = map.offsetHeight;
+
+    const minX = Math.min(0, containerWidth - mapWidth);
+    const minY = Math.min(0, containerHeight - mapHeight);
+
+    return {
+        x: Math.min(0, Math.max(minX, x)),
+        y: Math.min(0, Math.max(minY, y))
+    };
+}
+
+/* --- Mise à jour visuelle --- */
+function updateMapPosition() {
+    map.style.transform = `translate(${mapX}px, ${mapY}px)`;
+    document.querySelectorAll(".marker").forEach(marker => {
+        marker.style.transform = `translate(${mapX}px, ${mapY}px)`;
+    });
+}
+
+/* --- Coordonnées réelles sur la map --- */
+function updateCoordsDisplay(e) {
+    if (!showCoords) return;
+
+    const rect = container.getBoundingClientRect();
+
+    const mouseInContainerX = e.clientX - rect.left;
+    const mouseInContainerY = e.clientY - rect.top;
+
+    const mapLocalX = mouseInContainerX - mapX;
+    const mapLocalY = mouseInContainerY - mapY;
+
+    coordsBox.innerHTML = `X: ${Math.round(mapLocalX)} | Y: ${Math.round(mapLocalY)}`;
+}
 
 /* --- Déplacement de la map --- */
 container.addEventListener("mousedown", e => {
@@ -79,29 +120,18 @@ window.addEventListener("mouseup", () => {
 });
 
 window.addEventListener("mousemove", e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-
     if (isDragging) {
-        mapX = e.clientX - startX;
-        mapY = e.clientY - startY;
-        map.style.transform = `translate(${mapX}px, ${mapY}px)`;
-        document.querySelectorAll(".marker").forEach(m => {
-            m.style.transform = `translate(${mapX}px, ${mapY}px)`;
-        });
+        const newX = e.clientX - startX;
+        const newY = e.clientY - startY;
+
+        const clamped = clampMapPosition(newX, newY);
+        mapX = clamped.x;
+        mapY = clamped.y;
+
+        updateMapPosition();
     }
 
-    if (showCoords) {
-        coordsBox.innerHTML = `X: ${mouseX} | Y: ${mouseY}`;
-    }
-});
-
-/* --- Touche A pour afficher les coordonnées --- */
-window.addEventListener("keydown", e => {
-    if (e.key.toLowerCase() === "a") {
-        showCoords = !showCoords;
-        coordsBox.style.display = showCoords ? "block" : "none";
-    }
+    updateCoordsDisplay(e);
 });
 
 /* --- Ajouter un marker --- */
@@ -121,10 +151,22 @@ function addMarker(x, y, size, image, link) {
     container.appendChild(marker);
 }
 
-/* --- Exemples de markers --- */
-addMarker(300, 200, 40, "marker.png", "page1.html");
-addMarker(500, 690, 60, "marker.png", "https://example.com");
-</script>
+/* --- Recalage au chargement --- */
+map.addEventListener("load", () => {
+    const clamped = clampMapPosition(mapX, mapY);
+    mapX = clamped.x;
+    mapY = clamped.y;
+    updateMapPosition();
+});
+
+/* --- Recalage au resize --- */
+window.addEventListener("resize", () => {
+    const clamped = clampMapPosition(mapX, mapY);
+    mapX = clamped.x;
+    mapY = clamped.y;
+    updateMapPosition();
+});
+
 
 </body>
 </html>
