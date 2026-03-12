@@ -1,162 +1,30 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Structure radiale fidèle</title>
-  <style>
-    :root {
-      --bg: #000000;
-      --stroke: #ffffff;
-      --stroke-width: 7;
-      --page-size: min(94vmin, 980px);
-
-      /* Images : remplace simplement ces URLs */
-      --img-top: url('https://picsum.photos/id/1011/1200/600');
-      --img-bottom-left: url('https://picsum.photos/id/1025/700/700');
-      --img-bottom-right: url('https://picsum.photos/id/1005/700/700');
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: #111;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .frame {
-      width: var(--page-size);
-      aspect-ratio: 1064 / 1112;
-      background: var(--bg);
-    }
-
-    svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-      background: var(--bg);
-    }
-
-    .outline,
-    .divider,
-    .center-ring {
-      fill: none;
-      stroke: var(--stroke);
-      stroke-width: var(--stroke-width);
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      vector-effect: non-scaling-stroke;
-    }
-
-    .label {
-      fill: #ffffff;
-      font-size: 26px;
-      font-weight: 500;
-      text-anchor: middle;
-      dominant-baseline: middle;
-      user-select: none;
-    }
-
-    .img-fill {
-      width: 1064px;
-      height: 1112px;
-      preserveAspectRatio: xMidYMid slice;
-    }
-
-    .hint {
-      position: fixed;
-      right: 16px;
-      bottom: 16px;
-      max-width: 370px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(20, 20, 20, 0.9);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.15);
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .hint code {
-      background: rgba(255,255,255,0.08);
-      padding: 2px 6px;
-      border-radius: 6px;
-      color: #fff;
-    }
-  </style>
+<meta charset="UTF-8">
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:20px;
+  background:url("Fond/Ombre.png") center/cover no-repeat;
+}
+a{
+  padding:10px 20px;
+  border:1px solid white;
+  color:white;
+  text-decoration:none;
+  background:rgba(255,255,255,0.1);
+}
+</style>
 </head>
+
 <body>
-  <div class="frame">
-    <svg viewBox="0 0 1064 1112" aria-label="structure radiale fidèle à l'image de référence">
-      <defs>
-        <!-- Zones d'images : tu peux garder les paths et changer seulement les URLs -->
-        <clipPath id="clip-top-sector" clipPathUnits="userSpaceOnUse">
-          <path d="M 264 297
-                   Q 356 228 532 214
-                   Q 704 224 804 327
-                   L 666 445
-                   Q 611 388 532 388
-                   Q 455 388 400 444
-                   Z" />
-        </clipPath>
-
-        <clipPath id="clip-bottom-left-sector" clipPathUnits="userSpaceOnUse">
-          <path d="M 318 847
-                   Q 409 919 533 918
-                   L 532 734
-                   Q 470 734 417 726
-                   Z" />
-        </clipPath>
-
-        <clipPath id="clip-bottom-right-sector" clipPathUnits="userSpaceOnUse">
-          <path d="M 533 918
-                   Q 658 917 748 845
-                   L 648 724
-                   Q 595 734 532 734
-                   Z" />
-        </clipPath>
-      </defs>
-
-      <!-- Images injectables -->
-      <image href="https://picsum.photos/id/1011/1200/600" x="0" y="0" width="1064" height="1112" clip-path="url(#clip-top-sector)" preserveAspectRatio="xMidYMid slice">
-        <animate attributeName="href" dur="0.001s" fill="freeze" to="https://picsum.photos/id/1011/1200/600" />
-      </image>
-      <image href="https://picsum.photos/id/1025/700/700" x="0" y="0" width="1064" height="1112" clip-path="url(#clip-bottom-left-sector)" preserveAspectRatio="xMidYMid slice"></image>
-      <image href="https://picsum.photos/id/1005/700/700" x="0" y="0" width="1064" height="1112" clip-path="url(#clip-bottom-right-sector)" preserveAspectRatio="xMidYMid slice"></image>
-
-      <!-- Cercles principaux mesurés sur l'image -->
-      <circle class="outline" cx="532" cy="556" r="537" />
-      <circle class="outline" cx="532" cy="556" r="351" />
-      <circle class="center-ring" cx="532" cy="556" r="173" />
-      <circle class="center-ring" cx="532" cy="556" r="157" />
-
-      <!-- Divisions blanches : coordonnées rapprochées de l'image source -->
-      <line class="divider" x1="139" y1="189" x2="441" y2="442" />
-      <line class="divider" x1="942" y1="181" x2="625" y2="443" />
-
-      <line class="divider" x1="4" y1="450" x2="202" y2="489" />
-      <line class="divider" x1="39" y1="729" x2="196" y2="673" />
-
-      <line class="divider" x1="176" y1="998" x2="416" y2="725" />
-      <line class="divider" x1="547" y1="1109" x2="532" y2="734" />
-      <line class="divider" x1="865" y1="991" x2="648" y2="724" />
-
-      <!-- Labels facultatifs : supprime-les si tu veux seulement la structure -->
-      <text class="label" x="532" y="116">Social</text>
-      <text class="label" x="118" y="400">Philo</text>
-      <text class="label" x="85" y="620">Livre</text>
-      <text class="label" x="137" y="808">Doc</text>
-    </svg>
-  </div>
-
-  <div class="hint">
-    Pour personnaliser rapidement, modifie surtout les balises <code>&lt;image&gt;</code> et les <code>clipPath</code>.
-    Si tu veux un calque vide, supprime les trois balises <code>&lt;image&gt;</code>.
-    Si tu veux ajuster encore plus finement la géométrie, modifie les coordonnées des <code>&lt;line&gt;</code> et les rayons des <code>&lt;circle&gt;</code>.
-  </div>
+<a href="page1.html">Bouton 1</a>
+<a href="page2.html">Bouton 2</a>
+<a href="page3.html">Bouton 3</a>
 </body>
 </html>
