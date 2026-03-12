@@ -25,6 +25,8 @@
         top: 0;
         left: 0;
         user-select: none;
+        -webkit-user-drag: none;
+        pointer-events: none;
     }
 
     .marker {
@@ -42,6 +44,7 @@
         border-radius: 5px;
         display: none;
         font-size: 14px;
+        z-index: 1000;
     }
 </style>
 </head>
@@ -65,6 +68,32 @@ let mapX = 0, mapY = 0;
 let showCoords = false;
 let mouseX = 0, mouseY = 0;
 
+/* --- Limite le déplacement pour ne jamais sortir de l'image --- */
+function clampMapPosition(x, y) {
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    const mapWidth = map.offsetWidth;
+    const mapHeight = map.offsetHeight;
+
+    const minX = Math.min(0, containerWidth - mapWidth);
+    const minY = Math.min(0, containerHeight - mapHeight);
+    const maxX = 0;
+    const maxY = 0;
+
+    return {
+        x: Math.min(maxX, Math.max(minX, x)),
+        y: Math.min(maxY, Math.max(minY, y))
+    };
+}
+
+/* --- Applique le déplacement à la map et aux marqueurs --- */
+function updateMapPosition() {
+    map.style.transform = `translate(${mapX}px, ${mapY}px)`;
+    document.querySelectorAll(".marker").forEach(marker => {
+        marker.style.transform = `translate(${mapX}px, ${mapY}px)`;
+    });
+}
+
 /* --- Déplacement de la map --- */
 container.addEventListener("mousedown", e => {
     isDragging = true;
@@ -83,12 +112,14 @@ window.addEventListener("mousemove", e => {
     mouseY = e.clientY;
 
     if (isDragging) {
-        mapX = e.clientX - startX;
-        mapY = e.clientY - startY;
-        map.style.transform = `translate(${mapX}px, ${mapY}px)`;
-        document.querySelectorAll(".marker").forEach(m => {
-            m.style.transform = `translate(${mapX}px, ${mapY}px)`;
-        });
+        const newX = e.clientX - startX;
+        const newY = e.clientY - startY;
+
+        const clamped = clampMapPosition(newX, newY);
+        mapX = clamped.x;
+        mapY = clamped.y;
+
+        updateMapPosition();
     }
 
     if (showCoords) {
@@ -120,6 +151,22 @@ function addMarker(x, y, size, image, link) {
 
     container.appendChild(marker);
 }
+
+/* --- Quand l'image est chargée, on force la position dans les bornes --- */
+map.addEventListener("load", () => {
+    const clamped = clampMapPosition(mapX, mapY);
+    mapX = clamped.x;
+    mapY = clamped.y;
+    updateMapPosition();
+});
+
+/* --- Si la fenêtre change de taille, on rebloque la map dans les limites --- */
+window.addEventListener("resize", () => {
+    const clamped = clampMapPosition(mapX, mapY);
+    mapX = clamped.x;
+    mapY = clamped.y;
+    updateMapPosition();
+});
 
 /* --- Exemples de markers --- */
 addMarker(702, 272, 40, "Fond/Lieu.png", "ile.html");
