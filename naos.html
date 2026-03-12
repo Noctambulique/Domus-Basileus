@@ -66,9 +66,8 @@ let isDragging = false;
 let startX, startY;
 let mapX = 0, mapY = 0;
 let showCoords = false;
-let mouseX = 0, mouseY = 0;
 
-/* --- Limite le déplacement pour ne jamais sortir de l'image --- */
+/* --- Limites de déplacement --- */
 function clampMapPosition(x, y) {
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
@@ -77,21 +76,34 @@ function clampMapPosition(x, y) {
 
     const minX = Math.min(0, containerWidth - mapWidth);
     const minY = Math.min(0, containerHeight - mapHeight);
-    const maxX = 0;
-    const maxY = 0;
 
     return {
-        x: Math.min(maxX, Math.max(minX, x)),
-        y: Math.min(maxY, Math.max(minY, y))
+        x: Math.min(0, Math.max(minX, x)),
+        y: Math.min(0, Math.max(minY, y))
     };
 }
 
-/* --- Applique le déplacement à la map et aux marqueurs --- */
+/* --- Mise à jour visuelle --- */
 function updateMapPosition() {
     map.style.transform = `translate(${mapX}px, ${mapY}px)`;
     document.querySelectorAll(".marker").forEach(marker => {
         marker.style.transform = `translate(${mapX}px, ${mapY}px)`;
     });
+}
+
+/* --- Coordonnées réelles sur la map --- */
+function updateCoordsDisplay(e) {
+    if (!showCoords) return;
+
+    const rect = container.getBoundingClientRect();
+
+    const mouseInContainerX = e.clientX - rect.left;
+    const mouseInContainerY = e.clientY - rect.top;
+
+    const mapLocalX = mouseInContainerX - mapX;
+    const mapLocalY = mouseInContainerY - mapY;
+
+    coordsBox.innerHTML = `X: ${Math.round(mapLocalX)} | Y: ${Math.round(mapLocalY)}`;
 }
 
 /* --- Déplacement de la map --- */
@@ -108,9 +120,6 @@ window.addEventListener("mouseup", () => {
 });
 
 window.addEventListener("mousemove", e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-
     if (isDragging) {
         const newX = e.clientX - startX;
         const newY = e.clientY - startY;
@@ -122,12 +131,10 @@ window.addEventListener("mousemove", e => {
         updateMapPosition();
     }
 
-    if (showCoords) {
-        coordsBox.innerHTML = `X: ${mouseX} | Y: ${mouseY}`;
-    }
+    updateCoordsDisplay(e);
 });
 
-/* --- Touche A pour afficher les coordonnées --- */
+/* --- Touche A pour afficher/masquer les coordonnées --- */
 window.addEventListener("keydown", e => {
     if (e.key.toLowerCase() === "a") {
         showCoords = !showCoords;
@@ -152,7 +159,7 @@ function addMarker(x, y, size, image, link) {
     container.appendChild(marker);
 }
 
-/* --- Quand l'image est chargée, on force la position dans les bornes --- */
+/* --- Recalage au chargement --- */
 map.addEventListener("load", () => {
     const clamped = clampMapPosition(mapX, mapY);
     mapX = clamped.x;
@@ -160,7 +167,7 @@ map.addEventListener("load", () => {
     updateMapPosition();
 });
 
-/* --- Si la fenêtre change de taille, on rebloque la map dans les limites --- */
+/* --- Recalage au resize --- */
 window.addEventListener("resize", () => {
     const clamped = clampMapPosition(mapX, mapY);
     mapX = clamped.x;
@@ -168,7 +175,7 @@ window.addEventListener("resize", () => {
     updateMapPosition();
 });
 
-/* --- Exemples de markers --- */
+/* --- Exemples --- */
 addMarker(702, 272, 40, "Fond/Lieu.png", "ile.html");
 addMarker(848, 447, 40, "Fond/Lieu.png", "ile.html");
 </script>
