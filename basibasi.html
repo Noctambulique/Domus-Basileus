@@ -5,163 +5,337 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Moteur</title>
 <style>
-
 body{
-margin:0;
-font-family:Arial,Helvetica,sans-serif;
-background:#06040D;
-min-height:100vh;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:flex-start;
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#06040D;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  color:white;
 }
 
-/* logo / entête très compacte */
-
 .header{
-margin-top:80px;
-margin-bottom:40px;
-display:flex;
-justify-content:center;
+  margin-top:80px;
+  margin-bottom:40px;
+  display:flex;
+  justify-content:center;
 }
 
 .header img{
-height:250px;
-width:auto;
+  height:250px;
+  width:auto;
 }
 
-/* zone recherche */
-
 .search-area{
-width:90%;
-max-width:600px;
-text-align:center;
+  width:90%;
+  max-width:700px;
+  text-align:center;
 }
 
 input{
-width:100%;
-padding:14px 18px;
-border-radius:30px;
-border:none;
-font-size:16px;
-outline:none;
-box-shadow:0 4px 20px rgba(0,0,0,.4);
+  width:100%;
+  padding:14px 18px;
+  border-radius:30px;
+  border:none;
+  font-size:16px;
+  outline:none;
+  box-shadow:0 4px 20px rgba(0,0,0,.4);
+  box-sizing:border-box;
 }
 
 button{
-margin-top:20px;
-padding:10px 20px;
-border:none;
-border-radius:20px;
-background:#ffffff22;
-color:white;
-font-size:15px;
-cursor:pointer;
+  margin-top:20px;
+  padding:10px 20px;
+  border:none;
+  border-radius:20px;
+  background:#ffffff22;
+  color:white;
+  font-size:15px;
+  cursor:pointer;
 }
 
 button:hover{
-background:#ffffff33;
+  background:#ffffff33;
 }
 
 .results{
-margin-top:40px;
-width:90%;
-max-width:600px;
+  margin-top:40px;
+  width:90%;
+  max-width:700px;
+  padding-bottom:60px;
 }
 
 .result{
-background:#121018;
-padding:14px;
-border-radius:10px;
-margin-bottom:10px;
+  background:#121018;
+  padding:18px 20px;
+  border-radius:14px;
+  margin-bottom:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+  transition:transform .15s ease, box-shadow .15s ease;
 }
 
-.result a{
-color:white;
-text-decoration:none;
-font-weight:bold;
+.result:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
 }
 
-.result a:hover{
-text-decoration:underline;
+.result-url{
+  font-size:13px;
+  color:#8bd3a8;
+  margin-bottom:6px;
+  word-break:break-all;
 }
 
+.result-title a{
+  color:#9ecbff;
+  text-decoration:none;
+  font-size:22px;
+  font-weight:bold;
+}
+
+.result-title a:hover{
+  text-decoration:underline;
+}
+
+.result-desc{
+  margin-top:8px;
+  color:#d7d7d7;
+  line-height:1.5;
+  font-size:15px;
+}
+
+.result-meta{
+  margin-top:10px;
+  font-size:12px;
+  color:#9a9a9a;
+}
+
+.no-result{
+  background:#121018;
+  padding:16px;
+  border-radius:12px;
+  color:#ddd;
+}
 </style>
 </head>
 <body>
 
 <div class="header">
-<img src="Fond/BasiBasi.png" alt="entete">
+  <img src="Fond/BasiBasi.png" alt="entete">
 </div>
 
 <div class="search-area">
-<form id="searchForm">
-<input id="searchInput" type="text" placeholder="Recherche...">
-<button type="submit">Chercher</button>
-</form>
+  <form id="searchForm">
+    <input id="searchInput" type="text" placeholder="Recherche...">
+    <button type="submit">Chercher</button>
+  </form>
 </div>
 
 <div id="results" class="results"></div>
 
 <script>
-
-const searchIndex=[
-{title:"Bibliothèque",url:"https://noctambulique.github.io/Domus-Basileus/Biblioth%C3%A8que.html",keywords:["Livre","Savoir","Philosophie","Psychologie","Littérature","Librairie","Bibliothèque"]},
-{title:"Cercle Social",url:"https://noctambulique.github.io/Domus-Basileus/Cercle%20S.html",keywords:["Amis","Sociabilité","Gens","Personne","Gens"]},
-{title:"Classeurs",url:"https://noctambulique.github.io/Domus-Basileus/Classeurs.html",keywords:["Classeur", "Amis", "Sociabilité","Gens","Personne","Gens"]},
-{title:"Esthétique",url:"https://noctambulique.github.io/Domus-Basileus/Esthétique.html",keywords:["Esthétique","Fruitiger aéro","Aube","Nuit","Visuel"]},
-{title:"Excel Art",url:"https://noctambulique.github.io/Domus-Basileus/ExcelArt.html",keywords:["Film","Musique","Art","Vidéo","Cinéma", "Série"]},
-{title:"Galerie",url:"https://noctambulique.github.io/Domus-Basileus/Galerie.html",keywords:["Photographie","Souvenir","Mémoire","Paysages","Objets"]},
-{title:"Histoire Philo",url:"https://noctambulique.github.io/Domus-Basileus/Histoire Philo.html",keywords:["Histoire","Philosophie","Socrate","Penseurs","Livre"]},
-{title:"Marie Curie",url:"https://noctambulique.github.io/Domus-Basileus/Cercle%20S.html",keywords:["Amis","Sociabilité","Gens","Personne","Gens"]},
-{title:"Marie Curie",url:"https://noctambulique.github.io/Domus-Basileus/Cercle%20S.html",keywords:["Amis","Sociabilité","Gens","Personne","Gens"]},
-
-  {title:"Service RH",url:"pages/rh.html",keywords:["rh","ressources humaines","service rh"]}
+const searchIndex = [
+  {
+    title:"Bibliothèque",
+    url:"https://noctambulique.github.io/Domus-Basileus/Biblioth%C3%A8que.html",
+    description:"Livres, savoir, philosophie, psychologie, littérature et espace de consultation.",
+    keywords:["Livre","Savoir","Philosophie","Psychologie","Littérature","Librairie","Bibliothèque"]
+  },
+  {
+    title:"Cercle Social",
+    url:"https://noctambulique.github.io/Domus-Basileus/Cercle%20S.html",
+    description:"Espace consacré aux relations, aux amis, aux personnes et à la sociabilité.",
+    keywords:["Amis","Sociabilité","Gens","Personne","Relations","Cercle social"]
+  },
+  {
+    title:"Classeurs",
+    url:"https://noctambulique.github.io/Domus-Basileus/Classeurs.html",
+    description:"Organisation, classement, notes personnelles et repères thématiques.",
+    keywords:["Classeur","Organisation","Notes","Archives","Rangement"]
+  },
+  {
+    title:"Esthétique",
+    url:"https://noctambulique.github.io/Domus-Basileus/Esthétique.html",
+    description:"Univers visuel, ambiance fruitiger aero, aube, nuit et formes esthétiques.",
+    keywords:["Esthétique","Fruitiger aero","Aube","Nuit","Visuel","Beauté"]
+  },
+  {
+    title:"Excel Art",
+    url:"https://noctambulique.github.io/Domus-Basileus/ExcelArt.html",
+    description:"Films, musique, art, vidéo, cinéma et séries dans une approche culturelle.",
+    keywords:["Film","Musique","Art","Vidéo","Cinéma","Série","Culture"]
+  },
+  {
+    title:"Galerie",
+    url:"https://noctambulique.github.io/Domus-Basileus/Galerie.html",
+    description:"Photographies, souvenirs, mémoire, paysages et objets visuels.",
+    keywords:["Photographie","Souvenir","Mémoire","Paysages","Objets","Images"]
+  },
+  {
+    title:"Histoire Philo",
+    url:"https://noctambulique.github.io/Domus-Basileus/Histoire%20Philo.html",
+    description:"Histoire de la philosophie, penseurs, concepts, figures et repères intellectuels.",
+    keywords:["Histoire","Philosophie","Socrate","Penseurs","Livre","Idées"]
+  },
+  {
+    title:"Multivers",
+    url:"https://noctambulique.github.io/Domus-Basileus/Multivers.html",
+    description:"Avenir, liberté, potentiel, espoir et exploration de possibilités multiples.",
+    keywords:["Avenir","Multivers","Liberté","Potentiel","Espoir"]
+  },
+  {
+    title:"Musique",
+    url:"https://noctambulique.github.io/Domus-Basileus/Musique.html",
+    description:"Ambiances musicales, humeurs, vibes, tristesse et espérance sonore.",
+    keywords:["Musique","Espoir","Tristesse","Mood","Vibes","Chanson"]
+  },
+  {
+    title:"Test de personnalité",
+    url:"https://noctambulique.github.io/Domus-Basileus/Personnalité.html",
+    description:"Tests, traits, psychométrie et profils de personnalité.",
+    keywords:["Test","Personnalité","Psychométrie","Triadique","Traits","Profil"]
+  },
+  {
+    title:"Service RH",
+    url:"pages/rh.html",
+    description:"Page du service RH, ressources humaines, informations administratives et contact.",
+    keywords:["RH","Ressources humaines","Service RH","Administratif"]
+  }
 ];
 
 function normalize(text){
-return text.toLowerCase().normalize("NFD").replace(/[^a-z0-9 ]/g," ");
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")   // enlève les accents
+    .replace(/[^a-z0-9\s]/g, " ")      // enlève ponctuation
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tokenize(text){
+  return normalize(text).split(" ").filter(Boolean);
 }
 
 function search(query){
-query=normalize(query);
-let results=[];
+  const normalizedQuery = normalize(query);
+  const queryWords = tokenize(query);
 
-for(let page of searchIndex){
-for(let word of page.keywords){
-if(query.includes(normalize(word))){results.push(page);break}
+  if(!normalizedQuery){
+    return [];
+  }
+
+  const results = [];
+
+  for(const page of searchIndex){
+    const titleNorm = normalize(page.title);
+    const descNorm = normalize(page.description || "");
+    const keywordsNorm = (page.keywords || []).map(k => normalize(k));
+
+    let score = 0;
+    let matchedTerms = [];
+
+    for(const word of queryWords){
+      if(titleNorm.includes(word)){
+        score += 12;
+        matchedTerms.push(word);
+      }
+
+      if(descNorm.includes(word)){
+        score += 4;
+        matchedTerms.push(word);
+      }
+
+      for(const kw of keywordsNorm){
+        if(kw.includes(word) || word.includes(kw)){
+          score += 8;
+          matchedTerms.push(word);
+          break;
+        }
+      }
+    }
+
+    if(titleNorm.includes(normalizedQuery)){
+      score += 20;
+    }
+
+    if(descNorm.includes(normalizedQuery)){
+      score += 8;
+    }
+
+    if(score > 0){
+      results.push({
+        ...page,
+        score,
+        matchedTerms:[...new Set(matchedTerms)]
+      });
+    }
+  }
+
+  // suppression des doublons par URL
+  const uniqueResults = [];
+  const seen = new Set();
+
+  for(const item of results.sort((a,b) => b.score - a.score)){
+    if(!seen.has(item.url)){
+      seen.add(item.url);
+      uniqueResults.push(item);
+    }
+  }
+
+  return uniqueResults;
 }
+
+function escapeHtml(text){
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
-return results;
-}
+const form = document.getElementById("searchForm");
+const input = document.getElementById("searchInput");
+const resultsDiv = document.getElementById("results");
 
-const form=document.getElementById("searchForm");
-const input=document.getElementById("searchInput");
-const resultsDiv=document.getElementById("results");
+form.addEventListener("submit", function(e){
+  e.preventDefault();
 
-form.addEventListener("submit",function(e){
-e.preventDefault();
+  const query = input.value.trim();
+  const results = search(query);
 
-const query=input.value;
-const results=search(query);
+  resultsDiv.innerHTML = "";
 
-resultsDiv.innerHTML="";
+  if(!query){
+    resultsDiv.innerHTML = "<div class='no-result'>Entrez une recherche.</div>";
+    return;
+  }
 
-if(results.length===0){
-resultsDiv.innerHTML="<div class='result'>Aucun résultat</div>";
-return;
-}
+  if(results.length === 0){
+    resultsDiv.innerHTML = "<div class='no-result'>Aucun résultat trouvé.</div>";
+    return;
+  }
 
-for(let r of results){
-const el=document.createElement("div");
-el.className="result";
-el.innerHTML=`<a href="${r.url}">${r.title}</a>`;
-resultsDiv.appendChild(el);
-}
+  for(const r of results){
+    const el = document.createElement("div");
+    el.className = "result";
+
+    el.innerHTML = `
+      <div class="result-url">${escapeHtml(r.url)}</div>
+      <div class="result-title">
+        <a href="${r.url}">${escapeHtml(r.title)}</a>
+      </div>
+      <div class="result-desc">${escapeHtml(r.description || "Aucune description disponible.")}</div>
+      <div class="result-meta">Pertinence : ${r.score}</div>
+    `;
+
+    resultsDiv.appendChild(el);
+  }
 });
-
 </script>
 
 </body>
