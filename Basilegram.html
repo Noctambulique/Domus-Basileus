@@ -13,6 +13,7 @@
       --text: #f5f5f5;
       --muted: #9b9b9b;
       --soft: #d8d8d8;
+      --overlay: rgba(0, 0, 0, 0.62);
     }
 
     * {
@@ -31,6 +32,14 @@
     a {
       color: inherit;
       text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
     }
 
     .page {
@@ -106,6 +115,16 @@
       margin-right: 6px;
     }
 
+    .meta-link {
+      color: var(--soft);
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .meta-link:hover {
+      color: white;
+      opacity: 1;
+    }
+
     .bio {
       max-width: 620px;
       display: flex;
@@ -127,74 +146,6 @@
 
     .bio-link {
       color: #b9d3ff;
-    }
-
-    .following-section {
-      padding: 26px 0 30px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .section-title {
-      font-size: 13px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
-
-    .following-list {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .following-card {
-      min-width: 150px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .following-avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: var(--panel-soft);
-      flex-shrink: 0;
-    }
-
-    .following-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .following-info {
-      min-width: 0;
-    }
-
-    .following-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: white;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .following-handle {
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-top: 3px;
     }
 
     .gallery-section {
@@ -264,6 +215,134 @@
       line-height: 1.6;
     }
 
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: var(--overlay);
+      padding: 20px;
+      z-index: 50;
+    }
+
+    .modal.is-open {
+      display: flex;
+    }
+
+    .modal-panel {
+      width: min(440px, 100%);
+      max-height: 75vh;
+      overflow: auto;
+      background: #101010;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: #101010;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .modal-close {
+      color: var(--muted);
+      font-size: 22px;
+      line-height: 1;
+      transition: color 0.2s ease;
+    }
+
+    .modal-close:hover {
+      color: white;
+    }
+
+    .following-list {
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+    }
+
+    .following-card {
+      background: transparent;
+      border-radius: 18px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .following-card:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .following-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .following-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--panel-soft);
+      flex-shrink: 0;
+    }
+
+    .following-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .following-info {
+      min-width: 0;
+    }
+
+    .following-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .following-handle {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 3px;
+    }
+
+    .following-tag {
+      font-size: 12px;
+      color: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 10px;
+      flex-shrink: 0;
+    }
+
     @media (max-width: 760px) {
       .page {
         padding: 24px 14px 40px;
@@ -287,8 +366,8 @@
         gap: 4px;
       }
 
-      .following-card {
-        min-width: calc(50% - 7px);
+      .modal-panel {
+        border-radius: 22px;
       }
     }
   </style>
@@ -305,6 +384,7 @@
       followingCount: 6,
       bioText: 'Chercheur visuel. Notes, images, fragments, atmosphères.',
       bioLink: 'basilegram.local',
+      followingLabel: 'Suivi',
       following: [
         {
           name: 'Noir Studio',
@@ -367,7 +447,9 @@
         <div class="meta">
           <span><strong id="posts-count"></strong>publications</span>
           <span><strong id="followers-count"></strong>abonnés</span>
-          <span><strong id="following-count"></strong>suivis</span>
+          <button class="meta-link" id="following-trigger" type="button" aria-haspopup="dialog" aria-controls="following-modal" aria-expanded="false">
+            <strong id="following-count"></strong>suivis
+          </button>
         </div>
 
         <div class="bio">
@@ -378,11 +460,6 @@
       </div>
     </section>
 
-    <section class="following-section">
-      <div class="section-title">Comptes suivis</div>
-      <div class="following-list" id="following-list"></div>
-    </section>
-
     <section class="gallery-section">
       <div class="gallery-header">Publications</div>
       <div class="gallery-grid" id="gallery-grid"></div>
@@ -390,6 +467,16 @@
         Toute la personnalisation se fait directement dans l’objet JavaScript <strong>profileData</strong> en haut du fichier.
       </div>
     </section>
+  </div>
+
+  <div class="modal" id="following-modal" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="following-modal-title">
+      <div class="modal-header">
+        <div class="modal-title" id="following-modal-title">Comptes suivis</div>
+        <button class="modal-close" id="following-close" type="button" aria-label="Fermer">×</button>
+      </div>
+      <div class="following-list" id="following-list"></div>
+    </div>
   </div>
 
   <script>
@@ -408,13 +495,16 @@
       const card = document.createElement('div');
       card.className = 'following-card';
       card.innerHTML = `
-        <div class="following-avatar">
-          <img src="${account.avatar}" alt="${account.name}">
+        <div class="following-left">
+          <div class="following-avatar">
+            <img src="${account.avatar}" alt="${account.name}">
+          </div>
+          <div class="following-info">
+            <div class="following-name">${account.name}</div>
+            <div class="following-handle">${account.handle}</div>
+          </div>
         </div>
-        <div class="following-info">
-          <div class="following-name">${account.name}</div>
-          <div class="following-handle">${account.handle}</div>
-        </div>
+        <div class="following-tag">${profileData.followingLabel}</div>
       `;
       followingList.appendChild(card);
     });
@@ -431,6 +521,39 @@
         </div>
       `;
       galleryGrid.appendChild(item);
+    });
+
+    const modal = document.getElementById('following-modal');
+    const trigger = document.getElementById('following-trigger');
+    const closeButton = document.getElementById('following-close');
+
+    function openModal() {
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      trigger.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      trigger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    trigger.addEventListener('click', openModal);
+    closeButton.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+        closeModal();
+      }
     });
   </script>
 </body>
