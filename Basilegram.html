@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Basilegram</title>
+  <title>Basilegram — Profil</title>
   <style>
     :root {
-      --bg: #0a0a0a;
+      --bg: #090909;
       --panel: #111111;
-      --panel-2: #171717;
-      --border: rgba(255,255,255,0.08);
+      --panel-soft: #151515;
+      --border: rgba(255, 255, 255, 0.08);
       --text: #f5f5f5;
-      --muted: #9a9a9a;
-      --soft: #cfcfcf;
+      --muted: #9b9b9b;
+      --soft: #d8d8d8;
     }
 
     * {
@@ -28,320 +28,410 @@
       min-height: 100vh;
     }
 
-    .layout {
-      display: flex;
-      min-height: 100vh;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
-    .sidebar {
-      width: 260px;
-      border-right: 1px solid var(--border);
-      padding: 32px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      background: #0d0d0d;
-      position: sticky;
-      top: 0;
-      height: 100vh;
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
     }
 
     .brand {
-      font-size: 30px;
+      font-size: 28px;
       font-weight: 700;
+      letter-spacing: -0.04em;
+      margin-bottom: 28px;
+    }
+
+    .profile-header {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 28px;
+      align-items: center;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--panel-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .profile-main {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .profile-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      align-items: center;
+    }
+
+    .username {
+      font-size: 26px;
+      font-weight: 500;
       letter-spacing: -0.03em;
     }
 
-    .menu {
+    .meta {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .menu a,
-    .new-post {
-      text-decoration: none;
+      flex-wrap: wrap;
+      gap: 20px;
       color: var(--soft);
-      background: transparent;
-      border: 1px solid transparent;
-      padding: 14px 16px;
-      border-radius: 18px;
-      transition: 0.2s ease;
       font-size: 15px;
     }
 
-    .menu a:hover,
-    .new-post:hover {
-      background: rgba(255,255,255,0.04);
+    .meta strong {
       color: white;
-      border-color: var(--border);
+      margin-right: 6px;
     }
 
-    .new-post {
-      background: white;
-      color: black;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .new-post:hover {
-      background: #eaeaea;
-      color: black;
-    }
-
-    .profile-box {
-      margin-top: auto;
-      padding: 16px;
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      background: rgba(255,255,255,0.03);
-    }
-
-    .profile-box .name {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .profile-box .tagline {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .main {
-      flex: 1;
-      padding: 32px 24px 48px;
-    }
-
-    .topbar {
-      max-width: 760px;
-      margin: 0 auto 28px;
-      padding-bottom: 18px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .topbar h1 {
-      font-size: 34px;
-      letter-spacing: -0.04em;
-      margin-bottom: 6px;
-    }
-
-    .topbar p {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .counter {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.03);
-      color: var(--soft);
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-size: 14px;
-      white-space: nowrap;
-    }
-
-    .feed {
-      max-width: 760px;
-      margin: 0 auto;
+    .bio {
+      max-width: 620px;
       display: flex;
       flex-direction: column;
-      gap: 28px;
+      gap: 6px;
     }
 
-    .post {
+    .bio-name {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .bio-text,
+    .bio-link {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--soft);
+    }
+
+    .bio-link {
+      color: #b9d3ff;
+    }
+
+    .following-section {
+      padding: 26px 0 30px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .following-list {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .following-card {
+      min-width: 150px;
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 32px;
-      overflow: hidden;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
-    }
-
-    .post-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 20px;
-    }
-
-    .post-user {
+      border-radius: 20px;
+      padding: 14px;
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .avatar {
-      width: 44px;
-      height: 44px;
+    .following-avatar {
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
+      overflow: hidden;
+      background: var(--panel-soft);
+      flex-shrink: 0;
+    }
+
+    .following-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .following-info {
+      min-width: 0;
+    }
+
+    .following-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .following-handle {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 3px;
+    }
+
+    .gallery-section {
+      padding-top: 28px;
+    }
+
+    .gallery-header {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--panel-2);
-      border: 1px solid var(--border);
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
+      margin-bottom: 20px;
       color: var(--soft);
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
     }
 
-    .user-meta strong {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 2px;
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
     }
 
-    .user-meta span {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .more {
-      color: var(--muted);
-      font-size: 20px;
-    }
-
-    .post-image {
-      width: 100%;
+    .gallery-item {
+      position: relative;
       aspect-ratio: 1 / 1;
+      overflow: hidden;
+      background: var(--panel-soft);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       display: block;
-      background: black;
+      transition: transform 0.25s ease, opacity 0.25s ease;
     }
 
-    .post-body {
-      padding: 18px 20px 22px;
-    }
-
-    .actions {
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.38);
+      opacity: 0;
       display: flex;
-      gap: 16px;
-      margin-bottom: 12px;
-      color: var(--soft);
-      font-size: 18px;
-    }
-
-    .caption {
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
       font-size: 14px;
-      line-height: 1.7;
-      color: #dedede;
-    }
-
-    .caption strong {
       color: white;
-      margin-right: 8px;
+      transition: opacity 0.25s ease;
     }
 
-    @media (max-width: 900px) {
-      .sidebar {
-        display: none;
+    .gallery-item:hover img {
+      transform: scale(1.03);
+      opacity: 0.92;
+    }
+
+    .gallery-item:hover .gallery-overlay {
+      opacity: 1;
+    }
+
+    .footer-note {
+      margin-top: 26px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        padding: 24px 14px 40px;
       }
 
-      .main {
-        padding: 22px 14px 40px;
+      .profile-header {
+        grid-template-columns: 1fr;
+        gap: 18px;
       }
 
-      .topbar {
-        align-items: flex-start;
-        flex-direction: column;
+      .avatar {
+        width: 92px;
+        height: 92px;
       }
 
-      .topbar h1 {
-        font-size: 28px;
+      .username {
+        font-size: 22px;
+      }
+
+      .gallery-grid {
+        gap: 4px;
+      }
+
+      .following-card {
+        min-width: calc(50% - 7px);
       }
     }
   </style>
 </head>
 <body>
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="brand">Basilegram</div>
+  <script>
+    const profileData = {
+      siteName: 'Basilegram',
+      username: 'basile',
+      displayName: 'Basile',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80',
+      postsCount: 9,
+      followersCount: 1240,
+      followingCount: 6,
+      bioText: 'Chercheur visuel. Notes, images, fragments, atmosphères.',
+      bioLink: 'basilegram.local',
+      following: [
+        {
+          name: 'Noir Studio',
+          handle: '@noirstudio',
+          avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80'
+        },
+        {
+          name: 'Ligne Claire',
+          handle: '@ligneclaire',
+          avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80'
+        },
+        {
+          name: 'Atelier Minuit',
+          handle: '@atelierminuit',
+          avatar: 'https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=300&q=80'
+        },
+        {
+          name: 'Sable',
+          handle: '@sable',
+          avatar: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=300&q=80'
+        },
+        {
+          name: 'Formes',
+          handle: '@formes',
+          avatar: 'https://images.unsplash.com/photo-1502323777036-f29e3972d82f?auto=format&fit=crop&w=300&q=80'
+        },
+        {
+          name: 'Archive Nuit',
+          handle: '@archivenuit',
+          avatar: 'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?auto=format&fit=crop&w=300&q=80'
+        }
+      ],
+      posts: [
+        { image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80', likes: 312, comments: 18 },
+        { image: 'https://images.unsplash.com/photo-1494256997604-768d1f608cac?auto=format&fit=crop&w=1200&q=80', likes: 281, comments: 11 },
+        { image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80', likes: 402, comments: 26 },
+        { image: 'https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1200&q=80', likes: 197, comments: 9 },
+        { image: 'https://images.unsplash.com/photo-1504208434309-cb69f4fe52b0?auto=format&fit=crop&w=1200&q=80', likes: 356, comments: 14 },
+        { image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', likes: 438, comments: 33 },
+        { image: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1200&q=80', likes: 228, comments: 10 },
+        { image: 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=1200&q=80', likes: 267, comments: 12 },
+        { image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80', likes: 501, comments: 41 }
+      ]
+    };
+  </script>
 
-      <nav class="menu">
-        <a href="#">Accueil</a>
-        <a href="#">Explorer</a>
-        <a href="#">Messages</a>
-        <a href="#">Favoris</a>
-        <a href="#">Profil</a>
-      </nav>
+  <div class="page">
+    <div class="brand" id="brand"></div>
 
-      <button class="new-post">Nouveau post</button>
-
-      <div class="profile-box">
-        <div class="name">@basile</div>
-        <div class="tagline">Minimal dark feed</div>
+    <section class="profile-header">
+      <div class="avatar">
+        <img id="profile-avatar" src="" alt="Avatar profil">
       </div>
-    </aside>
 
-    <main class="main">
-      <header class="topbar">
-        <div>
-          <h1>Basilegram</h1>
-          <p>Une page minimaliste en thème sombre pour publier des images.</p>
+      <div class="profile-main">
+        <div class="profile-top">
+          <div class="username" id="username"></div>
         </div>
-        <div class="counter">3 posts</div>
-      </header>
 
-      <section class="feed">
-        <article class="post">
-          <div class="post-header">
-            <div class="post-user">
-              <div class="avatar">ba</div>
-              <div class="user-meta">
-                <strong>basile</strong>
-                <span>@basilegram · Aujourd’hui</span>
-              </div>
-            </div>
-            <div class="more">•••</div>
-          </div>
-          <img class="post-image" src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80" alt="Image Basilegram 1">
-          <div class="post-body">
-            <div class="actions">♡ ∘ ↗</div>
-            <p class="caption"><strong>basile</strong> Une esthétique sobre, nette, sans bruit.</p>
-          </div>
-        </article>
+        <div class="meta">
+          <span><strong id="posts-count"></strong>publications</span>
+          <span><strong id="followers-count"></strong>abonnés</span>
+          <span><strong id="following-count"></strong>suivis</span>
+        </div>
 
-        <article class="post">
-          <div class="post-header">
-            <div class="post-user">
-              <div class="avatar">no</div>
-              <div class="user-meta">
-                <strong>noir</strong>
-                <span>@minimal · Hier</span>
-              </div>
-            </div>
-            <div class="more">•••</div>
-          </div>
-          <img class="post-image" src="https://images.unsplash.com/photo-1494256997604-768d1f608cac?auto=format&fit=crop&w=1200&q=80" alt="Image Basilegram 2">
-          <div class="post-body">
-            <div class="actions">♡ ∘ ↗</div>
-            <p class="caption"><strong>noir</strong> Des images, un cadre, une respiration.</p>
-          </div>
-        </article>
+        <div class="bio">
+          <div class="bio-name" id="display-name"></div>
+          <div class="bio-text" id="bio-text"></div>
+          <a class="bio-link" id="bio-link" href="#"></a>
+        </div>
+      </div>
+    </section>
 
-        <article class="post">
-          <div class="post-header">
-            <div class="post-user">
-              <div class="avatar">lu</div>
-              <div class="user-meta">
-                <strong>lumiere</strong>
-                <span>@ombre · Cette semaine</span>
-              </div>
-            </div>
-            <div class="more">•••</div>
-          </div>
-          <img class="post-image" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80" alt="Image Basilegram 3">
-          <div class="post-body">
-            <div class="actions">♡ ∘ ↗</div>
-            <p class="caption"><strong>lumiere</strong> Basilegram en thème sombre, pensé pour l’essentiel.</p>
-          </div>
-        </article>
-      </section>
-    </main>
+    <section class="following-section">
+      <div class="section-title">Comptes suivis</div>
+      <div class="following-list" id="following-list"></div>
+    </section>
+
+    <section class="gallery-section">
+      <div class="gallery-header">Publications</div>
+      <div class="gallery-grid" id="gallery-grid"></div>
+      <div class="footer-note">
+        Toute la personnalisation se fait directement dans l’objet JavaScript <strong>profileData</strong> en haut du fichier.
+      </div>
+    </section>
   </div>
+
+  <script>
+    document.getElementById('brand').textContent = profileData.siteName;
+    document.getElementById('profile-avatar').src = profileData.avatar;
+    document.getElementById('username').textContent = profileData.username;
+    document.getElementById('posts-count').textContent = profileData.postsCount;
+    document.getElementById('followers-count').textContent = profileData.followersCount;
+    document.getElementById('following-count').textContent = profileData.followingCount;
+    document.getElementById('display-name').textContent = profileData.displayName;
+    document.getElementById('bio-text').textContent = profileData.bioText;
+    document.getElementById('bio-link').textContent = profileData.bioLink;
+
+    const followingList = document.getElementById('following-list');
+    profileData.following.forEach((account) => {
+      const card = document.createElement('div');
+      card.className = 'following-card';
+      card.innerHTML = `
+        <div class="following-avatar">
+          <img src="${account.avatar}" alt="${account.name}">
+        </div>
+        <div class="following-info">
+          <div class="following-name">${account.name}</div>
+          <div class="following-handle">${account.handle}</div>
+        </div>
+      `;
+      followingList.appendChild(card);
+    });
+
+    const galleryGrid = document.getElementById('gallery-grid');
+    profileData.posts.forEach((post, index) => {
+      const item = document.createElement('div');
+      item.className = 'gallery-item';
+      item.innerHTML = `
+        <img src="${post.image}" alt="Publication ${index + 1}">
+        <div class="gallery-overlay">
+          <span>♡ ${post.likes}</span>
+          <span>◦ ${post.comments}</span>
+        </div>
+      `;
+      galleryGrid.appendChild(item);
+    });
+  </script>
 </body>
 </html>
