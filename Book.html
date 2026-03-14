@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bibliothèque</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #2b1b3f; /* violet sombre */
+            margin: 0;
+            padding: 40px;
+            color: #f0f0f0;
+        }
+
+        /* image en haut */
+        .header-image {
+            width: 33%;
+            margin-bottom: 40px;
+        }
+
+        .header-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .bibliotheque {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .bibliotheque img {
+            width: 150px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .bibliotheque img:hover {
+            transform: scale(1.05);
+        }
+
+        .texte {
+            display: none;
+            max-width: 800px;
+            margin: auto;
+            white-space: pre-line;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .retour {
+            margin-top: 40px;
+            cursor: pointer;
+            color: #c8b6ff;
+            font-size: 14px;
+        }
+
+        .retour:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<!-- image paysage en haut -->
+<div class="header-image">
+    <img src="images/photo.jpg" alt="Photographie">
+</div>
+
+<div class="bibliotheque" id="bibliotheque"></div>
+
+<div class="texte" id="texte">
+    <div id="contenuTexte"></div>
+    <div class="retour" id="retour">← Retour à la bibliothèque</div>
+</div>
+
+<script>
+    const livres = [
+        {
+            image: "images/livre2.jpg",
+            texte: "Titre : Livre 2\n\nUn autre contenu.\nMinimaliste.\nSilencieux."
+        }
+    ];
+
+    const bibliotheque = document.getElementById("bibliotheque");
+    const texteDiv = document.getElementById("texte");
+    const contenuTexte = document.getElementById("contenuTexte");
+    const retour = document.getElementById("retour");
+
+    livres.forEach(livre => {
+        const img = document.createElement("img");
+        img.src = livre.image;
+
+        img.addEventListener("click", () => {
+            bibliotheque.style.display = "none";
+            contenuTexte.textContent = livre.texte;
+            texteDiv.style.display = "block";
+        });
+
+        bibliotheque.appendChild(img);
+    });
+
+    retour.addEventListener("click", () => {
+        texteDiv.style.display = "none";
+        bibliotheque.style.display = "flex";
+    });
+</script>
+
+</body>
+</html>
