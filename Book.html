@@ -4,123 +4,109 @@
     <meta charset="UTF-8">
     <title>Bibliothèque</title>
 
-    <style>
-        body {
-            font-family: Georgia, "Times New Roman", serif;
-            background: radial-gradient(circle at top, #3d2757 0%, #1a1028 45%, #0f0a17 100%);
-            margin: 0;
-            padding: 40px;
-            color: #f3ecff;
-            min-height: 100vh;
-        }
+   <style>
+body {
+    font-family: Georgia, "Times New Roman", serif;
+    background: #000;
+    margin: 0;
+    padding: 40px;
+    color: #ffffff;
+    min-height: 100vh;
+}
 
-        .page {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+.page {
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
-        /* image du haut centrée */
-        .header-image {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 50px;
-        }
+/* image du haut centrée */
+.header-image {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+}
 
-        .header-image img {
-            width: 33%;
-            min-width: 260px;
-            max-width: 480px;
-            aspect-ratio: 16 / 9;
-            object-fit: cover;
-            display: block;
-            border-radius: 10px;
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            filter: brightness(0.92) contrast(1.05) saturate(0.9);
-        }
+.header-image img {
+    width: 33%;
+    min-width: 260px;
+    max-width: 480px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
 
-        .bibliotheque {
-            display: flex;
-            gap: 28px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+    /* suppression totale du cadre */
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    filter: none;
+}
 
-        .livre {
-            text-align: center;
-            width: 170px;
-        }
+.bibliotheque {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 
-        .livre img {
-            width: 100%;
-            height: 240px;
-            object-fit: cover;
-            cursor: pointer;
-            transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
-            border-radius: 8px;
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(255, 255, 255, 0.03);
-        }
+.livre {
+    text-align: center;
+    width: 170px;
+}
 
-        .livre img:hover {
-            transform: scale(1.04) translateY(-4px);
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
-            opacity: 0.95;
-        }
+.livre img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.25s ease;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+}
 
-        .livre-titre {
-            margin-top: 10px;
-            font-size: 15px;
-            color: #d8c7f7;
-            letter-spacing: 0.4px;
-        }
+.livre img:hover {
+    transform: scale(1.04);
+}
 
-        .texte {
-            display: none;
-            max-width: 850px;
-            margin: 30px auto 0 auto;
-            white-space: pre-line;
-            font-size: 17px;
-            line-height: 1.9;
-            background: rgba(255, 255, 255, 0.04);
-            padding: 35px;
-            border-radius: 14px;
-            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(3px);
-        }
+.livre-titre {
+    margin-top: 10px;
+    font-size: 15px;
+    color: #ffffff;
+    letter-spacing: 0.4px;
+}
 
-        #contenuTexte {
-            color: #f2ebff;
-        }
+.texte {
+    display: none;
+    max-width: 850px;
+    margin: 30px auto 0 auto;
+    white-space: pre-line;
+    font-size: 17px;
+    line-height: 1.9;
+    background: #000;
+    padding: 35px;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+}
 
-        .retour {
-            margin-top: 35px;
-            cursor: pointer;
-            color: #cdb7ff;
-            font-size: 14px;
-            letter-spacing: 0.3px;
-        }
+#contenuTexte {
+    color: #ffffff;
+}
 
-        .retour:hover {
-            text-decoration: underline;
-            color: #ffffff;
-        }
+.retour {
+    margin-top: 35px;
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+}
 
-        /* légère ambiance visuelle */
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            background:
-                linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0)),
-                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 25%),
-                radial-gradient(circle at 80% 30%, rgba(170,120,255,0.08), transparent 20%);
-            mix-blend-mode: screen;
-        }
-    </style>
+.retour:hover {
+    text-decoration: underline;
+}
+</style>
+
 </head>
 <body>
 
