@@ -2,20 +2,13 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Map interactive</title>
 
 <style>
-    html, body {
+    body {
         margin: 0;
-        width: 100%;
-        height: 100%;
         overflow: hidden;
         font-family: Arial, sans-serif;
-    }
-
-    body {
-        touch-action: none;
     }
 
     #map-container {
@@ -25,7 +18,6 @@
         cursor: grab;
         position: relative;
         background: #000;
-        touch-action: none;
     }
 
     #map {
@@ -35,14 +27,11 @@
         user-select: none;
         -webkit-user-drag: none;
         pointer-events: none;
-        max-width: none;
     }
 
     .marker {
         position: absolute;
         cursor: pointer;
-        user-select: none;
-        -webkit-user-drag: none;
     }
 </style>
 </head>
@@ -50,7 +39,7 @@
 <body>
 
 <div id="map-container">
-    <img id="map" src="Fond/Map Aube.png" alt="map">
+    <img id="map" src="Fond/Aube.png" alt="map">
 </div>
 
 <script>
@@ -58,7 +47,7 @@ const map = document.getElementById("map");
 const container = document.getElementById("map-container");
 
 let isDragging = false;
-let startX = 0, startY = 0;
+let startX, startY;
 let mapX = 0, mapY = 0;
 
 /* --- Limites de déplacement --- */
@@ -77,65 +66,38 @@ function clampMapPosition(x, y) {
     };
 }
 
-/* --- Centrage initial de la map --- */
-function centerMap() {
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-    const mapWidth = map.offsetWidth;
-    const mapHeight = map.offsetHeight;
-
-    let centeredX = (containerWidth - mapWidth) / 2;
-    let centeredY = (containerHeight - mapHeight) / 2;
-
-    const clamped = clampMapPosition(centeredX, centeredY);
-    mapX = clamped.x;
-    mapY = clamped.y;
-
-    updateMapPosition();
-}
-
 /* --- Mise à jour visuelle --- */
 function updateMapPosition() {
     map.style.transform = `translate(${mapX}px, ${mapY}px)`;
-
     document.querySelectorAll(".marker").forEach(marker => {
         marker.style.transform = `translate(${mapX}px, ${mapY}px)`;
     });
 }
 
-/* --- Début du drag --- */
-container.addEventListener("pointerdown", e => {
+/* --- Déplacement de la map --- */
+container.addEventListener("mousedown", e => {
     isDragging = true;
     startX = e.clientX - mapX;
     startY = e.clientY - mapY;
     container.style.cursor = "grabbing";
-    container.setPointerCapture(e.pointerId);
 });
 
-/* --- Fin du drag --- */
-container.addEventListener("pointerup", e => {
-    isDragging = false;
-    container.style.cursor = "grab";
-    container.releasePointerCapture(e.pointerId);
-});
-
-container.addEventListener("pointercancel", () => {
+window.addEventListener("mouseup", () => {
     isDragging = false;
     container.style.cursor = "grab";
 });
 
-/* --- Déplacement de la map --- */
-container.addEventListener("pointermove", e => {
-    if (!isDragging) return;
+window.addEventListener("mousemove", e => {
+    if (isDragging) {
+        const newX = e.clientX - startX;
+        const newY = e.clientY - startY;
 
-    const newX = e.clientX - startX;
-    const newY = e.clientY - startY;
+        const clamped = clampMapPosition(newX, newY);
+        mapX = clamped.x;
+        mapY = clamped.y;
 
-    const clamped = clampMapPosition(newX, newY);
-    mapX = clamped.x;
-    mapY = clamped.y;
-
-    updateMapPosition();
+        updateMapPosition();
+    }
 });
 
 /* --- Ajouter un marker --- */
@@ -155,21 +117,25 @@ function addMarker(x, y, size, image, link) {
     container.appendChild(marker);
 }
 
-/* --- Chargement --- */
+/* --- Recalage au chargement --- */
 map.addEventListener("load", () => {
-    centerMap();
+    const clamped = clampMapPosition(mapX, mapY);
+    mapX = clamped.x;
+    mapY = clamped.y;
+    updateMapPosition();
 });
 
-/* --- Resize --- */
+/* --- Recalage au resize --- */
 window.addEventListener("resize", () => {
-    centerMap();
+    const clamped = clampMapPosition(mapX, mapY);
+    mapX = clamped.x;
+    mapY = clamped.y;
+    updateMapPosition();
 });
 
 /* --- Exemples --- */
-// addMarker(300, 200, 100, "Fond/MonMarker.png", "page.html");
 addMarker(300, 200, 100, "Fond/Lieu.png", "Musique.html");
-addMarker(300, 200, 100, "Fond/Lieu.png", "Biographie.html");
-
+addMarker(500, 200, 100, "Fond/Lieu.png", "Biographie.html");
 </script>
 
 </body>
