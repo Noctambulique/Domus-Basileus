@@ -20,10 +20,15 @@
         background: #000;
     }
 
-    #map {
+    /* CONTENEUR GLOBAL QUI BOUGE */
+    #map-wrapper {
         position: absolute;
         top: 0;
         left: 0;
+    }
+
+    #map {
+        display: block;
         user-select: none;
         -webkit-user-drag: none;
         pointer-events: none;
@@ -32,6 +37,14 @@
     .marker {
         position: absolute;
         cursor: pointer;
+        transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    /* Effet hover propre */
+    .marker:hover {
+        transform: scale(1.15);
+        filter: brightness(1.2) drop-shadow(0 0 10px rgba(255,255,255,0.6));
+        z-index: 10;
     }
 </style>
 </head>
@@ -39,12 +52,15 @@
 <body>
 
 <div id="map-container">
-    <img id="map" src="Fond/Map Aube.png" alt="map">
+    <div id="map-wrapper">
+        <img id="map" src="Fond/Map Aube.png" alt="map">
+    </div>
 </div>
 
 <script>
 const map = document.getElementById("map");
 const container = document.getElementById("map-container");
+const wrapper = document.getElementById("map-wrapper");
 
 let isDragging = false;
 let startX, startY;
@@ -68,13 +84,10 @@ function clampMapPosition(x, y) {
 
 /* --- Mise à jour visuelle --- */
 function updateMapPosition() {
-    map.style.transform = `translate(${mapX}px, ${mapY}px)`;
-    document.querySelectorAll(".marker").forEach(marker => {
-        marker.style.transform = `translate(${mapX}px, ${mapY}px)`;
-    });
+    wrapper.style.transform = `translate(${mapX}px, ${mapY}px)`;
 }
 
-/* --- Déplacement de la map --- */
+/* --- Drag --- */
 container.addEventListener("mousedown", e => {
     isDragging = true;
     startX = e.clientX - mapX;
@@ -108,13 +121,12 @@ function addMarker(x, y, size, image, link) {
     marker.style.width = size + "px";
     marker.style.left = x + "px";
     marker.style.top = y + "px";
-    marker.style.transform = `translate(${mapX}px, ${mapY}px)`;
 
     marker.addEventListener("click", () => {
         window.location.href = link;
     });
 
-    container.appendChild(marker);
+    wrapper.appendChild(marker);
 }
 
 /* --- Recalage au chargement --- */
@@ -125,7 +137,7 @@ map.addEventListener("load", () => {
     updateMapPosition();
 });
 
-/* --- Recalage au resize --- */
+/* --- Resize --- */
 window.addEventListener("resize", () => {
     const clamped = clampMapPosition(mapX, mapY);
     mapX = clamped.x;
@@ -133,9 +145,10 @@ window.addEventListener("resize", () => {
     updateMapPosition();
 });
 
+
 /* --- Exemples --- */
-addMarker(660, 280, 150, "Fond/BasileOiseau.png", "Biographie.html");
-    addMarker(600, 600, 100, "Fond/Lieu.png", "Musique.html");
+addMarker(630, 280, 250, "Fond/BasileOiseau.png", "Biographie.html");
+addMarker(600, 600, 100, "Fond/Lieu.png", "Musique.html");
 </script>
 
 </body>
