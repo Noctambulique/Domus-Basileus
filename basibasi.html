@@ -119,6 +119,7 @@ button:hover{
   border-radius:12px;
   color:#ddd;
 }
+  
 </style>
 </head>
 <body>
@@ -360,6 +361,31 @@ function escapeHtml(text){
 
 const form = document.getElementById("searchForm");
 const input = document.getElementById("searchInput");
+  const weirdChars = ["@", "#", "%", "&", "Ø", "∆"];
+
+input.addEventListener("input", () => {
+
+  // --- Effet 3 : flash sombre ---
+  document.body.classList.add("flash");
+  setTimeout(() => {
+    document.body.classList.remove("flash");
+  }, 150);
+
+
+  // --- Effet 2 : déformation légère ---
+  let val = input.value;
+  let newVal = "";
+
+  for (let c of val) {
+    if (Math.random() < 0.08) { // faible probabilité pour rester subtil
+      newVal += weirdChars[Math.floor(Math.random() * weirdChars.length)];
+    } else {
+      newVal += c;
+    }
+  }
+
+  input.value = newVal;
+});
 const resultsDiv = document.getElementById("results");
 
 form.addEventListener("submit", function(e){
