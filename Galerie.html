@@ -10,7 +10,7 @@
 body{
   margin:0;
   padding:30px;
-  background:linear-gradient(180deg, #254A59 0%, #6FA8BF 40%, #99D9F2 100%);
+  background:linear-gradient(180deg, #3a2f4f 0%, #5a4a6b 50%, #7a6a8c 100%);
   font-family:"Segoe UI", sans-serif;
   color:#fff;
 }
@@ -22,59 +22,67 @@ h2{
   text-shadow:0 2px 8px rgba(0,0,0,0.7);
 }
 
-/* ------------------- ZONE AERO ------------------- */
+/* ------------------- ZONE ------------------- */
 .zone{
   display:grid;
   grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
-  gap:40px;
-  padding:40px;
+  gap:50px;
+  padding:50px;
 
-  background:rgba(255,255,255,0.22);
-  backdrop-filter:blur(14px) saturate(150%);
-  -webkit-backdrop-filter:blur(14px) saturate(150%);
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(12px);
   border-radius:18px;
 
-  border:1px solid rgba(255,255,255,0.55);
+  border:1px solid rgba(255,255,255,0.25);
   box-shadow:
-    inset 0 0 25px rgba(255,255,255,0.33),
-    0 18px 35px rgba(0,0,0,0.45),
-    0 0 40px rgba(40,130,255,0.35);
+    inset 0 0 20px rgba(255,255,255,0.15),
+    0 20px 40px rgba(0,0,0,0.5);
 }
 
 /* ------------------- IMAGES ------------------- */
 .zone img{
   width:100%;
   height:auto;
-  border-radius:8px;
+  border-radius:10px;
   display:block;
 
+  /* effet gravité (position basse + rotation) */
+  transform-origin:center;
+  
   box-shadow:
-    0 10px 25px rgba(0,0,0,0.65),
-    0 0 15px rgba(160,200,255,0.35),
-    inset 0 0 18px rgba(255,255,255,0.18);
+    0 25px 35px rgba(0,0,0,0.7),
+    0 0 15px rgba(180,160,255,0.25);
 
-  border:1px solid rgba(255,255,255,0.45);
+  border:1px solid rgba(255,255,255,0.3);
 
   transition:
-    transform 0.35s cubic-bezier(0.16, 0.84, 0.44, 1),
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 0.3s,
     filter 0.25s;
 }
 
+/* rotations différentes pour effet naturel */
+.zone img:nth-child(1){ transform:translateY(10px) rotate(-4deg); }
+.zone img:nth-child(2){ transform:translateY(20px) rotate(3deg); }
+.zone img:nth-child(3){ transform:translateY(15px) rotate(-2deg); }
+.zone img:nth-child(4){ transform:translateY(25px) rotate(5deg); }
+.zone img:nth-child(5){ transform:translateY(18px) rotate(-3deg); }
+.zone img:nth-child(6){ transform:translateY(22px) rotate(2deg); }
+
+/* ------------------- HOVER ------------------- */
 .zone img:hover{
-  transform:scale(1.15);
-  filter:brightness(1.15);
+  transform:translateY(-10px) scale(1.12) rotate(0deg);
+  filter:brightness(1.1);
   z-index:10;
+
   box-shadow:
-    0 0 22px rgba(70,150,255,0.85),
-    0 12px 35px rgba(0,0,0,0.55),
-    inset 0 0 18px rgba(255,255,255,0.28);
+    0 10px 25px rgba(0,0,0,0.6),
+    0 0 25px rgba(150,120,255,0.7);
 }
 </style>
 </head>
 
 <body>
-
 
 <div class="zone">
   <img src="Photo/Souvenir/Anesthésie.jpg">
