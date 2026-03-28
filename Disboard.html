@@ -2,15 +2,21 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Discord UI Style</title>
+<title>Discord UI Avancé</title>
 
 <style>
 :root {
-  --card-bg: rgba(20, 22, 30, 0.85);
-  --card-radius: 12px;
+  /* 🎨 PERSONNALISATION SIMPLE */
+  --bg-image: url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f");
+  --bg-color: rgba(0, 0, 0, 0.5);
+  --blur: 10px;
+
+  --card-bg: rgba(20, 22, 30, 0.9);
   --accent: #2ecc71;
+
   --text-main: #ffffff;
   --text-muted: #9aa0a6;
+
   --tag-bg: #2a2d3a;
 }
 
@@ -24,20 +30,38 @@
 
 /* Background */
 body {
-  height: 100vh;
-  background: url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f")
-              center/cover no-repeat fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 100vh;
+  background: var(--bg-image) center/cover no-repeat fixed;
 }
 
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  backdrop-filter: blur(10px);
-  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(var(--blur));
+  background: var(--bg-color);
+}
+
+/* Layout */
+.main {
+  position: relative;
+  z-index: 1;
+  width: 90%;
+  margin: auto;
+  padding-top: 40px;
+}
+
+/* 🔍 Search bar */
+.search-bar {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 30px;
+  font-size: 14px;
+  outline: none;
+  background: rgba(30,30,40,0.9);
+  color: white;
 }
 
 /* Container */
@@ -45,22 +69,16 @@ body::before {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
-  width: 80%;
-  z-index: 1;
 }
 
 /* Card */
 .server-card {
-  background: linear-gradient(
-    180deg,
-    rgba(30,30,40,0.9),
-    rgba(15,15,20,0.95)
-  );
-  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  border-radius: 12px;
   padding: 14px;
   box-shadow: 0 8px 30px rgba(0,0,0,0.5);
   border: 1px solid rgba(255,255,255,0.05);
-  transition: transform 0.2s ease;
+  transition: 0.2s;
 }
 
 .server-card:hover {
@@ -70,23 +88,21 @@ body::before {
 /* Header */
 .server-header {
   display: flex;
-  align-items: center;
   gap: 10px;
+  align-items: center;
 }
 
 .server-icon {
   width: 42px;
   height: 42px;
   border-radius: 8px;
-  object-fit: cover;
 }
 
 .server-title {
-  font-weight: 600;
   color: var(--text-main);
+  font-weight: 600;
 }
 
-/* Count */
 .server-count {
   font-size: 12px;
   color: var(--text-muted);
@@ -96,6 +112,14 @@ body::before {
   content: "●";
   color: var(--accent);
   margin-right: 6px;
+}
+
+/* 📄 Description */
+.server-description {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.4;
 }
 
 /* Tags */
@@ -108,69 +132,103 @@ body::before {
 
 .tag {
   background: var(--tag-bg);
-  color: var(--text-main);
-  font-size: 11px;
   padding: 4px 8px;
+  font-size: 11px;
   border-radius: 6px;
+  color: white;
 }
 </style>
-
 </head>
+
 <body>
 
-<div class="container">
+<div class="main">
 
-  <div class="server-card">
-    <div class="server-header">
-      <img class="server-icon" src="https://picsum.photos/50">
-      <div>
-        <div class="server-title">L'Aqueduc</div>
-        <div class="server-count">37 · il y a 11 minutes</div>
+  <!-- 🔍 Recherche -->
+  <input 
+    type="text" 
+    class="search-bar" 
+    placeholder="Rechercher par tags (ex: science, débat...)"
+    onkeyup="filterServers()"
+    id="searchInput"
+  >
+
+  <div class="container" id="serverContainer">
+
+    <!-- Serveur -->
+    <div class="server-card" data-tags="discussion science politique debat philosophie">
+      <div class="server-header">
+        <img class="server-icon" src="https://picsum.photos/50">
+        <div>
+          <div class="server-title">L'Aqueduc</div>
+          <div class="server-count">37 · actif récemment</div>
+        </div>
+      </div>
+      <div class="server-description">
+        Un espace de réflexion critique autour des sciences, de la politique et de la philosophie contemporaine.
+      </div>
+      <div class="tags">
+        <span class="tag">DISCUSSION</span>
+        <span class="tag">SCIENCE</span>
+        <span class="tag">POLITIQUE</span>
+        <span class="tag">DÉBAT</span>
       </div>
     </div>
-    <div class="tags">
-      <span class="tag">DISCUSSION</span>
-      <span class="tag">SCIENCE</span>
-      <span class="tag">POLITIQUE</span>
-      <span class="tag">DÉBAT</span>
-      <span class="tag">PHILOSOPHIE</span>
-    </div>
-  </div>
 
-  <div class="server-card">
-    <div class="server-header">
-      <img class="server-icon" src="https://picsum.photos/51">
-      <div>
-        <div class="server-title">La Cité Libre</div>
-        <div class="server-count">202 · il y a 51 minutes</div>
+    <div class="server-card" data-tags="culture discussion philosophie">
+      <div class="server-header">
+        <img class="server-icon" src="https://picsum.photos/51">
+        <div>
+          <div class="server-title">La Cité Libre</div>
+          <div class="server-count">202 · actif</div>
+        </div>
+      </div>
+      <div class="server-description">
+        Discussions ouvertes sur la culture, les idées et les dynamiques sociales modernes.
+      </div>
+      <div class="tags">
+        <span class="tag">CULTURE</span>
+        <span class="tag">DISCUSSION</span>
+        <span class="tag">PHILOSOPHIE</span>
       </div>
     </div>
-    <div class="tags">
-      <span class="tag">CULTURE</span>
-      <span class="tag">DISCUSSION</span>
-      <span class="tag">POLITIQUE</span>
-      <span class="tag">DÉBATS</span>
-      <span class="tag">PHILOSOPHIE</span>
-    </div>
-  </div>
 
-  <div class="server-card">
-    <div class="server-header">
-      <img class="server-icon" src="https://picsum.photos/52">
-      <div>
-        <div class="server-title">Arène des Débats</div>
-        <div class="server-count">535 · il y a 58 minutes</div>
+    <div class="server-card" data-tags="science religion debat politique">
+      <div class="server-header">
+        <img class="server-icon" src="https://picsum.photos/52">
+        <div>
+          <div class="server-title">Arène des Débats</div>
+          <div class="server-count">535 · actif</div>
+        </div>
+      </div>
+      <div class="server-description">
+        Plateforme de confrontation d’idées autour de sujets sensibles : science, religion et politique.
+      </div>
+      <div class="tags">
+        <span class="tag">SCIENCE</span>
+        <span class="tag">RELIGION</span>
+        <span class="tag">DÉBAT</span>
       </div>
     </div>
-    <div class="tags">
-      <span class="tag">SCIENCE</span>
-      <span class="tag">RELIGION</span>
-      <span class="tag">POLITIQUE</span>
-      <span class="tag">DÉBAT</span>
-    </div>
-  </div>
 
+  </div>
 </div>
+
+<script>
+function filterServers() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const cards = document.querySelectorAll(".server-card");
+
+  cards.forEach(card => {
+    const tags = card.getAttribute("data-tags");
+    if (tags.includes(input)) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+</script>
 
 </body>
 </html>
