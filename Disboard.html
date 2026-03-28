@@ -1,153 +1,176 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Disboard Philo</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
-      margin: 0;
-    }
+<meta charset="UTF-8">
+<title>Discord UI Style</title>
 
-    header {
-      padding: 20px;
-      text-align: center;
-      background: #1e293b;
-      font-size: 24px;
-    }
+<style>
+:root {
+  --card-bg: rgba(20, 22, 30, 0.85);
+  --card-radius: 12px;
+  --accent: #2ecc71;
+  --text-main: #ffffff;
+  --text-muted: #9aa0a6;
+  --tag-bg: #2a2d3a;
+}
 
-    .controls {
-      padding: 15px;
-      background: #111827;
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-    }
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
 
-    input, select {
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-    }
+/* Background */
+body {
+  height: 100vh;
+  background: url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f")
+              center/cover no-repeat fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(10px);
+  background: rgba(0,0,0,0.5);
+}
 
-    .card {
-      background: #1e293b;
-      padding: 15px;
-      border-radius: 10px;
-      transition: 0.3s;
-    }
+/* Container */
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  width: 80%;
+  z-index: 1;
+}
 
-    .card:hover {
-      transform: scale(1.03);
-    }
+/* Card */
+.server-card {
+  background: linear-gradient(
+    180deg,
+    rgba(30,30,40,0.9),
+    rgba(15,15,20,0.95)
+  );
+  border-radius: var(--card-radius);
+  padding: 14px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: transform 0.2s ease;
+}
 
-    .title {
-      font-size: 18px;
-      font-weight: bold;
-    }
+.server-card:hover {
+  transform: translateY(-5px);
+}
 
-    .tag {
-      display: inline-block;
-      margin-top: 5px;
-      background: #3b82f6;
-      padding: 3px 8px;
-      border-radius: 5px;
-      font-size: 12px;
-    }
+/* Header */
+.server-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-    .desc {
-      margin-top: 10px;
-      font-size: 14px;
-    }
+.server-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+}
 
-    button {
-      margin-top: 10px;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 5px;
-      background: #22c55e;
-      color: white;
-      cursor: pointer;
-    }
-  </style>
+.server-title {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Count */
+.server-count {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.server-count::before {
+  content: "●";
+  color: var(--accent);
+  margin-right: 6px;
+}
+
+/* Tags */
+.tags {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  background: var(--tag-bg);
+  color: var(--text-main);
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+</style>
+
 </head>
 <body>
 
-<header>📜 Serveurs Philosophie</header>
+<div class="container">
 
-<div class="controls">
-  <input type="text" id="search" placeholder="Rechercher...">
-  <select id="filter">
-    <option value="all">Tous</option>
-    <option value="existentialisme">Existentialisme</option>
-    <option value="epistemologie">Épistémologie</option>
-    <option value="ethique">Éthique</option>
-  </select>
+  <div class="server-card">
+    <div class="server-header">
+      <img class="server-icon" src="https://picsum.photos/50">
+      <div>
+        <div class="server-title">L'Aqueduc</div>
+        <div class="server-count">37 · il y a 11 minutes</div>
+      </div>
+    </div>
+    <div class="tags">
+      <span class="tag">DISCUSSION</span>
+      <span class="tag">SCIENCE</span>
+      <span class="tag">POLITIQUE</span>
+      <span class="tag">DÉBAT</span>
+      <span class="tag">PHILOSOPHIE</span>
+    </div>
+  </div>
+
+  <div class="server-card">
+    <div class="server-header">
+      <img class="server-icon" src="https://picsum.photos/51">
+      <div>
+        <div class="server-title">La Cité Libre</div>
+        <div class="server-count">202 · il y a 51 minutes</div>
+      </div>
+    </div>
+    <div class="tags">
+      <span class="tag">CULTURE</span>
+      <span class="tag">DISCUSSION</span>
+      <span class="tag">POLITIQUE</span>
+      <span class="tag">DÉBATS</span>
+      <span class="tag">PHILOSOPHIE</span>
+    </div>
+  </div>
+
+  <div class="server-card">
+    <div class="server-header">
+      <img class="server-icon" src="https://picsum.photos/52">
+      <div>
+        <div class="server-title">Arène des Débats</div>
+        <div class="server-count">535 · il y a 58 minutes</div>
+      </div>
+    </div>
+    <div class="tags">
+      <span class="tag">SCIENCE</span>
+      <span class="tag">RELIGION</span>
+      <span class="tag">POLITIQUE</span>
+      <span class="tag">DÉBAT</span>
+    </div>
+  </div>
+
 </div>
-
-<div class="container" id="serverList"></div>
-
-<script>
-  const servers = [
-    {
-      name: "Agora Existentialiste",
-      tag: "existentialisme",
-      desc: "Discussion Sartre, Camus, liberté et absurdité.",
-      link: "#"
-    },
-    {
-      name: "Cercle Éthique",
-      tag: "ethique",
-      desc: "Morale, responsabilité et dilemmes modernes.",
-      link: "#"
-    },
-    {
-      name: "Laboratoire Épistémologique",
-      tag: "epistemologie",
-      desc: "Science, vérité, et construction du savoir.",
-      link: "#"
-    }
-  ];
-
-  const container = document.getElementById("serverList");
-
-  function display(list) {
-    container.innerHTML = "";
-    list.forEach(s => {
-      container.innerHTML += `
-        <div class="card">
-          <div class="title">${s.name}</div>
-          <div class="tag">${s.tag}</div>
-          <div class="desc">${s.desc}</div>
-          <button onclick="window.open('${s.link}')">Rejoindre</button>
-        </div>
-      `;
-    });
-  }
-
-  document.getElementById("search").addEventListener("input", e => {
-    const value = e.target.value.toLowerCase();
-    const filtered = servers.filter(s => s.name.toLowerCase().includes(value));
-    display(filtered);
-  });
-
-  document.getElementById("filter").addEventListener("change", e => {
-    const value = e.target.value;
-    if (value === "all") return display(servers);
-    display(servers.filter(s => s.tag === value));
-  });
-
-  display(servers);
-</script>
 
 </body>
 </html>
