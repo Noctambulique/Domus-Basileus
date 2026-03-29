@@ -17,7 +17,7 @@
 
   /* Position de la barre */
   --search-top: 68%;
-  --search-left: 56%;
+  --search-left: 54%;
 
   /* Taille */
   --search-width: 500px;
@@ -25,7 +25,7 @@
 
   /* Style */
   --text-color: black;
-  --placeholder-color: #ffffff88;
+  --placeholder-color: black; /* ← MODIFIÉ ICI */
 
   /* Résultats */
   --results-top: 70%;
@@ -71,12 +71,12 @@ body{
   color:var(--text-color);
   font-size:18px;
 
-  /* facultatif : zone cliquable */
   border-radius:30px;
 }
 
 #searchInput::placeholder{
   color:var(--placeholder-color);
+  opacity:1; /* ← assure un noir bien visible */
 }
 
 /* =========================
@@ -159,7 +159,7 @@ body{
 <div id="results" class="results"></div>
 
 <script>
-
+   
 /* =========================
    INDEX (à remplir)
    ========================= */
