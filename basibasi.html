@@ -167,11 +167,141 @@ body{
 <div id="results" class="results"></div>
 
 <script>
-
-/* =========================
-   INDEX (à remplir)
-   ========================= */
-
+   
+const searchIndex = [
+  {
+    title:"Bibliothèque",
+    url:"https://noctambulique.github.io/Domus-Basileus/Biblioth%C3%A8que.html",
+    description:"Ensemble de résumé de livres...",
+    keywords:["Livre","Savoir","Philosophie","Psychologie","Littérature","Librairie","Bibliothèque","Nocta"]
+  },
+  {
+    title:"Cercle Social",
+    url:"https://noctambulique.github.io/Domus-Basileus/Cercle%20S.html",
+    description:"Ensemble des fiches amis contenant certaines stats",
+    keywords:["Amis","Sociabilité","Gens","Personne","Relations","Cercle social", "Nocta"]
+  },
+  {
+    title:"Esthétique",
+    url:"https://noctambulique.github.io/Domus-Basileus/Esthétique.html",
+    description:"Univers visuel, ambiance fruitiger aero, aube, nuit et formes esthétiques.",
+    keywords:["Esthétique","Fruitiger aero","Aube","Nuit","Visuel","Beauté", "Nocta"]
+  },
+  {
+    title:"Galerie",
+    url:"https://noctambulique.github.io/Domus-Basileus/Galerie.html",
+    description:"Quelques souvenirs de la vie.",
+    keywords:["Photographie","Souvenir","Mémoire","Paysages","Objets","Images", "Nocta"]
+  },
+  {
+    title:"Histoire Philo",
+    url:"https://noctambulique.github.io/Domus-Basileus/Histoire%20Philo.html",
+    description:"Histoire de la philosophie, penseurs et concepts",
+    keywords:["Histoire","Philosophie","Socrate","Penseurs","Livre","Idées", "Nocta"]
+  },
+  {
+    title:"Multivers",
+    url:"https://noctambulique.github.io/Domus-Basileus/Multivers.html",
+    description:"Ensemble des avenirs ayant frôlés ma vie",
+    keywords:["Avenir","Multivers","Liberté","Potentiel","Espoir", "Nocta"]
+  },
+  {
+    title:"Test de personnalité",
+    url:"https://noctambulique.github.io/Domus-Basileus/Personnalité.html",
+    description:"Mesurer la personnalité à travers le test Vase et APFC",
+    keywords:["Test","Personnalité","Psychométrie","Triadique","Traits","Profil", "Nocta"]
+  },
+  {
+    title:"Cuisine",
+    url:"https://noctambulique.github.io/Domus-Basileus/SC Cuisine.html",
+    description:"Mes meilleures recettes",
+    keywords:["Cuisine","Recette","Miam","Ingrédients","Plat","Assiette", "Nocta"]
+  },
+    {
+    title:"Henné",
+    url:"https://noctambulique.github.io/Domus-Basileus/SC Henné.html",
+    description:"Mes créations au henné",
+    keywords:["henné","art","arabe","dessin","tatouage","Main", "Nocta"]
+  },
+    {
+    title:"Plante",
+    url:"https://noctambulique.github.io/Domus-Basileus/SC Plante.html",
+    description:"Ensemble des plantes que j'ai cultivié",
+    keywords:["Plante","Basilic","Avocat","Terre","Eau","Arroser", "Nocta"]
+  },
+    {
+    title:"Anticipation",
+    url:"https://noctambulique.github.io/Domus-Basileus/SM Anticipation Mentale.html",
+    description:"Outils et histoires relatifs aux prédictions",
+    keywords:["Histoie","Psychologie","Avenir","Futur","Demain","Anticipation", "Nocta"]
+  },
+    {
+    title:"Cartographie",
+    url:"https://noctambulique.github.io/Domus-Basileus/SM Cartographie mentale.html",
+    description:"Histoires et outils relatifs à la cartographie mentale",
+    keywords:["Psychologie","Cathographie","Jumeau","Double","Humain","Mental", "Nocta"]
+  },
+    {
+    title:"Créatifs Osbessionnels",
+    url:"https://noctambulique.github.io/Domus-Basileus/SM Créativité obsessionnelle.html",
+    description:"Histoire de créatifs obsessionnels",
+    keywords:["Créatif","Obsession","Art", "Nocta", "Créativité", "Histoire"]
+  },
+    {
+    title:"Dépassement",
+    url:"https://noctambulique.github.io/Domus-Basileus/SM Dépassement cognitif.html",
+    description:"Mesurer la personnalité à travers le test Vase et APFC",
+    keywords:["Améliorer","Développement","Croissance","Technologie","Transhumanisme", "Nocta"]
+  },
+    {
+    title:"Test de personnalité",
+    url:"https://noctambulique.github.io/Domus-Basileus/Personnalité.html",
+    description:"Mesurer la personnalité à travers le test Vase et APFC",
+    keywords:["Test","Personnalité","Psychométrie","Triadique","Traits","Profil", "Nocta"]
+  },
+    {
+    title:"Ordre et Chaos",
+    url:"https://noctambulique.github.io/Domus-Basileus/SM Ordre et Chaos.html",
+    description:"Ce qui touche à l'organisation et au débordement",
+    keywords:["Chaos","Ordre","Organisation","Entropie", "Nocta"]
+  },
+    {
+    title:"Poésie et Marginaux",
+    url:"https://noctambulique.github.io/Domus-Basileus/SM Poésie et Marginaux.html",
+    description:"Des gens originaux, avec des chemins rares",
+    keywords:["Marginaux","Poésie","Liberté","Originaux", "Nocta"]
+  },
+      {
+    title:"Basilegram",
+    url:"https://noctambulique.github.io/Domus-Basileus/Basilegram.html",
+    description:"Quelques photos",
+    keywords:["Photos","Photographie","Réseaux","Basile", "Nocta"]
+  },
+    {
+    title:"Santé Mentale",
+    url:"https://noctambulique.github.io/Domus-Basileus/Santé Mentale.html",
+    description:"Mon état mental selon les évènements",
+    keywords:["Santé","Mental","Bonheur","Malheur","Stimulation", "Nocta"]
+  },
+    {
+    title:"Photo Basile",
+    url:"https://noctambulique.github.io/Domus-Basileus/Photodemoi.html",
+    description:"Collection de photo de moi",
+    keywords:["Photo","Dessin","Basile","Moi","Photographie", "Esthétique", "Nocta"]
+  },
+    {
+    title:"Lexique",
+    url:"https://noctambulique.github.io/Domus-Basileus/Lexique.html",
+    description:"Le vocabulaire de Basile",
+    keywords:["Mot","Lexique","Basile","Basilien", "Vocabulaire", "Nocta"]
+  },
+      {
+    title:"Disboard",
+    url:"https://noctambulique.github.io/Domus-Basileus/Disboard.html",
+    description:"Les serveurs d'Octavie",
+    keywords:["Disboard","Discord","Domus","Octavia", "Serveur", "Nocta"]
+  }
+];
 const searchIndex = [
 
 ];
