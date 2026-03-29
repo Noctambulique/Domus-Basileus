@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -33,24 +34,17 @@
 /* =========================
    BASE
    ========================= */
-html, body{
-  height:auto;
-}
-   
+
 body{
   margin:0;
   font-family: 'Poppins', sans-serif;
+  height:100vh;
 
-  background:
-    var(--bg-image) no-repeat center top,
-    black; /* ✔ fond noir en dessous */
-
+  background: var(--bg-image) no-repeat center center;
   background-size:cover;
-
   color:white;
 
-  overflow-y:auto; /* ✔ scroll global */
-  min-height:100vh;
+  overflow:auto; /* ✔ FIX SCROLL */
 }
 
 /* =========================
@@ -93,12 +87,20 @@ body{
    ========================= */
 
 .results{
-  margin: calc(var(--search-top) + 80px) auto 100px auto;
+  position:absolute;
+
+  /* ✔ placé SOUS la barre dynamiquement */
+  top:calc(var(--search-top) + var(--search-height) + var(--results-gap));
+  left:50%;
+  transform:translateX(-50%);
 
   width:90%;
   max-width:700px;
 
-  padding-bottom:100px;
+  max-height:250px; /* ✔ zone scrollable */
+  overflow-y:auto;  /* ✔ SCROLL ICI */
+
+  padding-right:10px;
 }
 
 .result{
