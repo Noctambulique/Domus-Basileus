@@ -4,32 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Basibasi</title>
+
 <link rel="icon" type="image/png" href="Fond/Icone.png">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-   
+
 <style>
 
 /* =========================
-   PARAMÈTRES PERSONNALISABLES
+   PARAMÈTRES
    ========================= */
 
 :root{
   --bg-image: url("Fond/BasiBasi (2).jpg");
 
-  /* Position de la barre */
   --search-top: 69%;
   --search-left: 54%;
 
-  /* Taille */
   --search-width: 500px;
   --search-height: 45px;
 
-  /* Style */
   --text-color: black;
-  --placeholder-color: black; /* ← MODIFIÉ ICI */
+  --placeholder-color: black;
 
-  /* Résultats */
-  --results-top: 70%;
+  /* IMPORTANT : espace entre barre et résultats */
+  --results-gap: 20px;
 }
 
 /* =========================
@@ -38,12 +36,14 @@
 
 body{
   margin:0;
-font-family: 'Poppins', sans-serif; 
-overflow:hidden; 
-   height:100vh;
+  font-family: 'Poppins', sans-serif;
+  height:100vh;
+
   background: var(--bg-image) no-repeat center center;
   background-size:cover;
   color:white;
+
+  overflow:auto; /* ✔ FIX SCROLL */
 }
 
 /* =========================
@@ -57,12 +57,12 @@ overflow:hidden;
   transform:translate(-50%, -50%);
   width:var(--search-width);
   height:var(--search-height);
+  z-index:2; /* ✔ au-dessus des résultats */
 }
 
 #searchInput{
   width:100%;
   height:100%;
-
   padding:0 20px;
 
   background:transparent;
@@ -71,13 +71,14 @@ overflow:hidden;
 
   color:var(--text-color);
   font-size:18px;
+  font-family: 'Poppins', sans-serif; /* ✔ FIX POLICE */
 
   border-radius:30px;
 }
 
 #searchInput::placeholder{
   color:var(--placeholder-color);
-  opacity:1; /* ← assure un noir bien visible */
+  opacity:1;
 }
 
 /* =========================
@@ -86,12 +87,19 @@ overflow:hidden;
 
 .results{
   position:absolute;
-  top:var(--results-top);
+
+  /* ✔ placé SOUS la barre dynamiquement */
+  top:calc(var(--search-top) + var(--search-height) + var(--results-gap));
   left:50%;
   transform:translateX(-50%);
+
   width:90%;
   max-width:700px;
-  padding-bottom:60px;
+
+  max-height:250px; /* ✔ zone scrollable */
+  overflow-y:auto;  /* ✔ SCROLL ICI */
+
+  padding-right:10px;
 }
 
 .result{
@@ -99,8 +107,9 @@ overflow:hidden;
   padding:18px 20px;
   border-radius:14px;
   margin-bottom:14px;
+
   box-shadow:0 6px 18px rgba(0,0,0,.25);
-  transition:transform .15s ease, box-shadow .15s ease;
+  transition:.15s;
 }
 
 .result:hover{
@@ -151,162 +160,28 @@ overflow:hidden;
 
 <body>
 
-<!-- BARRE POSITIONNABLE -->
 <div class="search-container">
   <input id="searchInput" type="text" placeholder="Recherche...">
 </div>
 
-<!-- RESULTATS -->
 <div id="results" class="results"></div>
 
 <script>
-   
+
 /* =========================
    INDEX (à remplir)
    ========================= */
 
 const searchIndex = [
-  {
-    title:"Bibliothèque",
-    url:"https://noctambulique.github.io/Domus-Basileus/Biblioth%C3%A8que.html",
-    description:"Ensemble de résumé de livres...",
-    keywords:["Livre","Savoir","Philosophie","Psychologie","Littérature","Librairie","Bibliothèque","Nocta"]
-  },
-  {
-    title:"Cercle Social",
-    url:"https://noctambulique.github.io/Domus-Basileus/Cercle%20S.html",
-    description:"Ensemble des fiches amis contenant certaines stats",
-    keywords:["Amis","Sociabilité","Gens","Personne","Relations","Cercle social", "Nocta"]
-  },
-  {
-    title:"Esthétique",
-    url:"https://noctambulique.github.io/Domus-Basileus/Esthétique.html",
-    description:"Univers visuel, ambiance fruitiger aero, aube, nuit et formes esthétiques.",
-    keywords:["Esthétique","Fruitiger aero","Aube","Nuit","Visuel","Beauté", "Nocta"]
-  },
-  {
-    title:"Galerie",
-    url:"https://noctambulique.github.io/Domus-Basileus/Galerie.html",
-    description:"Quelques souvenirs de la vie.",
-    keywords:["Photographie","Souvenir","Mémoire","Paysages","Objets","Images", "Nocta"]
-  },
-  {
-    title:"Histoire Philo",
-    url:"https://noctambulique.github.io/Domus-Basileus/Histoire%20Philo.html",
-    description:"Histoire de la philosophie, penseurs et concepts",
-    keywords:["Histoire","Philosophie","Socrate","Penseurs","Livre","Idées", "Nocta"]
-  },
-  {
-    title:"Multivers",
-    url:"https://noctambulique.github.io/Domus-Basileus/Multivers.html",
-    description:"Ensemble des avenirs ayant frôlés ma vie",
-    keywords:["Avenir","Multivers","Liberté","Potentiel","Espoir", "Nocta"]
-  },
-  {
-    title:"Test de personnalité",
-    url:"https://noctambulique.github.io/Domus-Basileus/Personnalité.html",
-    description:"Mesurer la personnalité à travers le test Vase et APFC",
-    keywords:["Test","Personnalité","Psychométrie","Triadique","Traits","Profil", "Nocta"]
-  },
-  {
-    title:"Cuisine",
-    url:"https://noctambulique.github.io/Domus-Basileus/SC Cuisine.html",
-    description:"Mes meilleures recettes",
-    keywords:["Cuisine","Recette","Miam","Ingrédients","Plat","Assiette", "Nocta"]
-  },
-    {
-    title:"Henné",
-    url:"https://noctambulique.github.io/Domus-Basileus/SC Henné.html",
-    description:"Mes créations au henné",
-    keywords:["henné","art","arabe","dessin","tatouage","Main", "Nocta"]
-  },
-    {
-    title:"Plante",
-    url:"https://noctambulique.github.io/Domus-Basileus/SC Plante.html",
-    description:"Ensemble des plantes que j'ai cultivié",
-    keywords:["Plante","Basilic","Avocat","Terre","Eau","Arroser", "Nocta"]
-  },
-    {
-    title:"Anticipation",
-    url:"https://noctambulique.github.io/Domus-Basileus/SM Anticipation Mentale.html",
-    description:"Outils et histoires relatifs aux prédictions",
-    keywords:["Histoie","Psychologie","Avenir","Futur","Demain","Anticipation", "Nocta"]
-  },
-    {
-    title:"Cartographie",
-    url:"https://noctambulique.github.io/Domus-Basileus/SM Cartographie mentale.html",
-    description:"Histoires et outils relatifs à la cartographie mentale",
-    keywords:["Psychologie","Cathographie","Jumeau","Double","Humain","Mental", "Nocta"]
-  },
-    {
-    title:"Créatifs Osbessionnels",
-    url:"https://noctambulique.github.io/Domus-Basileus/SM Créativité obsessionnelle.html",
-    description:"Histoire de créatifs obsessionnels",
-    keywords:["Créatif","Obsession","Art", "Nocta", "Créativité", "Histoire"]
-  },
-    {
-    title:"Dépassement",
-    url:"https://noctambulique.github.io/Domus-Basileus/SM Dépassement cognitif.html",
-    description:"Mesurer la personnalité à travers le test Vase et APFC",
-    keywords:["Améliorer","Développement","Croissance","Technologie","Transhumanisme", "Nocta"]
-  },
-    {
-    title:"Test de personnalité",
-    url:"https://noctambulique.github.io/Domus-Basileus/Personnalité.html",
-    description:"Mesurer la personnalité à travers le test Vase et APFC",
-    keywords:["Test","Personnalité","Psychométrie","Triadique","Traits","Profil", "Nocta"]
-  },
-    {
-    title:"Ordre et Chaos",
-    url:"https://noctambulique.github.io/Domus-Basileus/SM Ordre et Chaos.html",
-    description:"Ce qui touche à l'organisation et au débordement",
-    keywords:["Chaos","Ordre","Organisation","Entropie", "Nocta"]
-  },
-    {
-    title:"Poésie et Marginaux",
-    url:"https://noctambulique.github.io/Domus-Basileus/SM Poésie et Marginaux.html",
-    description:"Des gens originaux, avec des chemins rares",
-    keywords:["Marginaux","Poésie","Liberté","Originaux", "Nocta"]
-  },
-      {
-    title:"Basilegram",
-    url:"https://noctambulique.github.io/Domus-Basileus/Basilegram.html",
-    description:"Quelques photos",
-    keywords:["Photos","Photographie","Réseaux","Basile", "Nocta"]
-  },
-    {
-    title:"Santé Mentale",
-    url:"https://noctambulique.github.io/Domus-Basileus/Santé Mentale.html",
-    description:"Mon état mental selon les évènements",
-    keywords:["Santé","Mental","Bonheur","Malheur","Stimulation", "Nocta"]
-  },
-    {
-    title:"Photo Basile",
-    url:"https://noctambulique.github.io/Domus-Basileus/Photodemoi.html",
-    description:"Collection de photo de moi",
-    keywords:["Photo","Dessin","Basile","Moi","Photographie", "Esthétique", "Nocta"]
-  },
-    {
-    title:"Lexique",
-    url:"https://noctambulique.github.io/Domus-Basileus/Lexique.html",
-    description:"Le vocabulaire de Basile",
-    keywords:["Mot","Lexique","Basile","Basilien", "Vocabulaire", "Nocta"]
-  },
-      {
-    title:"Disboard",
-    url:"https://noctambulique.github.io/Domus-Basileus/Disboard.html",
-    description:"Les serveurs d'Octavie",
-    keywords:["Disboard","Discord","Domus","Octavia", "Serveur", "Nocta"]
-  }
+
 ];
 
 /* =========================
-   LOGIQUE DE RECHERCHE
+   LOGIQUE
    ========================= */
 
 function normalize(text){
-  return text
-    .toLowerCase()
+  return text.toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g,"")
     .replace(/[^a-z0-9\s]/g," ")
@@ -366,7 +241,7 @@ function escapeHtml(text){
 }
 
 /* =========================
-   INTERACTION (ENTRÉE UNIQUEMENT)
+   INTERACTION
    ========================= */
 
 const input = document.getElementById("searchInput");
