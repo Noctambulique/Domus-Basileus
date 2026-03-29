@@ -4,65 +4,90 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Basibasi</title>
-<link rel="icon" type="image/png" href="Fond/Icone.png"><style>
+<link rel="icon" type="image/png" href="Fond/Icone.png">
+
+<style>
+
+/* =========================
+   PARAMÈTRES PERSONNALISABLES
+   ========================= */
+
+:root{
+  --bg-image: url("Fond/homme-barre.png");
+
+  /* Position de la barre */
+  --search-top: 55%;
+  --search-left: 50%;
+
+  /* Taille */
+  --search-width: 500px;
+  --search-height: 45px;
+
+  /* Style */
+  --text-color: white;
+  --placeholder-color: #ffffff88;
+
+  /* Résultats */
+  --results-top: 70%;
+}
+
+/* =========================
+   BASE
+   ========================= */
+
 body{
   margin:0;
   font-family:Arial,Helvetica,sans-serif;
-  background:#06040D;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
+  height:100vh;
+  overflow:hidden;
+  background: var(--bg-image) no-repeat center center;
+  background-size:cover;
   color:white;
 }
 
-.header{
-  margin-top:80px;
-  margin-bottom:40px;
-  display:flex;
-  justify-content:center;
+/* =========================
+   BARRE DE RECHERCHE
+   ========================= */
+
+.search-container{
+  position:absolute;
+  top:var(--search-top);
+  left:var(--search-left);
+  transform:translate(-50%, -50%);
+  width:var(--search-width);
+  height:var(--search-height);
 }
 
-.header img{
-  height:250px;
-  width:auto;
-}
-
-.search-area{
-  width:90%;
-  max-width:700px;
-  text-align:center;
-}
-
-input{
+#searchInput{
   width:100%;
-  padding:14px 18px;
-  border-radius:30px;
+  height:100%;
+
+  padding:0 20px;
+
+  background:transparent;
   border:none;
-  font-size:16px;
   outline:none;
-  box-shadow:0 4px 20px rgba(0,0,0,.4);
-  box-sizing:border-box;
+
+  color:var(--text-color);
+  font-size:18px;
+
+  /* facultatif : zone cliquable */
+  border-radius:30px;
 }
 
-button{
-  margin-top:20px;
-  padding:10px 20px;
-  border:none;
-  border-radius:20px;
-  background:#ffffff22;
-  color:white;
-  font-size:15px;
-  cursor:pointer;
+#searchInput::placeholder{
+  color:var(--placeholder-color);
 }
 
-button:hover{
-  background:#ffffff33;
-}
+/* =========================
+   RÉSULTATS
+   ========================= */
 
 .results{
-  margin-top:40px;
+  position:absolute;
+  top:var(--results-top);
+  left:50%;
+  transform:translateX(-50%);
   width:90%;
   max-width:700px;
   padding-bottom:60px;
@@ -119,24 +144,26 @@ button:hover{
   border-radius:12px;
   color:#ddd;
 }
+
 </style>
 </head>
+
 <body>
 
-<div class="header">
-  <img src="Fond/BasiBasi.png" alt="entete">
+<!-- BARRE POSITIONNABLE -->
+<div class="search-container">
+  <input id="searchInput" type="text" placeholder="Recherche...">
 </div>
 
-<div class="search-area">
-  <form id="searchForm">
-    <input id="searchInput" type="text" placeholder="Recherche...">
-    <button type="submit">Chercher</button>
-  </form>
-</div>
-
+<!-- RESULTATS -->
 <div id="results" class="results"></div>
 
 <script>
+
+/* =========================
+   INDEX (à remplir)
+   ========================= */
+
 const searchIndex = [
   {
     title:"Bibliothèque",
@@ -271,13 +298,18 @@ const searchIndex = [
     keywords:["Disboard","Discord","Domus","Octavia", "Serveur", "Nocta"]
   }
 ];
+
+/* =========================
+   LOGIQUE DE RECHERCHE
+   ========================= */
+
 function normalize(text){
   return text
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")   // enlève les accents
-    .replace(/[^a-z0-9\s]/g, " ")      // enlève ponctuation
-    .replace(/\s+/g, " ")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9\s]/g," ")
+    .replace(/\s+/g," ")
     .trim();
 }
 
@@ -289,9 +321,7 @@ function search(query){
   const normalizedQuery = normalize(query);
   const queryWords = tokenize(query);
 
-  if(!normalizedQuery){
-    return [];
-  }
+  if(!normalizedQuery) return [];
 
   const results = [];
 
@@ -301,77 +331,54 @@ function search(query){
     const keywordsNorm = (page.keywords || []).map(k => normalize(k));
 
     let score = 0;
-    let matchedTerms = [];
 
     for(const word of queryWords){
-      if(titleNorm.includes(word)){
-        score += 12;
-        matchedTerms.push(word);
-      }
-
-      if(descNorm.includes(word)){
-        score += 4;
-        matchedTerms.push(word);
-      }
+      if(titleNorm.includes(word)) score += 12;
+      if(descNorm.includes(word)) score += 4;
 
       for(const kw of keywordsNorm){
         if(kw.includes(word) || word.includes(kw)){
           score += 8;
-          matchedTerms.push(word);
           break;
         }
       }
     }
 
-    if(titleNorm.includes(normalizedQuery)){
-      score += 20;
-    }
-
-    if(descNorm.includes(normalizedQuery)){
-      score += 8;
-    }
+    if(titleNorm.includes(normalizedQuery)) score += 20;
+    if(descNorm.includes(normalizedQuery)) score += 8;
 
     if(score > 0){
-      results.push({
-        ...page,
-        score,
-        matchedTerms:[...new Set(matchedTerms)]
-      });
+      results.push({...page, score});
     }
   }
 
-  // suppression des doublons par URL
-  const uniqueResults = [];
-  const seen = new Set();
-
-  for(const item of results.sort((a,b) => b.score - a.score)){
-    if(!seen.has(item.url)){
-      seen.add(item.url);
-      uniqueResults.push(item);
-    }
-  }
-
-  return uniqueResults;
+  return results.sort((a,b) => b.score - a.score);
 }
 
 function escapeHtml(text){
   return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
-const form = document.getElementById("searchForm");
+/* =========================
+   INTERACTION (ENTRÉE UNIQUEMENT)
+   ========================= */
+
 const input = document.getElementById("searchInput");
 const resultsDiv = document.getElementById("results");
 
-form.addEventListener("submit", function(e){
-  e.preventDefault();
+input.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    e.preventDefault();
+    lancerRecherche(input.value.trim());
+  }
+});
 
-  const query = input.value.trim();
-  const results = search(query);
+function lancerRecherche(query){
 
   resultsDiv.innerHTML = "";
 
@@ -379,6 +386,8 @@ form.addEventListener("submit", function(e){
     resultsDiv.innerHTML = "<div class='no-result'>Entrez une recherche.</div>";
     return;
   }
+
+  const results = search(query);
 
   if(results.length === 0){
     resultsDiv.innerHTML = "<div class='no-result'>Aucun résultat trouvé.</div>";
@@ -394,13 +403,14 @@ form.addEventListener("submit", function(e){
       <div class="result-title">
         <a href="${r.url}">${escapeHtml(r.title)}</a>
       </div>
-      <div class="result-desc">${escapeHtml(r.description || "Aucune description disponible.")}</div>
+      <div class="result-desc">${escapeHtml(r.description || "")}</div>
       <div class="result-meta">Pertinence : ${r.score}</div>
     `;
 
     resultsDiv.appendChild(el);
   }
-});
+}
+
 </script>
 
 </body>
