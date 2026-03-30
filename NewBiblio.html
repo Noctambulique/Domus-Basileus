@@ -1,149 +1,133 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Bibliothèque de synthèses</title>
+<meta charset="UTF-8">
+<title>Library</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: #f5f5f5;
-    }
+<style>
+  body {
+    margin: 0;
+    background: #111;
+  }
 
-    h1, h2 {
-      margin-bottom: 20px;
-    }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    padding: 10px;
+  }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 20px;
-    }
+  .book img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: 0.2s;
+  }
 
-    .book {
-      background: white;
-      border-radius: 12px;
-      padding: 10px;
-      cursor: pointer;
-      transition: transform 0.2s;
-      text-align: center;
-    }
+  .book img:hover {
+    transform: scale(1.05);
+  }
 
-    .book:hover {
-      transform: scale(1.05);
-    }
+  .viewer {
+    display: none;
+    padding: 10px;
+  }
 
-    .book img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
+  .slide {
+    width: 100%;
+    margin-bottom: 10px;
+  }
 
-    .slides {
-      display: none;
-    }
+  .back {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    background: white;
+    opacity: 0.2;
+    cursor: pointer;
+  }
 
-    .slide {
-      background: white;
-      padding: 20px;
-      margin-bottom: 15px;
-      border-radius: 12px;
-    }
-
-    button {
-      padding: 10px 15px;
-      margin-bottom: 20px;
-      border: none;
-      background: black;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-  </style>
+  .back:hover {
+    opacity: 0.6;
+  }
+</style>
 </head>
 
 <body>
 
-  <h1 id="title">Mes synthèses</h1>
+<div id="library" class="grid"></div>
 
-  <div id="library" class="grid"></div>
+<div id="viewer" class="viewer">
+  <div class="back" onclick="goBack()"></div>
+  <div id="slides"></div>
+</div>
 
-  <div id="reader" class="slides">
-    <button onclick="goBack()">Retour</button>
-    <h2 id="bookTitle"></h2>
-    <div id="slidesContainer"></div>
-  </div>
+<script>
+const books = [
+  {
+    cover: "https://via.placeholder.com/150x200",
+    slides: [
+      "Diapo/Classeurs/Diapositive1.PNG",
+      "Diapo/Classeurs/Diapositive1.PNG",
+      "https://via.placeholder.com/800x500"
+    ]
+  },
+  {
+    cover: "https://via.placeholder.com/150x200",
+    slides: [
+      "https://via.placeholder.com/800x500",
+      "https://via.placeholder.com/800x500"
+    ]
+  }
+];
 
-  <script>
-    const books = [
-      {
-        title: "Livre 1",
-        cover: "https://via.placeholder.com/150",
-        slides: [
-          "Diapo/Classeurs/Diapositive1.PNG",
-          "Diapo/Classeurs/Diapositive1.PNG",
-          "Conclusion et critique"
-        ]
-      },
-      {
-        title: "Livre 2",
-        cover: "https://via.placeholder.com/150",
-        slides: [
-          "Résumé général",
-          "Arguments importants",
-          "Ouverture"
-        ]
-      }
-    ];
+const library = document.getElementById("library");
+const viewer = document.getElementById("viewer");
+const slidesContainer = document.getElementById("slides");
 
-    const library = document.getElementById("library");
-    const reader = document.getElementById("reader");
-    const slidesContainer = document.getElementById("slidesContainer");
-    const bookTitle = document.getElementById("bookTitle");
+function render() {
+  books.forEach((book, i) => {
+    const div = document.createElement("div");
+    div.className = "book";
 
-    function renderLibrary() {
-      library.innerHTML = "";
-      books.forEach((book, index) => {
-        const div = document.createElement("div");
-        div.className = "book";
-        div.onclick = () => openBook(index);
+    const img = document.createElement("img");
+    img.src = book.cover;
+    img.onclick = () => openBook(i);
 
-        div.innerHTML = `
-          <img src="${book.cover}" />
-          <p>${book.title}</p>
-        `;
+    div.appendChild(img);
+    library.appendChild(div);
+  });
+}
 
-        library.appendChild(div);
-      });
-    }
+function openBook(i) {
+  library.style.display = "none";
+  viewer.style.display = "block";
 
-    function openBook(index) {
-      const book = books[index];
+  slidesContainer.innerHTML = "";
 
-      library.style.display = "none";
-      reader.style.display = "block";
+  books[i].slides.forEach(src => {
+    const img = document.createElement("img");
+    img.src = src;
+    img.className = "slide";
+    slidesContainer.appendChild(img);
+  });
+}
 
-      bookTitle.textContent = book.title;
-      slidesContainer.innerHTML = "";
+function goBack() {
+  viewer.style.display = "none";
+  library.style.display = "grid";
+}
 
-      book.slides.forEach(slide => {
-        const div = document.createElement("div");
-        div.className = "slide";
-        div.textContent = slide;
-        slidesContainer.appendChild(div);
-      });
-    }
+// touche ESC pour retour
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") goBack();
+});
 
-    function goBack() {
-      reader.style.display = "none";
-      library.style.display = "grid";
-    }
-
-    renderLibrary();
-  </script>
+render();
+</script>
 
 </body>
 </html>
